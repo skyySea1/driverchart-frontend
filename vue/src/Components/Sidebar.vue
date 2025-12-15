@@ -46,13 +46,13 @@
     </nav>
 
     <!-- User Section (Footer) -->
-    <footer class="sidebar__footer p-4 border-t border-slate-800">
-      <div class="sidebar__user flex items-center gap-3">
+   <footer class="sidebar__footer p-4 border-t border-slate-800">
+      <div class="sidebar__user flex items-center gap-3 mb-3">
         <div class="sidebar__user-avatar w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center">
           <User class="w-5 h-5 text-white" />
         </div>
         <div v-show="!collapsed || collapsedMobile" class="sidebar__user-info flex-1 min-w-0">
-          <div class="sidebar__user-name text-sm font-medium truncate">Manoel Passos</div>
+          <div class="sidebar__user-name text-sm font-medium truncate">John Doe</div>
           <div class="sidebar__user-role text-xs text-slate-400 truncate">Administrator</div>
         </div>
         <button
@@ -63,16 +63,16 @@
           <LogOut class="w-4 h-4" />
         </button>
       </div>
-    </footer>
-    <footer class="sidebar__footer mt-auto p-4 text-xs text-slate-500 border-t border-slate-800">
-      &copy; 2025 PhoenixBus
+      <div v-show="!collapsed || collapsedMobile" class="text-xs text-slate-500">
+        &copy; 2025 CharterSafe
+      </div>
     </footer>
   </aside>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { LayoutDashboard, Code, Users, Truck, FileText, PieChart } from 'lucide-vue-next'
+import { LayoutDashboard, Code, Users, Truck, FileText, PieChart, Settings } from 'lucide-vue-next'
 
 const props = defineProps({
   collapsed: Boolean,
@@ -98,5 +98,7 @@ const navItems = [
   { id: 'reports', label: ' Audit Reports', icon: PieChart },
   { id: 'docs', label: 'Document Registry', icon: FileText },
   { id: 'specs', label: 'System Specs', icon: Code },
+  { id: 'mainreports', label: 'Main Reports', icon: FileText },
+  { id: 'settings', label: 'Settings', icon: Settings },
 ]
 </script>
