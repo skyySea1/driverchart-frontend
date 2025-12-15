@@ -69,7 +69,7 @@ const viewComponent = computed(() => {
     vehicles: Vehicles,
     docs: DocumentRegistry,
     reports: Reports,
-    specs: SystemSpecs,
+    systemSpecs: SystemSpecs,
   }[route.value]
 })
 

@@ -1,0 +1,116 @@
+<template>
+  <!-- Document Registry Card -->
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden print:hidden">
+
+    <!-- Header -->
+    <div class="p-6 border-b border-slate-100 flex flex-col space-y-4">
+      <div class="flex justify-between items-center">
+        <div>
+          <h3 class="font-bold text-slate-800">Document Registry &amp; Audit Log</h3>
+          <p class="text-slate-500 text-sm">Centralized repository for all compliance uploads.</p>
+        </div>
+      </div>
+
+      <!-- Tab Filters -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
+        <div class="flex space-x-2 bg-slate-100 p-1 rounded-lg self-start">
+          <button
+            v-for="tab in tabs"
+            :key="tab.id"
+            :class="[
+              'px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center',
+              activeTab === tab.id
+                ? 'bg-white text-slate-800 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700'
+            ]"
+            @click="activeTab = tab.id"
+          >
+            <component :is="tab.icon" class="w-4 h-4 mr-2" />
+            {{ tab.label }}
+          </button>
+        </div>
+
+        <!-- Search Filter -->
+        <div class="flex items-center">
+          <input
+            v-model="filter"
+            placeholder="Search by name or entity..."
+            class="p-2 border border-slate-200 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 text-slate-600 text-sm uppercase tracking-wider">
+            <th class="p-4 border-b">Upload Date</th>
+            <th class="p-4 border-b">Document Name</th>
+            <th class="p-4 border-b">Type</th>
+            <th class="p-4 border-b">Related Entity</th>
+            <th class="p-4 border-b">Uploaded By</th>
+            <th class="p-4 border-b text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody class="text-sm text-slate-700 divide-y divide-slate-100">
+          <tr v-if="filtered.length === 0">
+            <td colspan="6" class="p-8 text-center text-slate-400">
+              No documents found in this category.
+            </td>
+          </tr>
+          <tr v-for="doc in filtered" :key="doc.id" class="hover:bg-slate-50">
+            <td class="p-4">{{ formatDate(doc.createdAt) }}</td>
+            <td class="p-4">{{ doc.fileName }}</td>
+            <td class="p-4">{{ doc.type }}</td>
+            <td class="p-4">{{ doc.entity }}</td>
+            <td class="p-4">{{ doc.user || 'system' }}</td>
+            <td class="p-4 text-right">
+              <button class="text-indigo-600 hover:text-indigo-800 text-sm">View</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+import { collection, onSnapshot } from 'firebase/firestore'
+import { db } from '../utils/firebase'
+import { History, User, Bus } from 'lucide-vue-next'
+
+const entries = ref([])
+const filter = ref('')
+const activeTab = ref('history')
+
+const tabs = [
+  { id: 'history', label: 'General History', icon: History },
+  { id: 'drivers', label: 'Driver Docs', icon: User },
+  { id: 'fleet', label: 'Fleet Docs', icon: Bus },
+]
+
+onMounted(() => {
+  const q = collection(db, 'artifacts/app/public/data/document_logs')
+  onSnapshot(q, (snap) => {
+    entries.value = snap.docs.map(s => ({ id: s.id, ...s.data() }))
+  })
+})
+
+const filtered = computed(() => {
+  if (!filter.value) return entries.value
+  const f = filter.value.toLowerCase()
+  return entries.value.filter(e =>
+    (e.entity || '').toLowerCase().includes(f) ||
+    (e.fileName || '').toLowerCase().includes(f)
+  )
+})
+
+function formatDate(timestamp) {
+  if (!timestamp) return '-'
+  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
+  return date.toISOString().slice(0, 10)
+}
+</script>

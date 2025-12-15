@@ -1,6 +1,6 @@
 import { ref, onUnmounted, type Ref } from 'vue'
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore'
-import { db } from '../services/firebase.ts'
+import { db } from '../utils/firebase.ts'
 
 // Define a generic Firestore document type, add new fields as needed
 interface FirestoreDoc {
@@ -19,7 +19,7 @@ export function useRealtimeCollection<T extends FirestoreDoc = FirestoreDoc>(
     items.value = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as T)
   });
 
-  // 
+
   onUnmounted(unsub);
   return { items }
 }
