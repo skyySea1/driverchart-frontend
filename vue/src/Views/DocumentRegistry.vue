@@ -25,6 +25,7 @@
             ]"
             @click="activeTab = tab.id"
           >
+          <!-- TODO SET VISUALIZATIONS  -->
             <component :is="tab.icon" class="w-4 h-4 mr-2" />
             {{ tab.label }}
           </button>
@@ -76,10 +77,9 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, computed } from 'vue'
+<script setup lang="ts">import { ref, onMounted, computed } from 'vue'
 import { collection, onSnapshot } from 'firebase/firestore'
-import { db } from '../utils/firebase'
+import { db } from '../services/firebase'
 import { History, User, Bus } from 'lucide-vue-next'
 
 const entries = ref([])

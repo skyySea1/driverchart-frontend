@@ -110,11 +110,10 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
+<script setup lang="ts">import { ref, onMounted } from 'vue'
 import DriverFormModal from './DriverFormModal.vue'
 import { collection, onSnapshot, doc, deleteDoc } from 'firebase/firestore'
-import { db } from '../utils/firebase'
+import { db } from '../services/firebase'
 import { statusColorFor } from '../Composables/useDotHelpers'
 import { Plus, Edit, Trash2, Bot } from 'lucide-vue-next'
 

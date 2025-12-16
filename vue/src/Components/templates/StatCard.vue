@@ -4,6 +4,5 @@
     <div class="text-2xl font-bold">{{ value }}</div>
   </div>
 </template>
-<script setup>
-const props = defineProps({ title: String, value: [String,Number] })
+<script setup lang="ts">const props = defineProps({ title: String, value: [String,Number] })
 </script>

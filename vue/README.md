@@ -11,10 +11,9 @@ driverchart/
 ├── src/
 │   ├── Components/Dashboard.vue       # Main app component ( migrated of react 1000+ lines, all state management)
 │   ├── components/
-│   │   ├── forms/                # DriverForm, VehicleForm (handle CRUD operations)
 │   │   ├── templates/            # FormW9, FormI9, RoadTestTemplate (printable DOT docs)
 │   │   └── ui/                   # Reusable components (Modal, StatCard, etc.)
-│   ├── lib/
+│   ├── utils/                    # Pure functions withoutState
 │   │   ├── firebase.js           # Firebase initialization (uses Vite env vars)
 │   │   └── utils.js              # Date/compliance calculation helpers
 │   └── main.jsx                  # Entry point, renders <Dashboard />

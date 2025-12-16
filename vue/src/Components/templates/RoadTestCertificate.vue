@@ -13,6 +13,5 @@
     </div>
   </div>
 </template>
-<script setup>
-const props = defineProps({ driver: Object })
+<script setup lang="ts">const props = defineProps({ driver: Object })
 </script>

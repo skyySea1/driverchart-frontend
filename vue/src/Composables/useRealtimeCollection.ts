@@ -1,6 +1,6 @@
 import { ref, onUnmounted, type Ref } from 'vue'
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore'
-import { db } from '../utils/firebase.ts'
+import { db } from '../services/firebase.ts'
 
 // Define a generic Firestore document type, add new fields as needed
 interface FirestoreDoc {

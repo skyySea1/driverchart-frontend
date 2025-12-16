@@ -24,6 +24,5 @@
   </div>
 </template>
 
-<script setup>
-import { Database } from 'lucide-vue-next'
+<script setup lang="ts">import { Database } from 'lucide-vue-next'
 </script>

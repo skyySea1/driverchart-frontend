@@ -36,10 +36,9 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
+<script setup lang="ts">import { ref, onMounted } from 'vue'
 import { collection, onSnapshot } from 'firebase/firestore'
-import { db } from '../utils/firebase'
+import { db } from '../services/firebase'
 import dayjs from 'dayjs'
 
 const vehicles = ref([])
@@ -51,7 +50,7 @@ onMounted(() => {
   })
 })
 
-function nextInspectionFor(last){
+function nextInspectionFor(last: string){
   if (!last) return '-'
   return dayjs(last).add(1,'year').format('YYYY-MM-DD')
 }

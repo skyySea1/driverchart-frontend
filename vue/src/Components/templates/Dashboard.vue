@@ -1,10 +1,12 @@
 <template>
   <div>
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <StatCard title="Motoristas" :value="totalDrivers" />
-      <StatCard title="Veículos" :value="totalVehicles" />
-      <StatCard title="Alertas" :value="alertsCount" />
-      <StatCard title="Pontuação Auditoria" :value="auditScore" />
+      <StatCard title="Inspectionsa Due" :value="alertsCount" />
+      <StatCard title="Drivers" :value="totalDrivers" />
+      <StatCard title="Vehicles" :value="totalVehicles" />
+      <StatCard title="Alerts" :value="alertsCount" />
+      <StatCard title="Audit Score" :value="auditScore" />
+
     </div>
 
     <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -27,7 +29,7 @@
           <h3 class="font-semibold">Assistente de Regulação DOT (IA)</h3>
           <div class="mt-2">
             <input v-model="iaQuery" placeholder="Pergunte sobre FMCSA..." class="w-full p-2 border rounded" />
-            <button @click="askIa" class="mt-2 px-3 py-1 bg-slate-800 text-white rounded">Ask</button>
+            <button v-cursor @click="askIa" class="mt-2 px-3 py-1 bg-slate-800 text-white rounded">Ask</button>
           </div>
           <div v-if="iaAnswer" class="mt-3 p-3 bg-slate-50 rounded">{{ iaAnswer }}</div>
         </div>
@@ -36,12 +38,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import StatCard from './StatCard.vue'
-import { db } from '../utils/firebase'
+import { db } from '../../services/firebase'
 import { collection, query, getDocs } from 'firebase/firestore'
 import dayjs from 'dayjs'
+import { StatusDot } from '../../Views/MainReports.vue';
 
 const totalDrivers = ref(0)
 const totalVehicles = ref(0)
