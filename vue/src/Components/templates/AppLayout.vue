@@ -1,3 +1,4 @@
+<!-- vue/src/Components/templates/AppLayout.vue -->
 <template>
   <div class="h-screen overflow-auto bg-slate-100 font-sans text-slate-800  md:flex-row print:bg-white relative">
     <!-- Mobile Overlay -->
@@ -18,7 +19,7 @@
       ]"
     >
       <div class="p-4 md:p-8">
-        <Header title="Safety Dashboard" @open-mobile="sidebarCollapsed = !sidebarCollapsed" />
+        <Header :title="hTitle" :subtitle="hSubtitle" @open-mobile="sidebarCollapsed = !sidebarCollapsed" />
 
         <main class="mt-2 flex">
           <div class="max-w-7xl mx-auto">
@@ -46,14 +47,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router'
 import { ChevronLeft } from 'lucide-vue-next'
 import Sidebar from './Sidebar.vue'
 import Header from './Header.vue'
 import { MOBILE_BREAKPOINT } from '@/utils/constants'
 
 const router = useRouter()
+const currentRoute = useRoute()
+
+// Router metadata for header
+const hTitle = computed<string>(() => currentRoute.meta.title as string || '')
+const hSubtitle = computed<string | undefined>(() => currentRoute.meta.subtitle as string || '')
 
 // Sidebar state: closed on mobile (< 768px)
 const sidebarCollapsed = ref(window.innerWidth < MOBILE_BREAKPOINT)
