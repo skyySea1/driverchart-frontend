@@ -209,52 +209,29 @@
 
       <!-- 5. LEGAL & TAX FORMS -->
       <div>
-        <div class="flex items-center mb-2 gap-1 pb-1 border-b border-slate-200">
+        <div class="flex items-center  gap-1 pb-1 mb-2 border-b border-slate-200">
           <Building class="w-5 h-5 text-slate-500" />
           <h3 class="font-bold text-slate-700">Legal & Tax Forms (USCIS / IRS)</h3>
         </div>
-        <div class="flex flex-col md:flex-row gap-4">
-          <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700">Social Security (SSN)</label>
-            <input
-              v-model="form.ssn"
-              placeholder="XXX-XX-XXXX"
-              class="w-full p-2 text-sm border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-          <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700">Upload SSN Card</label>
-            <input
-              type="text"
-              v-model="form.ssnDoc"
-              placeholder="File URL (simulated)"
-              class="w-full p-2 text-sm border border-slate-300 rounded bg-white text-slate-500"
-              readonly
-            />
-          </div>
-            <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700">ITIN</label>
-            <input
-              type="text"
-              v-model="form.ssnDoc"
-              placeholder="XXX-XXX-XXXX"
-              class="w-full p-2 text-sm border border-slate-300 rounded bg-white text-slate-500 "
-              readonly
-            />
-          </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4  bg-slate-50 p-3 rounded-lg border border-slate-200">
+             <InputGroup label="Social Security (SSN)" placeholder="XXX-XX-XXXX" v-model="form.ssn" />
+             <FileInput label="Upload SSN Card" :fileName="form.ssnDocName" @change="(e) => handleFileChange('ssnDoc', e)" />
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-4">
           <button
             v-cursor
             type="button"
             @click="activeDocument = 'w9'"
-            class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md transition-all group"
+            class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-xl hover:border-purple-500 hover:shadow-md transition-all group flex-1"
           >
-            <PenTool class="w-5 h-5 text-slate-400 group-hover:text-blue-600 mb-1" />
+            <PenTool class="w-5 h-5 text-slate-400 group-hover:text-purple-600 mb-1" />
             <span class="font-bold text-sm text-slate-700">Form W-9</span>
             <span class="text-[10px] text-slate-400">Taxpayer ID & Cert</span>
             <span
               v-if="form.w9Signed"
-              class="mt-1 inline-flex items-center text-[10px] text-green-600 bg-green-50 px-2 py-0.5 rounded-full"
+              class="mt-1 inline-flex items-center text-[10px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full"
             >
               <CheckCircle class="w-3 h-3 mr-1" /> Signed
             </span>
@@ -264,14 +241,14 @@
             v-cursor
             type="button"
             @click="activeDocument = 'i9'"
-            class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md transition-all group"
+            class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-xl hover:border-purple-500 hover:shadow-md transition-all group flex-1"
           >
-            <PenTool class="w-6 h-6 text-slate-400 group-hover:text-blue-600 mb-1" />
+            <PenTool class="w-6 h-6 text-slate-400 group-hover:text-purple-600 mb-1" />
             <span class="font-bold text-sm text-slate-700">Form I-9</span>
             <span class="text-[10px] text-slate-400">Employment Eligibility</span>
             <span
               v-if="form.i9EmployerSignature"
-              class="mt-1 inline-flex items-center text-[10px] text-green-600 bg-green-50 px-2 py-0.5 rounded-full"
+              class="mt-1 inline-flex items-center text-[10px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full"
             >
               <CheckCircle class="w-3 h-3 mr-1" /> Verified
             </span>
@@ -299,14 +276,14 @@
               <div class="flex space-x-2 col-span-2">
                 <div class="flex-1 space-y-1">
                   <label class="block text-[10px] font-bold text-slate-500">Number <span class="text-red-500">*</span></label>
-                  <input v-model="form.cdlNumber" class="w-full bg-white p-1.5 text-sm border rounded" />
+                  <input v-model="form.cdlNumber" class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all" />
                 </div>
                 <div class="w-20 space-y-1">
                   <label class="block text-[10px] font-bold text-slate-500">State <span class="text-red-500">*</span></label>
                   <input
                     v-model="form.cdlState"
                     placeholder="FL"
-                    class="w-full bg-white p-1.5 text-sm border rounded"
+                    class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -315,7 +292,7 @@
                 <input
                   v-model="form.cdlExp"
                   type="date"
-                  class="w-full bg-white p-1.5 text-sm border rounded"
+                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
                 />
               </div>
             </div>
@@ -334,14 +311,14 @@
             <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="col-span-2 space-y-1">
                 <label class="block text-[10px] font-bold text-slate-500">Registry Number</label>
-                <input v-model="form.medRegistry" class="w-full p-1.5 text-sm border rounded" />
+                  <input v-model="form.medRegistry" class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all" />
               </div>
               <div class="space-y-1">
                 <label class="block text-[10px] font-bold text-slate-500">Expiration <span class="text-red-500">*</span></label>
                 <input
                   v-model="form.medExp"
                   type="date"
-                  class="w-full p-1.5 text-sm border rounded"
+                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
                 />
               </div>
             </div>
@@ -352,7 +329,7 @@
             class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center border-t border-slate-200 pt-4"
           >
             <div class="md:col-span-3 flex items-center gap-3">
-              <div class="p-2 bg-white rounded shadow-sm text-emerald-600">
+              <div class="p-2 bg-white rounded shadow-sm text-purple-600">
                 <ClipboardList class="w-5 h-5" />
               </div>
               <div class="text-sm font-bold text-slate-700">MVR (Annual)</div>
@@ -369,7 +346,7 @@
                 <input
                   v-model="form.mvrDate"
                   type="date"
-                  class="w-full p-1.5 text-sm border rounded"
+                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
                 />
               </div>
             </div>
@@ -397,7 +374,7 @@
                 <input
                   v-model="form.lastDrugTest"
                   type="date"
-                  class="w-full p-1.5 text-sm border rounded"
+                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
                 />
               </div>
             </div>
@@ -418,7 +395,7 @@
                 <label class="block text-[10px] font-bold text-slate-500">Examiner Name <span class="text-red-500">*</span></label>
                 <input
                   v-model="form.roadTestExaminer"
-                  class="w-full p-1.5 bg-white text-sm border rounded"
+                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
                 />
               </div>
               <div class="space-y-1 relative">
@@ -426,7 +403,7 @@
                 <input
                   v-model="form.roadTestDate"
                   type="date"
-                  class="w-full p-1.5 bg-white text-sm border rounded"
+                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
                 />
 
                 <div class="absolute -top-1 right-0 flex space-x-1">
@@ -511,6 +488,8 @@ import Modal from '@/Components/ui/Modal.vue'
 import FormW9 from '@/Components/ui/FormW9.vue'
 import FormI9 from '@/Components/ui/FormI9.vue'
 import RoadTestCertificate from '@/Components/templates/RoadTestCertificate.vue'
+import InputGroup from '@/Components/ui/inputgroup.vue'
+import FileInput from '@/Components/ui/fileinput.vue'
 import {
   User,
   Users,
@@ -518,12 +497,12 @@ import {
   PenTool,
   CheckCircle,
   BadgeDollarSign,
+  UploadCloud,
   ShieldAlert,
   CreditCard,
   Stethoscope,
   ClipboardList,
   FlaskConical,
-  Globe,
   Map,
   Printer,
   Download,
@@ -643,6 +622,29 @@ const formattedForCertificate = computed(() => {
     ...form.value,
   }
 })
+
+// Helper to handle file selection for FileInput components
+function handleFileChange(fieldName: string, event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    const file = target.files[0]
+    // In a real app, you would upload the file here and get a URL
+    // For now, we'll simulate it by storing the file name
+    if (fieldName === 'ssnDoc') {
+      const previousUrl = form.value.ssnDoc
+      if (previousUrl) {
+        try {
+          URL.revokeObjectURL(previousUrl as string)
+        } catch (e) {
+          // Ignore errors in case the stored value is not an object URL
+        }
+      }
+      form.value.ssnDoc = URL.createObjectURL(file) // Simulating a URL
+      form.value.ssnDocName = file.name // Store name for display
+    }
+    // Add logic for other file fields if needed
+  }
+}
 
 // Validation logic handled in save()
 
