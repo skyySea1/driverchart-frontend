@@ -23,23 +23,23 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="sidebar__nav p-4 space-y-2 mt-2 flex-1">
+    <nav class=" p-4 space-y-2 mt-2 flex-1">
       <button
         v-cursor
         v-for="item in visibleNavItems"
         :key="item.id"
         @click="$emit('navigate', item.id)"
         :class="[
-          'sidebar__nav-item flex items-center gap-3 w-full text-left p-3 rounded-lg transition-colors duration-200',
+          '-item flex items-center gap-3 w-full text-left p-3 rounded-lg transition-colors duration-200',
           currentRoute === item.id
-            ? 'sidebar__nav-item--active bg-indigo-600 text-white shadow-md'
+            ? '-item--active bg-indigo-600 text-white shadow-md'
             : 'text-slate-300 hover:bg-slate-800 hover:text-white',
         ]"
       >
-        <component :is="item.icon" class="sidebar__nav-icon w-5 h-5 shrink-0 pointer-events-none" />
+        <component :is="item.icon" class="-icon w-5 h-5 shrink-0 pointer-events-none" />
         <span
           :class="[
-            'sidebar__nav-label transition-opacity duration-300 whitespace-nowrap',
+            '-label transition-opacity duration-300 whitespace-nowrap',
             { 'md:opacity-0': collapsed, 'md:opacity-100': !collapsed, 'opacity-100': true },
           ]"
         >
@@ -88,6 +88,6 @@ const navItems = [
   { id: 'mainreports', label: 'Main Reports', icon: FileText },
   { id: 'settings', label: 'Settings', icon: Settings },
 ]
-
+// hidden items that are filtered out
 const visibleNavItems = computed(() => navItems.filter(item => !item.hidden))
 </script>

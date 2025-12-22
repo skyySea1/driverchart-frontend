@@ -50,7 +50,7 @@
             Add Driver
           </button>
           <button
-            class="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 ttransition-all duration-200 hover:scale-[1.03] active:scale-[0.99] hover:-translate-y-0.5"
+            class="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition-all duration-200 hover:scale-[1.03] active:scale-[0.99] hover:-translate-y-0.5"
             @click="handleAddVehicle"
             v-cursor
           >

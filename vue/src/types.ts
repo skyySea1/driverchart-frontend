@@ -8,7 +8,7 @@ export interface Alert {
 }
 
 export interface ComplianceItem {
-value: string
+  documentNumber: string
   expiryDate?: string // ISO string YYYY-MM-DD
   file?: string // Filename mock
 }
@@ -29,7 +29,7 @@ export interface Driver {
   firstName: string
   middleName: string
   lastName: string
-  birthDate: string
+  dob: string
   ssn: string
   phone: string
   email: string
