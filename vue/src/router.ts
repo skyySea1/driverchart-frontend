@@ -1,4 +1,6 @@
+// src/router.ts
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { Settings } from 'lucide-vue-next';
 
 // Lazy load
 const Login = () => import('@/Views/Login.vue')
@@ -21,12 +23,51 @@ const routes: RouteRecordRaw[] = [
     component: AppLayout,
     children: [
       { path: '', redirect: '/dashboard' },
-      { path: 'dashboard', name: 'dashboard', component: Dashboard },
-      { path: 'drivers', name: 'drivers', component: Drivers },
-      { path: 'vehicles', name: 'vehicles', component: Vehicles },
-      { path: 'docs', name: 'docs', component: DocumentRegistry },
-      { path: 'reports', name: 'reports', component: Reports },
-      { path: 'specs', name: 'specs', component: SystemSpecs },
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: Dashboard,
+        meta: {
+          title: 'Safety & Compliance Overview',
+          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier'
+        },
+      },
+      {
+        path: 'drivers', name: 'drivers', component: Drivers,
+        meta: {
+          title: 'Driver Qualification Files',
+        }
+      },
+      {
+        path: 'vehicles', name: 'vehicles', component: Vehicles,
+        meta: {
+          title: 'Fleet Maintenance Registry',
+        },
+      },
+      {
+        path: 'docs', name: 'docs', component: DocumentRegistry, meta: {
+
+          title: 'Document Registry',
+        },
+      },
+      {
+        path: 'reports', name: 'reports', component: Reports,
+        meta: {
+          title: 'Management & Audit Reports',
+        },
+      },
+      {
+        path: 'specs', name: 'specs', component: SystemSpecs, meta: {
+          title: ' System Specs',
+        },
+
+      },
+       {path: 'settings', name: 'settings', component: Settings, meta: {
+           title: 'System Settings',
+         },}
+
+
+
     ],
   },
   {
