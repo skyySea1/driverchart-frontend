@@ -20,9 +20,9 @@
       <div class="p-4 md:p-8">
         <Header @open-mobile="sidebarCollapsed = !sidebarCollapsed" />
 
-        <main class="mt-8">
+        <main class="mt-2 flex">
           <div class="max-w-7xl mx-auto">
-            <RouterView v-cursor />
+            <RouterView  />
           </div>
         </main>
       </div>
