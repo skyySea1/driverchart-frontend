@@ -1,38 +1,37 @@
 <template>
-  <div>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <StatCard title="Inspectionsa Due" :value="alertsCount" />
-      <StatCard title="Drivers" :value="totalDrivers" />
-      <StatCard title="Vehicles" :value="totalVehicles" />
+  <div class="space-y-6">
+    <div class="grid grid-cols-2 lg:grid-cols-7 gap-3">
+      <StatCard title="Inspections Due" :value="alertsCount" :icon="Users" />
+      <StatCard title="Expiring Clearinghouses" :value="totalDrivers" />
+      <StatCard title="Expiring Med Cards" :value="expiringMedCards" />
       <StatCard title="Alerts" :value="alertsCount" />
       <StatCard title="Audit Score" :value="auditScore" />
+      <StatCard title="New Applications" :value="newApplications" />
+      <StatCard title="Annual Record Review" :value="annualRecordReview" />
 
     </div>
 
-    <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div class="mt-3 grid grid-cols-2 lg:grid-cols-3 gap-4">
       <div class="col-span-2">
         <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-semibold">Painel de Alertas</h3>
+          <h3 class="font-semibold text-slate-800">Priority Compliance Alerts</h3>
           <ul class="mt-3 space-y-2">
-            <li v-for="a in alerts" :key="a.id" class="p-2 border rounded">
-              <div class="flex justify-between">
-                <div>{{ a.text }}</div>
-                <div class="text-sm text-slate-500">{{ a.when }}</div>
+            <li v-for="a in alerts" :key="a.id" class="p-2 border border-slate-200 rounded hover:bg-slate-50 transition-colors">
+              <div class="flex justify-between items-center">
+                <div class="text-slate-700">{{ a.text }}</div>
+                <div class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">{{ a.when }}</div>
               </div>
+            </li>
+            <li v-if="alerts.length === 0" class="text-slate-500 text-sm italic">
+              No critical compliance issues found. Take a water break!
             </li>
           </ul>
         </div>
       </div>
 
-      <div>
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-semibold">Assistente de Regulação DOT (IA)</h3>
-          <div class="mt-2">
-            <input v-model="iaQuery" placeholder="Pergunte sobre FMCSA..." class="w-full p-2 border rounded" />
-            <button v-cursor @click="askIa" class="mt-2 px-3 py-1 bg-slate-800 text-white rounded">Ask</button>
-          </div>
-          <div v-if="iaAnswer" class="mt-3 p-3 bg-slate-50 rounded">{{ iaAnswer }}</div>
-        </div>
+
+        <div class=" w-100 h-100 rounded shadow">
+          <AiAssistant/>
       </div>
     </div>
   </div>
@@ -41,38 +40,54 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import StatCard from './StatCard.vue'
-import { db } from '../../services/firebase'
-import { collection, query, getDocs } from 'firebase/firestore'
-import dayjs from 'dayjs'
-import { StatusDot } from '../../Views/MainReports.vue';
+import { db } from '@/services/firebase'
+import { collection, getDocs } from 'firebase/firestore'
+import  AiAssistant from './AiAssistant.vue'
+import { Users } from 'lucide-vue-next'
 
-const totalDrivers = ref(0)
-const totalVehicles = ref(0)
-const alerts = ref([])
-const alertsCount = computed(()=> alerts.value.length)
-const auditScore = ref('—')
-
-const iaQuery = ref('')
-const iaAnswer = ref('')
-
-async function loadCounts(){
-  const dSnap = await getDocs(collection(db, 'artifacts/app/public/data/drivers'))
-  totalDrivers.value = dSnap.size
-  const vSnap = await getDocs(collection(db, 'artifacts/app/public/data/vehicles'))
-  totalVehicles.value = vSnap.size
+interface Alert {
+  id: string
+  text: string
+  when: string
 }
 
-function computeAlerts(){
-  // lightweight: read all drivers and vehicles in realtime would be better; here we mock from drivers
-  // In real app, use onSnapshot and compute expirations
+// State
+const totalDrivers = ref<number>(0)
+const expiringMedCards = ref<number>(0)
+const newApplications = ref<number>(0)
+const annualRecordReview = ref<number>(0)
+// const totalVehicles = ref<number>(0)
+const alerts = ref<Alert[]>([])
+const alertsCount = computed(() => alerts.value.length)
+const auditScore = ref<string>('—')
+
+const iaQuery = ref<string>('')
+const iaAnswer = ref<string>('')
+const loadingIa = ref<boolean>(false)
+
+// Actions
+async function loadCounts() {
+  try {
+    const driverSnap = await getDocs(collection(db, 'artifacts/app/public/data/drivers'))
+    totalDrivers.value = driverSnap.size
+
+    // const vSnap = await getDocs(collection(db, 'artifacts/app/public/data/vehicles'))
+    // totalVehicles.value = vSnap.size
+
+    // Simulate alerts based on data or random for now
+    if (totalDrivers.value > 0) {
+      alerts.value = [
+        { id: '1', text: 'Driver John Doe: License expiring', when: 'In 5 days' },
+        { id: '2', text: 'Vehicle 104: Annual Inspection due', when: 'Tomorrow' }
+      ]
+    }
+  } catch (error) {
+    console.error("Error loading dashboard counts:", error)
+  }
 }
 
-async function askIa(){
-  // Placeholder: in prod this would call Antigravity or Gemini
-  iaAnswer.value = `(Resposta simulada) Para "${iaQuery.value}": consulte 49 CFR and FMCSA guidance. Esta é uma resposta simulada.`
-}
 
-onMounted(async ()=>{
+onMounted(async () => {
   await loadCounts()
 })
 </script>

@@ -13,12 +13,12 @@
     <!-- Main Content Area -->
     <div
       :class="[
-        'h-screen flex-10 overflow-auto transition-all duration-300 ease-in-out',
+        'h-screen flex-10  transition-all duration-300 ease-in-out',
         sidebarCollapsed ? 'md:ml-20' : 'md:ml-64',
       ]"
     >
       <div class="p-4 md:p-8">
-        <Header @open-mobile="sidebarCollapsed = !sidebarCollapsed" />
+        <Header title="Safety Dashboard" @open-mobile="sidebarCollapsed = !sidebarCollapsed" />
 
         <main class="mt-2 flex">
           <div class="max-w-7xl mx-auto">
@@ -33,7 +33,7 @@
       v-cursor
       @click="toggleSidebar"
       :class="[
-        'hidden md:flex fixed top-1/2 z-40 bg-slate-800 shadow-md border border-indigo-600 rounded-full p-1.5 items-center justify-center text-white hover:text-indigo-600 hover:border-indigo-600 transition-all duration-300 ease-in-out',
+        'hidden btn-up-hover-effect md:flex fixed top-1/2 z-40 bg-slate-800 shadow-md border border-indigo-600 rounded-full p-1.5 items-center justify-center text-white hover:text-indigo-600 hover:border-indigo-600 transition-all duration-300 ease-in-out',
         sidebarCollapsed ? 'left-10' : 'left-60',
       ]"
       title="Toggle Sidebar"
@@ -51,13 +51,11 @@ import { useRouter } from 'vue-router'
 import { ChevronLeft } from 'lucide-vue-next'
 import Sidebar from './Sidebar.vue'
 import Header from './Header.vue'
-
-// Breakpoint constant for mobile/desktop
-const MOBILE_BREAKPOINT = 768
+import { MOBILE_BREAKPOINT } from '@/utils/constants'
 
 const router = useRouter()
 
-// Sidebar state: closed on mobile (< 768px), open on desktop
+// Sidebar state: closed on mobile (< 768px)
 const sidebarCollapsed = ref(window.innerWidth < MOBILE_BREAKPOINT)
 
 // Helper to check if current viewport is mobile
@@ -71,6 +69,7 @@ function handleNavigate(routeName: string) {
   }
 }
 
+// sidebar event handler
 function toggleSidebar() {
   sidebarCollapsed.value = !sidebarCollapsed.value
 }

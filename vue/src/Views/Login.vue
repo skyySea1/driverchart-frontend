@@ -1,19 +1,27 @@
 <template>
-  <div class="  login min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center p-4">
-<!-- SVG Background -->
-  <svg
-    class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none"
-    xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="xMidYMid slice"
-  >
-    <defs>
-      <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#4f46e5" />
-        <stop offset="100%" stop-color="#3b82f6" />
-      </linearGradient>
-    </defs>
-    <circle cx="50%" cy="50%" r="500" fill="url(#grad)" />
-  </svg>
+<div class="login min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden">
+
+    <!-- SVG Background com animação pulsante (círculo principal) -->
+    <svg
+      class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none animate-pulse-slow"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMid slice"
+    >
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#4f46e5" />
+          <stop offset="100%" stop-color="#3b82f6" />
+        </linearGradient>
+      </defs>
+      <circle cx="50%" cy="50%" r="500" fill="url(#grad)" />
+    </svg>
+
+    <!-- Círculo central pulsante com efeito glassmorphism (MAIOR e ATRÁS) -->
+    <div class="circle-container">
+      <div class="circle-glow animate-pulse-glow">
+        <div class="circle-inner"></div>
+      </div>
+    </div>
 
     <!-- Login Card -->
     <div class=" login__card bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
@@ -27,7 +35,6 @@
         CharterSafe
       </h1>
     </div>
-
     <p class="text-sm text-indigo-200">
       DOT Compliance Management System
     </p>
@@ -128,8 +135,6 @@
           </button>
         </form>
 
-
-
       </div>
     </div>
     <!-- Copyright -->
@@ -141,10 +146,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import Logo from '@/Components/ui/logo.vue'
 import { useRouter } from 'vue-router'
 import { Bus, Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Truck } from 'lucide-vue-next'
-import type logoVue from '@/Components/ui/logo.vue'
 
 const router = useRouter()
 
@@ -189,3 +192,85 @@ async function handleLogin() {
   }
 }
 </script>
+
+  <style scoped>
+  /* Backgroiund Circle Animation  (principal) */
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 0.1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.2;
+      transform: scale(1.05);
+    }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Circle Container  - CRITICAL: position fixed e z-index baixo */
+  .circle-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Login card needs to have a higher z-index */
+  .login__card {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Central circle with glow effect - LARGER (20% larger than r="500") */
+  .circle-glow {
+    width: 600px;   /* 20% larger than the main circle */
+    height: 600px;
+    position: relative;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.25), rgba(59, 130, 246, 0.08), transparent);
+    box-shadow:
+      0 0 80px rgba(99, 102, 241, 0.3),
+      0 0 160px rgba(59, 130, 246, 0.25),
+      inset 0 0 80px rgba(99, 102, 241, 0.15);
+  }
+
+  .circle-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 450px;   /* 20% larger proportionally */
+    height: 450px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(59, 130, 246, 0.2));
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /*  Pulse Glow Animation */
+  @keyframes pulse-glow {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.5;
+      filter: blur(3px);
+    }
+    50% {
+      transform: scale(1.08);
+      opacity: 0.8;
+      filter: blur(0px);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+  </style>

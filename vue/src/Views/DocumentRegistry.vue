@@ -56,16 +56,19 @@
           </tr>
         </thead>
         <tbody class="text-sm text-slate-700 divide-y divide-slate-100">
-          <tr v-if="filtered.length === 0">
+          <tr v-if="loading" class="animate-pulse">
+             <td colspan="6" class="p-8 text-center text-slate-400">Loading documents...</td>
+          </tr>
+          <tr v-else-if="filtered.length === 0">
             <td colspan="6" class="p-8 text-center text-slate-400">
               No documents found in this category.
             </td>
           </tr>
           <tr v-for="doc in filtered" :key="doc.id" class="hover:bg-slate-50">
-            <td class="p-4">{{ formatDate(doc.createdAt) }}</td>
+            <td class="p-4">{{ formatDate(doc.date) }}</td>
             <td class="p-4">{{ doc.fileName }}</td>
             <td class="p-4">{{ doc.type }}</td>
-            <td class="p-4">{{ doc.entity }}</td>
+            <td class="p-4">{{ doc.entityName }}</td>
             <td class="p-4">{{ doc.user || 'system' }}</td>
             <td class="p-4 text-right">
               <button class="text-indigo-600 hover:text-indigo-800 text-sm">View</button>
@@ -77,14 +80,16 @@
   </div>
 </template>
 
-<script setup lang="ts">import { ref, onMounted, computed } from 'vue'
-import { collection, onSnapshot } from 'firebase/firestore'
-import { db } from '../services/firebase'
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
 import { History, User, Bus } from 'lucide-vue-next'
+import type { DocumentLog } from '@/types'
+import { dataService } from '@/services/dataService'
 
-const entries = ref([])
+const entries = ref<DocumentLog[]>([])
 const filter = ref('')
 const activeTab = ref('history')
+const loading = ref(false)
 
 const tabs = [
   { id: 'history', label: 'General History', icon: History },
@@ -92,25 +97,40 @@ const tabs = [
   { id: 'fleet', label: 'Fleet Docs', icon: Bus },
 ]
 
+async function fetchLogs() {
+  loading.value = true
+  try {
+    entries.value = await dataService.getDocumentLogs()
+  } catch (e) {
+    console.error("Error fetching logs:", e)
+  } finally {
+    loading.value = false
+  }
+}
+
 onMounted(() => {
-  const q = collection(db, 'artifacts/app/public/data/document_logs')
-  onSnapshot(q, (snap) => {
-    entries.value = snap.docs.map(s => ({ id: s.id, ...s.data() }))
-  })
+  fetchLogs()
 })
 
-const filtered = computed(() => {
+const filtered = computed<DocumentLog[]>(() => {
   if (!filter.value) return entries.value
   const f = filter.value.toLowerCase()
-  return entries.value.filter(e =>
-    (e.entity || '').toLowerCase().includes(f) ||
-    (e.fileName || '').toLowerCase().includes(f)
+  return entries.value.filter((e) =>
+    (e.entityName || '').toLowerCase().includes(f) ||
+    (e.fileName || '').toLowerCase().includes(f),
   )
 })
 
-function formatDate(timestamp) {
-  if (!timestamp) return '-'
-  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
-  return date.toISOString().slice(0, 10)
+function formatDate(value: unknown): string {
+  if (!value) return '-'
+  if (typeof value === 'string') {
+    return value.slice(0, 10)
+  }
+  try {
+    const d = new Date(value as any)
+    return isNaN(d.getTime()) ? '-' : d.toISOString().slice(0, 10)
+  } catch {
+    return '-'
+  }
 }
 </script>

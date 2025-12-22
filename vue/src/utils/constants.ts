@@ -1,0 +1,9 @@
+// src/utils/constants.ts
+// This file will contain project-wide constants.
+
+export const STATUS_ACTIVE = 'Active'
+export const STATUS_INACTIVE = 'Inactive'
+export const MOBILE_BREAKPOINT = 768
+export const STATUS_MAINTENANCE = 'Maintenance'
+export const APP_NAME = 'VueBus';
+export const API_BASE_URL = 'https://api.vuebus.com';

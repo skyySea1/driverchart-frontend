@@ -1,91 +1,45 @@
 <template>
   <div class="space-y-6">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-      <div>
-        <h2 class="text-2xl font-bold text-slate-800">Driver Qualification Files</h2>
-        <p class="text-slate-500 text-sm">Gerencie os motoristas e conformidade DQ.</p>
-      </div>
-      <button
-  @click="openNew"
-  type="button"
-  class="
-    px-4 py-2 rounded-lg
-    bg-indigo-600 text-white
-    flex items-center gap-2
-    shadow
-    transition-all duration-200
-    hover:bg-indigo-700 hover:-translate-y-0.5
-    active:translate-y-0 active:shadow-md
-    focus:outline-none focus:ring-2 focus:ring-indigo-400
-    cursor-pointer
-  "
->
-  <Plus class="w-4 h-4 pointer-events-none" />
-  Add Driver
-</button>
 
+          <PrimaryButton  @click="openNew" label="Add Driver"/>
     </div>
 
     <div class="bg-white rounded-lg shadow overflow-hidden border border-slate-200">
       <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left">
-          <thead class="bg-slate-50 text-slate-700 font-semibold border-b">
-            <tr>
-              <th class="p-4 whitespace-nowrap">Nome</th>
-              <th class="p-4 whitespace-nowrap">Status</th>
-              <th class="p-4 whitespace-nowrap">Contato</th>
-              <th class="p-4 whitespace-nowrap text-center">CDL Exp</th>
-              <th class="p-4 whitespace-nowrap text-center">Medical Exp</th>
-              <th class="p-4 whitespace-nowrap text-center">Annual MVR</th>
-              <th class="p-4 whitespace-nowrap text-center">Clearinghouse</th>
-              <th class="p-4 whitespace-nowrap text-right">Ações</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-            <tr v-for="d in drivers" :key="d.id" class="hover:bg-slate-50 transition-colors">
-              <td class="p-4 font-medium text-slate-800 whitespace-nowrap">{{ d.firstName }} {{ d.lastName }}</td>
-              <td class="p-4 whitespace-nowrap">
-                <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800" v-if="!d.status || d.status === 'Active'">
-                  Active
-                </span>
-                <span class="px-2 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-800" v-else>
-                  {{ d.status }}
-                </span>
-              </td>
-              <td class="p-4 text-slate-600 whitespace-nowrap">{{ d.contact || '-' }}</td>
 
-              <td class="p-4 text-center">
-                <span :class="['px-2 py-1 rounded text-xs font-medium', statusColor(d.cdlExp)]">{{ d.cdlExp || '-' }}</span>
-              </td>
-              <td class="p-4 text-center">
-                <span :class="['px-2 py-1 rounded text-xs font-medium', statusColor(d.medicalExp)]">{{ d.medicalExp || '-' }}</span>
-              </td>
-              <td class="p-4 text-center">
-                <span :class="['px-2 py-1 rounded text-xs font-medium', statusColor(d.mvrDate)]">{{ d.mvrDate || '-' }}</span>
-              </td>
-              <td class="p-4 text-center">
-                <span :class="['px-2 py-1 rounded text-xs font-medium', statusColor(d.clearinghouseDate)]">{{ d.clearinghouseDate || '-' }}</span>
-              </td>
+    <DefaultTable :columns="tableColumns" :items="drivers">
+      <template #cell(firstName)="{ item }">
+        <span class="font-medium text-slate-800">{{ item.firstName }} {{ item.lastName }}</span>
+      </template>
 
-              <td class="p-4 text-right whitespace-nowrap">
-                <div class="flex items-center justify-end gap-2">
-                  <button @click="openEdit(d)" class="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors" title="Editar">
-                    <Edit class="w-4 h-4" />
-                  </button>
-                  <button @click="runAudit(d)" class="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded transition-colors" title="Auditar IA">
-                    <Bot class="w-4 h-4" />
-                  </button>
-                  <button @click="confirmDelete(d)" class="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors" title="Excluir">
-                    <Trash2 class="w-4 h-4" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr v-if="drivers.length === 0">
-              <td colspan="8" class="p-8 text-center text-slate-500">No drivers found. Click "Add Driver" to start tracking.</td>
-            </tr>
-          </tbody>
-        </table>
+      <template #cell(status)="{ value }">
+        <span :class="['px-2 py-1 rounded-full text-xs font-semibold', value === 'Active' || !value ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-800']">
+          {{ value || 'Active' }}
+        </span>
+      </template>
+
+      <template #cell(cdlExp)="{ value }">
+        <span :class="['px-2 py-1 rounded text-xs font-medium', statusColor(value)]">{{ value || '-' }}</span>
+      </template>
+      <template #cell(actions)="{ item }">
+        <div  class="flex items-center justify-end gap-2">
+          <button @click="openEdit(item)" class="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors cursor-pointer">
+            <Edit class="w-4 h-4" />
+          </button>
+          <button @click="runAudit(item)" class="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors cursor-pointer">
+            <Bot class="w-4 h-4" />
+          </button>
+          <button @click="confirmDelete(item)" class="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer">
+            <Trash2 class="w-4 h-4" />
+          </button>
+        </div>
+      </template>
+
+      <template #empty>No drivers found. Click "Add Driver" to start tracking.</template>
+    </DefaultTable>
+  </div>
+
       </div>
     </div>
 
@@ -98,32 +52,73 @@
           <Trash2 class="w-5 h-5" /> Confirmar Exclusão
         </h3>
         <p class="mt-3 text-slate-600">
-          Tem certeza que deseja excluir <strong>{{ toDelete.firstName }} {{ toDelete.lastName }}</strong>?
-          <br>Esta ação é permanente e não pode ser desfeita.
+          Are you sure you want to delete <strong>{{ toDelete.firstName }} {{ toDelete.lastName }}</strong>?
+          <br>This action is permanent and cannot be undone.
         </p>
         <div class="mt-6 flex justify-end gap-3">
-          <button @click="toDelete=null" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded transition-colors">Cancelar</button>
-          <button @click="deleteDriver" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors shadow">Excluir permanentemente</button>
+          <button @click="toDelete=null" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded transition-colors">Cancel</button>
+          <button @click="deleteDriver" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors shadow">Delete permanently</button>
         </div>
       </div>
     </div>
-  </div>
+
 </template>
 
-<script setup lang="ts">import { ref, onMounted } from 'vue'
-import DriverFormModal from './DriverFormModal.vue'
-import { collection, onSnapshot, doc, deleteDoc } from 'firebase/firestore'
-import { db } from '../services/firebase'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import DriverFormModal from '../Components/templates/forms/DriverFormModal.vue'
+import { dataService } from '@/services/dataService'
 import { statusColorFor } from '../Composables/useDotHelpers'
-import { Plus, Edit, Trash2, Bot } from 'lucide-vue-next'
+import { Edit, Trash2, Bot } from 'lucide-vue-next'
+import  PrimaryButton from '@/Components/ui/PrimaryButton.vue'
+import DefaultTable from '@/Components/templates/DefaultTable.vue';
+import type { Column } from '@/types'
 
-const drivers = ref([])
+interface Driver {
+  id: string
+  firstName: string
+  lastName: string
+  status?: string
+  contact?: string
+  cdlExp?: string
+  medicalExp?: string
+  mvrDate?: string
+  clearinghouseDate?: string
+  [key: string]: any
+}
+
+
+const tableColumns: Column[] = [
+  { key: 'firstName', label: 'Name' },
+  { key: 'status', label: 'Status' },
+  { key: 'contact', label: 'Contact' },
+  { key: 'cdlExp', label: 'CDL Exp', align: 'center' },
+  { key: 'medicalExp', label: 'Medical Exp', align: 'center' },
+  { key: 'mvrDate', label: 'Annual MVR', align: 'center' },
+  { key: 'clearinghouseDate', label: 'Clearinghouse', align: 'center' },
+  { key: 'actions', label: 'Actions', align: 'right' },
+];
+
+const drivers = ref<Driver[]>([])
 const showModal = ref(false)
-const editing = ref(null)
-const toDelete = ref(null)
+const editing = ref<Driver  | undefined>(undefined)
+const toDelete = ref<Driver | null>(null)
+const loading = ref(false)
+
+async function fetchDrivers() {
+  loading.value = true
+  try {
+    drivers.value = await dataService.getDrivers()
+  } catch (e) {
+    console.error("Error fetching drivers:", e)
+  } finally {
+    loading.value = false
+  }
+}
 
 // Adapting helper to return full tailwind classes if possible, but keeping logic
-function statusColor(date){
+function statusColor(date: string | undefined | null) {
+  if (!date) return 'text-slate-500'
   // Map helper outputs to specific tailwind badge styles
   const cls = statusColorFor(date)
   if (cls.includes('bg-red')) return 'bg-red-100 text-red-800'
@@ -132,26 +127,45 @@ function statusColor(date){
   return 'text-slate-500'
 }
 
-function openNew(){ editing.value = null; showModal.value = true }
-function openEdit(d){ editing.value = { ...d }; showModal.value = true }
-function closeModal(){ showModal.value = false }
-function reload(){ /* noop: onSnapshot keeps list updated */ }
-
-function confirmDelete(d){ toDelete.value = d }
-async function deleteDriver(){
-  await deleteDoc(doc(db, `artifacts/app/public/data/drivers`, toDelete.value.id))
-  toDelete.value = null
+function openNew() {
+  editing.value = undefined
+  showModal.value = true
 }
 
-function runAudit(d){
+function openEdit(d: Driver) {
+  editing.value = { ...d }
+  showModal.value = true
+}
+
+function closeModal() {
+  showModal.value = false
+}
+
+function reload() {
+  fetchDrivers()
+}
+
+function confirmDelete(d: Driver) {
+  toDelete.value = d
+}
+
+async function deleteDriver() {
+  if (!toDelete.value) return
+  try {
+    await dataService.deleteDriver(toDelete.value.id)
+    toDelete.value = null
+    reload()
+  } catch (e) {
+    console.error("Error deleting driver:", e)
+  }
+}
+
+function runAudit(d: Driver) {
   // Simular auditoria IA
   alert(`Auditoria IA (simulada) para ${d.firstName} ${d.lastName}`)
 }
 
-onMounted(()=>{
-  const q = collection(db, 'artifacts/app/public/data/drivers')
-  onSnapshot(q, (snap)=>{
-    drivers.value = snap.docs.map(s=>({ id: s.id, ...s.data() }))
-  })
+onMounted(() => {
+  fetchDrivers()
 })
 </script>

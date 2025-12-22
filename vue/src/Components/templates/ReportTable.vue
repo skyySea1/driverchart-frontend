@@ -28,7 +28,10 @@
             class="p-4"
             :class="row[`${col.key}Class`]"
           >
-            {{ row[col.key] }}
+            <!-- Check if slot exists for this column, otherwise default text -->
+             <slot :name="`cell(${col.key})`" :value="row[col.key]" :item="row">
+               {{ row[col.key] }}
+             </slot>
           </td>
         </tr>
       </tbody>
@@ -36,9 +39,24 @@
   </div>
 </template>
 
-<script setup lang="ts">defineProps({
-  columns: Array,
-  rows: Array,
+<script setup lang="ts">
+import type { PropType } from 'vue'
+
+interface Column {
+  key: string
+  label: string
+  align?: 'left' | 'right' | 'center'
+}
+
+defineProps({
+  columns: {
+    type: Array as PropType<Column[]>,
+    default: () => []
+  },
+  rows: {
+    type: Array as PropType<any[]>,
+    default: () => []
+  },
   emptyText: { type: String, default: 'No data' }
 })
 </script>

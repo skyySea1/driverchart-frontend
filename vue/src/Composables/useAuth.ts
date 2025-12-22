@@ -44,7 +44,6 @@ export function useAuth() {
     }
   }
   const loading = computed(() => isLoading.value || isInitializing.value)
-  
   // verify auth state on app start
   function initAuth() {
     return new Promise<void>((resolve) => {

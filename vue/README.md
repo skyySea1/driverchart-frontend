@@ -1,8 +1,8 @@
 
 # How to run
 
-1. npm install
-2. npm run dev
+1. pnpm install
+2. pnpm run dev
 
 ## Project Architecture
 
@@ -13,10 +13,10 @@ driverchart/
 │   ├── components/
 │   │   ├── templates/            # FormW9, FormI9, RoadTestTemplate (printable DOT docs)
 │   │   └── ui/                   # Reusable components (Modal, StatCard, etc.)
-│   ├── utils/                    # Pure functions withoutState
-│   │   ├── firebase.js           # Firebase initialization (uses Vite env vars)
-│   │   └── utils.js              # Date/compliance calculation helpers
-│   └── main.jsx                  # Entry point, renders <Dashboard />
+│   ├── services/                    # Pure functions withoutState
+│   │   ├── firebase.ts           # Firebase initialization (uses Vite env vars)
+│   │   └── utils.ts              # Date/compliance calculation helpers
+│   └── main.vue                  # Entry point, renders <Dashboard />
 ├── .env                          # VITE_FIREBASE_* keys (never commit)
 └── package.json
 ```
@@ -43,10 +43,8 @@ driverchart/
 
  Script de validação rápido
 
- 1) Criar 3 drivers completos
- 2) Criar 2 buses e inspeções
- 3) Simular expirations and ensure alerts appear
- 4) Generate a road test certificate and print to PDF
+ 1) Simular expirations and ensure alerts appear
+ 2) Generate a road test certificate and print to PDF 
 
 ## Compliance Date Calculations (lib/utils.js)
 
