@@ -1,12 +1,12 @@
 <template>
   <div v-if="isOpen"
-    class="fixed inset-0 bg-black bg-opacity-50 z-100 flex items-center justify-center p-4 print:p-0 print:bg-white print:static">
+    class="fixed inset-0 bg-black bg-opacity-30 z-100 flex items-center justify-center p-4 print:p-0 print:bg-white print:static backdrop-blur-sm">
     <div :class="['bg-white rounded-xl shadow-2xl w-full overflow-y-auto max-h-[95vh] print:shadow-none print:w-full print:max-w-none print:max-h-none', size]">
       <div class="bg-slate-900 px-6 py-4 flex justify-between items-center sticky top-0 z-10 border-b border-slate-800 print:hidden">
         <h3 class="text-white font-bold text-lg">{{ title }}</h3>
         <div class="flex items-center space-x-4">
           <slot name="actions"></slot>
-          <button @click="emit('close')" class="text-slate-400 hover:text-white transition-colors">
+          <button @click="emit('close')" class="text-slate-400 hover:text-white transition-colors cursor-pointer" title="Close Modal" >
             <X class="w-5 h-5" />
           </button>
         </div>
