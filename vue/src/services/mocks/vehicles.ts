@@ -24,21 +24,6 @@ export const mockVehicles: Vehicle[] = [
     status: 'Active',
     lastAnnualInspection: '2024-01-05',
     mileage: 15400
-  },
-  { 
-    id: '1', 
-    busNumber: 'BUS-101', 
-    vin: '1HG...554', 
-    status: 'Active', 
-    lastAnnualInspection: '2023-05-10', 
-    mileage: 150000 
-  },
-  { 
-    id: '2', 
-    busNumber: 'BUS-102', 
-    vin: '1HG...998', 
-    status: 'Maintenance', 
-    lastAnnualInspection: '2022-11-01', 
-    mileage: 185000 
+
   }
 ]

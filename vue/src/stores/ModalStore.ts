@@ -4,10 +4,10 @@ import { defineStore } from 'pinia';
 export const useModalStore = defineStore('modal', {
   state: () => ({
     activeModal: null as 'vehicle' | 'driver' | null,
-    data: null as any // Para passar um objeto se for edição
+    data: null as unknown | null // Para passar um objeto se for edição
   }),
   actions: {
-    openModal(type: 'vehicle' | 'driver', payload = null) {
+    openModal(type: 'vehicle' | 'driver', payload: unknown = null) {
       this.activeModal = type;
       this.data = payload;
     },

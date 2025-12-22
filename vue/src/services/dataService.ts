@@ -28,6 +28,7 @@ export const dataService = {
 
   addDriver: async (driver: Driver): Promise<void> => {
     await new Promise((resolve) => setTimeout(resolve, 500))
+    // todo use more robust uuid generation
     driver.id = Math.random().toString(36).substr(2, 9) // Generate temp ID
     driversState.push(driver)
   },

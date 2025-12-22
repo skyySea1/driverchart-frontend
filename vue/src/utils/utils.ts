@@ -28,15 +28,17 @@ export const getStatusText = (days: number): string => {
   return 'Valid'
 }
 
-export const formatDate = (timestamp: any): string => {
+export const formatDate = (
+  timestamp: Date | string | number | { toDate: () => Date } | null | undefined,
+): string => {
   if (!timestamp) return 'Just now'
   let date: Date
-  if (timestamp?.toDate) {
-    date = timestamp.toDate()
+  if ((timestamp as { toDate?: () => Date })?.toDate) {
+    date = (timestamp as { toDate: () => Date }).toDate()
   } else if (timestamp instanceof Date) {
     date = timestamp
   } else {
-    date = new Date(timestamp)
+    date = new Date(timestamp as string | number)
   }
 
   if (isNaN(date.getTime())) return 'Invalid Date'
