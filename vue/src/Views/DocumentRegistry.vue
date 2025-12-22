@@ -32,11 +32,12 @@
         </div>
 
         <!-- Search Filter -->
-        <div class="flex items-center">
+        <div class="flex items-center relative">
+          <Search class="w-4 h-4 text-slate-400  absolute left-3 top-2.5" />
           <input
             v-model="filter"
             placeholder="Search by name or entity..."
-            class="p-2 border border-slate-200 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="p-2 border border-slate-200 rounded-lg text-sm w-64 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
       </div>
@@ -82,7 +83,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { History, User, Bus } from 'lucide-vue-next'
+import { History, User, Bus, Search } from 'lucide-vue-next'
 import type { DocumentLog } from '@/types'
 import { dataService } from '@/services/dataService'
 
