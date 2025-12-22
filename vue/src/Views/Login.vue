@@ -139,7 +139,7 @@
     </div>
     <!-- Copyright -->
     <div class="absolute bottom-4 text-center w-full">
-      <p class="text-white text-sm opacity-80">&copy; 2025 PhoenixBus. All rights reserved.</p>
+      <p class="text-white text-sm opacity-80">&copy; 2025 CharterSafe. All rights reserved.</p>
     </div>
   </div>
 </template>
@@ -194,7 +194,7 @@ async function handleLogin() {
 </script>
 
   <style scoped>
-  /* Backgroiund Circle Animation  (principal) */
+  /* Background Circle Animation  (principal) */
   @keyframes pulse-slow {
     0%, 100% {
       opacity: 0.1;

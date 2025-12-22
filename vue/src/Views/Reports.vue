@@ -52,7 +52,7 @@
       </div>
 
       <!-- AI Assistant -->
-      <div class="bg-slate-900 text-white rounded-xl flex flex-col h-125">
+      <div class="bg-slate-900 text-white rounded-xl flex flex-col">
         <header class="p-4 border-b border-slate-700 flex gap-2">
           <Bot class="text-blue-400" />
           <h3 class="font-semibold">DOT Regulatory Assistant</h3>

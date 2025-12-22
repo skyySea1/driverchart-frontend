@@ -1,3 +1,4 @@
+<!-- /src/Views/Drivers.vue -->
 <template>
   <div class="space-y-6">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -56,8 +57,8 @@
           <br>This action is permanent and cannot be undone.
         </p>
         <div class="mt-6 flex justify-end gap-3">
-          <button @click="toDelete=null" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded transition-colors">Cancel</button>
-          <button @click="deleteDriver" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors shadow">Delete permanently</button>
+          <button @click="toDelete=null" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded transition-colors cursor-pointer">Cancel</button>
+          <button @click="deleteDriver" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors shadow cursor-pointer">Delete permanently</button>
         </div>
       </div>
     </div>
