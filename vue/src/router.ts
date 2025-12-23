@@ -36,34 +36,40 @@ const routes: RouteRecordRaw[] = [
         path: 'drivers', name: 'drivers', component: Drivers,
         meta: {
           title: 'Driver Qualification Files',
+          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier'
         }
       },
       {
         path: 'vehicles', name: 'vehicles', component: Vehicles,
         meta: {
           title: 'Fleet Maintenance Registry',
+          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier'
         },
       },
       {
         path: 'docs', name: 'docs', component: DocumentRegistry, meta: {
 
           title: 'Document Registry',
+          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier'
         },
       },
       {
         path: 'reports', name: 'reports', component: Reports,
         meta: {
           title: 'Management & Audit Reports',
+          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier'
         },
       },
       {
         path: 'specs', name: 'specs', component: SystemSpecs, meta: {
           title: ' System Specs',
+          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier'
         },
 
       },
        {path: 'settings', name: 'settings', component: Settings, meta: {
            title: 'System Settings',
+           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier'
          },}
 
 

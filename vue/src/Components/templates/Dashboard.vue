@@ -1,52 +1,58 @@
 <!-- src/Components/templates/Dashboard.vue -->
 <template>
   <div class="space-y-6">
-    <!-- Top Stats Bar -->
-    <div class="grid grid-cols-3 lg:grid-cols-7 gap-3">
-      <StatCard
-        title="Inspections Due"
-        :value="alertsCount"
-        :icon="ShieldAlert"
-        :loading="isLoading"
-      />
-      <StatCard
-        title="Drivers"
-        :value="totalDrivers"
-        :icon="Users"
-        :loading="isLoading"
-      />
-      <StatCard
-        title="Expiring Med Cards"
-        :value="expiringMedCards"
-        :icon="Stethoscope"
-        :loading="isLoading"
-      />
-      <StatCard
-        title="Alerts"
-        :value="alertsCount"
-        :icon="Bell"
-        :loading="isLoading"
-      />
-      <StatCard
-        title="Audit Score"
-        :value="auditScore"
-        :icon="FileCheck"
-        :loading="isLoading"
-      />
-      <StatCard
-        title="New Apps"
-        :value="newApplications"
-        :icon="FileText"
-        :loading="isLoading"
-      />
-      <StatCard
-        title="Record Review"
-        :value="annualRecordReview"
-        :icon="ClipboardList"
-        :loading="isLoading"
-      />
-    </div>
+        <!-- Top Stats Bar -->
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+          <StatCard
+            title="Inspections Due"
+            :value="alertsCount"
+            :icon="ShieldAlert"
+            :loading="isLoading"
+            color="rose"
+          />
+          <StatCard
+            title="Drivers"
+            :value="totalDrivers"
+            :icon="Users"
+            :loading="isLoading"
+            color="indigo"
+          />
+          <StatCard
+            title=" Expiring Med Cards"
+            :value="expiringMedCards"
+            :icon="Stethoscope"
+            :loading="isLoading"
+            color="orange"
+          />
+          <StatCard
+            title="Expiring Clearinghouses"
+            :value="alertsCount"
+            :icon="CalendarCheck"
+            :loading="isLoading"
+            color="amber"
+          />
+          <StatCard
+            title="Audit Score"
+            :value="auditScore"
+            :icon="FileCheck"
+            :loading="isLoading"
+            color="emerald"
+          />
+          <StatCard
+            title="New Applications"
+            :value="newApplications"
+            :icon="FileText"
+            :loading="isLoading"
+            color="purple"
 
+          />
+          <StatCard
+            title="Annual Record Reviews"
+            :value="annualRecordReview"
+            :icon="ClipboardList"
+            :loading="isLoading"
+            color="blue"
+          />:        </div>
     <div class="mt-3 grid grid-cols-1 lg:grid-cols-3 gap-4">
       <!-- Priority Alerts Section -->
       <div class="lg:col-span-2">
@@ -81,7 +87,7 @@
       </div>
 
       <!-- AI Assistant Section -->
-      <div class="rounded shadow bg-white overflow-hidden min-h-[300px]">
+      <div class="rounded shadow bg-white overflow-hidden min-h-75">
         <AiAssistant />
       </div>
     </div>
@@ -98,11 +104,13 @@ import {
   Users,
   ShieldAlert,
   Stethoscope,
+  Calendar,
   Bell,
   FileCheck,
   FileText,
   ClipboardList
 } from 'lucide-vue-next'
+import { CalendarCheck } from 'lucide-vue-next'
 
 interface Alert {
   id: string

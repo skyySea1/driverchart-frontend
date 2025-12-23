@@ -15,14 +15,14 @@
     <div
       :class="[
         'h-screen flex-10  transition-all duration-300 ease-in-out',
-        sidebarCollapsed ? 'md:ml-20' : 'md:ml-64',
+        sidebarCollapsed ? 'md:ml-10' : 'md:ml-64',
       ]"
     >
-      <div class="p-4 md:p-8">
+      <div class="p-4 md:p-4">   <!--- then -->
         <Header :title="hTitle" :subtitle="hSubtitle" @open-mobile="sidebarCollapsed = !sidebarCollapsed" />
 
-        <main class="mt-2 flex">
-          <div class="max-w-7xl mx-auto">
+        <main class="mt-2   flex">
+          <div class=" mx-auto ml-6"> <!-- before was mx-auto-->
             <RouterView  />
           </div>
         </main>

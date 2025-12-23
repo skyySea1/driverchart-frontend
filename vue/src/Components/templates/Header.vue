@@ -12,7 +12,7 @@
 
       <div class="flex flex-col">
         <h1 class="text-xl md:text-2xl font-bold text-slate-900">{{ title }}</h1>
-        <p v-if="subtitle" class="text-slate-500 text-sm mt-1">{{ subtitle }}</p>
+        <p v-if="subtitle" class="text-slate-500 text-sm ml-2 mt-1">{{ subtitle }}</p>
 
       </div>
     </div>

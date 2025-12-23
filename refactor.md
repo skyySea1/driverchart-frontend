@@ -1,6 +1,6 @@
 # migração para vue
 
-- Use v-show not v-if for navigation, avoiding recreating an reevaluate  
+- Use v-show not v-if for navigation, avoiding recreating and reevaluating  
 - ícones devem ser do tamanho da fonte (usar 1em)
 - usestate = ref
 - onChange in react is equal to v-model bdinging in vvue
