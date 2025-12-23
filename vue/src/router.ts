@@ -5,7 +5,7 @@ import { Settings } from 'lucide-vue-next';
 // Lazy load
 const Login = () => import('@/Views/Login.vue')
 const AppLayout = () => import('@/Components/templates/AppLayout.vue')
-const Dashboard = () => import('@/Components/templates/Dashboard.vue')
+const Dashboard = () => import('@/Views/Dashboard.vue')
 const Drivers = () => import('@/Views/Drivers.vue')
 const Vehicles = () => import('@/Views/Vehicles.vue')
 const DocumentRegistry = () => import('@/Views/DocumentRegistry.vue')

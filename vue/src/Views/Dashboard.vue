@@ -1,4 +1,4 @@
-<!-- src/Components/templates/Dashboard.vue -->
+<!-- src/Views/Dashboard.vue -->
 <template>
   <div class="space-y-6">
     <!-- Top Stats Bar -->
@@ -90,10 +90,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import StatCard from './StatCard.vue'
+import StatCard from '../Components/templates/StatCard.vue'
 import { db } from '@/services/firebase'
 import { collection, getDocs } from 'firebase/firestore'
-import AiAssistant from './AiAssistant.vue'
+import AiAssistant from '../Components/templates/AiAssistant.vue'
 import { Bell } from 'lucide-vue-next'
 
 interface Alert {

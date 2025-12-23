@@ -1,6 +1,6 @@
 <!-- src/Components/templates/StatCard.vue -->
 <template>
-  <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 min-h-[110px] flex items-center gap-4 relative">
+  <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 min-h-27.5 flex items-center gap-4 relative">
     <!-- Skeleton State -->
     <div v-if="loading" class="flex items-center gap-4 w-full h-full">
       <div class="w-12 h-12 rounded-lg shrink-0 skeleton"></div>
