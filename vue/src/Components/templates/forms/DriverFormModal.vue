@@ -472,7 +472,6 @@
       <div v-else-if="activeDocument === 'roadtest'">
         <!-- Using the original certificate component structure but passing flat form data -->
         <!-- Note: The original certificate expects nested objects, but we flattened the form. -->
-        <!-- We'll construct a compatible object on the fly or adjust the certificate later. -->
         <RoadTestCertificate :driver="formattedForCertificate" />
       </div>
     </Modal>
