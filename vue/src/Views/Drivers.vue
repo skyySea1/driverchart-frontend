@@ -9,7 +9,7 @@
     <div class="bg-white rounded-lg shadow overflow-hidden border border-slate-200">
       <div class="overflow-x-auto">
 
-    <DefaultTable :columns="tableColumns" :items="drivers">
+    <DefaultTable :columns="tableColumns" :items="drivers" :loading="loading">
       <template #cell(firstName)="{ item }">
         <span class="font-medium text-slate-800">{{ item.firstName }} {{ item.lastName }}</span>
       </template>

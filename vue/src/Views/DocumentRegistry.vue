@@ -57,15 +57,23 @@
           </tr>
         </thead>
         <tbody class="text-sm text-slate-700 divide-y divide-slate-100">
-          <tr v-if="loading" class="animate-pulse">
-             <td colspan="6" class="p-8 text-center text-slate-400">Loading documents...</td>
-          </tr>
+          <!-- Skeleton State -->
+          <template v-if="loading">
+            <tr v-for="i in 5" :key="i">
+              <td class="p-4"><div class="h-4 skeleton rounded w-24"></div></td>
+              <td class="p-4"><div class="h-4 skeleton rounded w-48"></div></td>
+              <td class="p-4"><div class="h-4 skeleton rounded w-20"></div></td>
+              <td class="p-4"><div class="h-4 skeleton rounded w-32"></div></td>
+              <td class="p-4"><div class="h-4 skeleton rounded w-24"></div></td>
+              <td class="p-4"><div class="h-4 skeleton rounded w-12 ml-auto"></div></td>
+            </tr>
+          </template>
           <tr v-else-if="filtered.length === 0">
             <td colspan="6" class="p-8 text-center text-slate-400">
               No documents found in this category.
             </td>
           </tr>
-          <tr v-for="doc in filtered" :key="doc.id" class="hover:bg-slate-50">
+          <tr v-for="doc in filtered" :key="doc.id" class="hover:bg-slate-50 transition-colors">
             <td class="p-4">{{ formatDate(doc.date) }}</td>
             <td class="p-4">{{ doc.fileName }}</td>
             <td class="p-4">{{ doc.type }}</td>

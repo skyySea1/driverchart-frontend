@@ -4,7 +4,7 @@
       <PrimaryButton @click="openNew" label="Add Vehicle" />
     </div>
 
-    <DefaultTable :columns="tableColumns" :items="vehicles">
+    <DefaultTable :columns="tableColumns" :items="vehicles" :loading="loading">
       <template #cell(busNumber)="{ item }">
         <div class="font-bold text-slate-800 flex items-center gap-2">
           <Bus :size="16" class="text-slate-400" /> {{ item.busNumber }}
