@@ -1,4 +1,4 @@
-<!-- vue/src/Components/templates/AppLayout.vue -->
+<!-- src/Components/templates/AppLayout.vue -->
 <template>
   <div class="h-screen overflow-auto bg-slate-100 font-sans text-slate-800  md:flex-row print:bg-white relative">
     <!-- Mobile Overlay -->
@@ -14,15 +14,15 @@
     <!-- Main Content Area -->
     <div
       :class="[
-        'h-screen flex-10  transition-all duration-300 ease-in-out',
-        sidebarCollapsed ? 'md:ml-10' : 'md:ml-64',
+        'h-screen flex-1 transition-all duration-300 ease-in-out',
+        sidebarCollapsed ? 'md:ml-20' : 'md:ml-64',
       ]"
     >
-      <div class="p-4 md:p-4">   <!--- then -->
-        <Header :title="hTitle" :subtitle="hSubtitle" @open-mobile="sidebarCollapsed = !sidebarCollapsed" />
+      <div class="p-4 md:p-8">
+        <Header title="Compliance Overview" @open-mobile="sidebarCollapsed = !sidebarCollapsed" />
 
-        <main class="mt-2   flex">
-          <div class=" mx-auto ml-6"> <!-- before was mx-auto-->
+        <main class="mt-4">
+          <div class="w-full">
             <RouterView  />
           </div>
         </main>
