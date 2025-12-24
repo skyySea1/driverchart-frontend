@@ -19,7 +19,11 @@
       ]"
     >
       <div class="p-4 md:p-8">
-        <Header title="Compliance Overview" @open-mobile="sidebarCollapsed = !sidebarCollapsed" />
+        <Header 
+          :title="($route.meta.title as string) || 'Safety Dashboard'" 
+          :subtitle="($route.meta.subtitle as string)"
+          @open-mobile="sidebarCollapsed = !sidebarCollapsed" 
+        />
 
         <main class="mt-4">
           <div class="w-full">
