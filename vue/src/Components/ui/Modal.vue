@@ -30,12 +30,12 @@ const props = defineProps<{
   isOpen: boolean
 }>()
 
-function handleKeydown(e: KeyboardEvent) {
+function escListener(e: KeyboardEvent) {
   if (e.key === 'Escape' && props.isOpen) {
     emit('close')
   }
 }
 
-onMounted(() => document.addEventListener('keydown', handleKeydown))
-onUnmounted(() => document.removeEventListener('keydown', handleKeydown))
+onMounted(() => document.addEventListener('keydown', escListener))
+onUnmounted(() => document.removeEventListener('keydown', escListener))
 </script>
