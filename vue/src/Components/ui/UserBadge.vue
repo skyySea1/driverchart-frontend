@@ -1,26 +1,23 @@
 <template>
   <div
-    class="user-badge flex items-center gap-3 p-3 rounded-lg transition-all duration-200 hover:bg-slate-800 group"
+    class="flex items-center gap-3 p-3 rounded-lg transition-all duration-200 hover:bg-slate-800 group"
   >
     <!-- Avatar Icon -->
     <div
       :class="[
-        'user-badge__avatar w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-110',
-        setAvatarColor
+        ' w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-110',
+        setAvatarColor,
       ]"
     >
       <User class="w-5 h-5 text-white" />
     </div>
 
     <!-- User Info -->
-    <div
-      v-show="showInfo"
-      class="user-badge__info flex-1 min-w-0 transition-opacity duration-200"
-    >
-      <div class="user-badge__name text-sm font-medium text-white truncate">
+    <div v-show="showInfo" class=" flex-1 min-w-0 transition-opacity duration-200">
+      <div class=" text-sm font-medium text-white truncate">
         {{ userName }}
       </div>
-      <div class="user-badge__role text-xs text-slate-400 truncate">
+      <div class="text-xs text-slate-400 truncate">
         {{ userRole }}
       </div>
     </div>
@@ -30,13 +27,11 @@
       v-cursor
       v-show="showInfo"
       @click.stop="handleLogout"
-      class="user-badge__logout p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded transition-all duration-200 opacity-0 group-hover:opacity-100"
+      class="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded transition-all duration-200 opacity-0 group-hover:opacity-100"
       title="Logout"
       aria-label="Logout"
     >
-      <LogOut
-      @click="handleLogout"
-      class="w-4 h-4" />
+      <LogOut @click="handleLogout" class="w-4 h-4" />
     </button>
   </div>
 </template>
