@@ -70,9 +70,10 @@ export interface Vehicle {
 export type ViewState =
   | 'dashboard'
   | 'drivers'
-  | 'fleet'
-  | 'registry'
-  | 'reports'
+  | 'vehicles'
+  | 'auditreports '
+  | 'documentregistry'
+  | 'applications'
   | 'specs'
   | 'login'
   | 'settings'
