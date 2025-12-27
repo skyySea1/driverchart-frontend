@@ -69,20 +69,20 @@
 import { computed } from 'vue'
 import UserBadge from '../ui/UserBadge.vue'
 import { LayoutDashboard, Code, Users, Truck, FileText, PieChart, Settings } from 'lucide-vue-next'
-import { useNav } from '@/Composables/useNav'
-
+import { useRouter } from 'vue-router';
 const props = defineProps<{
   collapsed: boolean
   currentRoute?: string
 }>()
 
+const router = useRouter();
 defineEmits(['navigate', 'logout'])
 
 // Helper to detect if we are effectively collapsed on mobile
 const collapsedMobile = computed(() => !props.collapsed)
 
 const handleLogout = () => {
-  useNav().go('login')
+  router.push('login')
 }
 
 const navItems = [
