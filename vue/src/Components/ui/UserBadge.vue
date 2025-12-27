@@ -92,9 +92,9 @@ const setAvatarColor = computed(() => {
 
 // Logout handler
 function handleLogout() {
-  // TODO: Implement Firebase logout
-  emit('logout')
+  localStorage.setItem('isAuthenticated', 'false')
   router.push('/login')
-  console.log('Logout clicked')
+  emit('logout')
 }
+
 </script>

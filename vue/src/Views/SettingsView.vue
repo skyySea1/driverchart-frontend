@@ -5,6 +5,7 @@
       <!-- Sidebar Settings Nav -->
       <div class="space-y-2">
         <button
+          v-cursor
           v-for="item in menuItems"
           :key="item.id"
           @click="activeSection = item.id"
@@ -79,7 +80,7 @@
           <div class="pt-6 border-t border-slate-100 flex justify-end">
             <BaseButton
               label="Save Changes"
-              class="px-6 py-2 text-white rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-200"
+              class="px-6 py-2 text-white rounded-xl font-bold hover:bg-slate-800"
             />
           </div>
         </div>

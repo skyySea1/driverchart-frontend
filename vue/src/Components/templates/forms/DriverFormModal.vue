@@ -17,13 +17,15 @@
     />
 
     <!-- 1. PERSONAL INFO -->
-    <form novalidate @submit.prevent="save" class="space-y-6">
+    <form novalidate @submit.prevent="save" class="space-y-3">
       <div>
         <div id="formTitle" class="flex items-center mb-2 gap-1 pb-1 border-b border-slate-200">
           <User class="w-5 h-5 text-slate-500" />
           <h3 class="font-bold text-slate-700">Personal Information</h3>
         </div>
-        <div class="grid grid-cols-3 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50 p-2 rounded-lg border border-slate-200"
+        >
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
               >First Name <span class="text-red-500">*</span></label
@@ -60,13 +62,8 @@
             </label>
             <input id="emailInput" v-model="form.email" type="email" class="input-base" />
           </div>
-        </div>
 
-        <!-- Address  -->
-        <div
-          class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200"
-        >
-          <div class="md:col-span-2 space-y-1">
+          <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Street Address</label>
             <input v-model="form.address" placeholder="123 Main St" class="input-base" />
           </div>
@@ -119,7 +116,7 @@
         </div>
 
         <div
-          class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200"
+          class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50 p-2 rounded-lg border border-slate-200"
         >
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Contact Name</label>
@@ -143,7 +140,7 @@
           <h3 class="font-bold text-slate-700">Employment Status</h3>
         </div>
         <div
-          class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200"
+          class="grid grid-cols-1 md:grid-cols-4 gap-3 bg-slate-50 p-2 rounded-lg border border-slate-200"
         >
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
@@ -187,7 +184,7 @@
         </div>
 
         <div
-          class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200"
+          class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-2 rounded-lg border border-slate-200"
         >
           <div>
             <InputGroup
@@ -241,12 +238,11 @@
       </div>
 
       <!-- 6. COMPLIANCE & QUALIFICATIONS -->
+      <div class="flex items-center mb-2 gap-1 pb-1 border-b border-slate-200">
+        <ShieldAlert class="w-5 h-5 text-slate-500" />
+        <h3 class="font-bold text-slate-700">Compliance & Qualifications</h3>
+      </div>
       <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-        <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-200">
-          <ShieldAlert class="w-5 h-5 text-slate-500" />
-          <h3 class="font-bold text-slate-700">Compliance & Qualifications</h3>
-        </div>
-
         <div class="space-y-4">
           <!-- CDL -->
           <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
@@ -405,13 +401,13 @@
         </div>
       </div>
 
-      <div class="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-6">
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 mt-6">
         <button
           v-cursor
           type="button"
           @click="$emit('close')"
           :disabled="isSaving"
-          class="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg disabled:opacity-50"
+          class=" px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg disabled:opacity-50"
         >
           Cancel
         </button>
@@ -419,7 +415,7 @@
           type="submit"
           :disabled="isSaving"
           v-cursor
-          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center shadow-sm shadow-blue-200 transition-all duration-200 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.99] active:translate-y-0 active:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center shadow-sm shadow-blue-200 btn-up-hover-effect"
         >
           <Save class="w-4 h-4 mr-2" />
           {{ props.driver ? 'Update Driver File' : 'Save New Driver' }}
@@ -486,8 +482,48 @@ const isSaving = ref(false)
 const errorMsg = ref('')
 const activeDocument = ref<string | null>(null)
 
+interface DriverForm {
+  firstName: string
+  middleName: string
+  lastName: string
+  birthDate: string
+  email: string
+  phone: string
+  ssn: string
+  address: string
+  city: string
+  state: string
+  zip: string
+  hireStatus: 'Active' | 'Inactive' | 'Terminated' | 'Rehired' | 'On Leave'
+  hireDate: string
+  termDate: string
+  rehireDate: string
+  emergencyName: string
+  emergencyPhone: string
+  emergencyRelationship: string
+  cdlNumber: string
+  cdlState: string
+  cdlExp: string
+  medRegistry: string
+  medExp: string
+  mvrDate: string
+  lastDrugTest: string
+  roadTestDate: string
+  roadTestExaminer: string
+  bankName: string
+  routingNumber: string
+  accountNumber: string
+  w9Signed: boolean
+  businessName: string
+  taxClassification: string
+  i9EmployerSignature: string
+  ssnDocName: string
+  ssnDocFile: File | null
+  ssnDocPreviewUrl: string
+}
+
 // form states - internal flattened structure
-const form = ref({
+const form = ref<DriverForm>({
   firstName: '',
   middleName: '',
   lastName: '',
@@ -523,7 +559,7 @@ const form = ref({
   taxClassification: 'individual',
   i9EmployerSignature: '',
   ssnDocName: '',
-  ssnDocFile: null as File | null,
+  ssnDocFile: null,
   ssnDocPreviewUrl: '',
 })
 
