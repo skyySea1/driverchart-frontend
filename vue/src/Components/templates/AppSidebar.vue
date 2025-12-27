@@ -89,10 +89,10 @@ const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'drivers', label: 'Drivers (DQ Files)', icon: Users },
   { id: 'vehicles', label: 'Fleet Maintenance', icon: Truck, hidden: true },
-  { id: 'reports', label: ' Audit Reports', icon: PieChart },
+  { id: 'audit', label: ' Audit Reports', icon: PieChart },
   { id: 'docs', label: 'Document Registry', icon: FileText },
   { id: 'specs', label: 'System Specs', icon: Code },
-  { id: 'mainreports', label: 'Main Reports', icon: FileText },
+  { id: 'reports', label: 'Main Reports', icon: FileText },
   { id: 'settings', label: 'Settings', icon: Settings },
 ]
 // hidden items that are filtered out
