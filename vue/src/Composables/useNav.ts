@@ -1,4 +1,3 @@
-
 // custom hook for future implementation
 import { useRouter } from 'vue-router'
 
@@ -9,5 +8,3 @@ export function useNav() {
 
   return { go }
 }
-
-

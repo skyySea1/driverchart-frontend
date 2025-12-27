@@ -5,10 +5,7 @@
   >
     <div
       v-if="visible"
-      :class="[
-        'flex items-start gap-3 p-4 rounded-lg border',
-        variantClasses
-      ]"
+      :class="['flex items-start gap-3 p-4 rounded-lg border', variantClasses]"
       role="alert"
     >
       <div class="shrink-0 mt-0.5">
@@ -23,7 +20,7 @@
         </p>
       </div>
       <button
-      v-cursor
+        v-cursor
         v-if="closeable"
         @click="visible = false"
         :class="['shrink-0', closeButtonColor]"
@@ -37,22 +34,21 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import {
-  AlertCircle,
-  CheckCircle2,
-  AlertTriangle,
-  Info,
-  X,
-} from 'lucide-vue-next'
+import { AlertCircle, CheckCircle2, AlertTriangle, Info, X } from 'lucide-vue-next'
 
 export type AlertType = 'error' | 'success' | 'warning' | 'info'
 
-const {type = 'info', title, message, closeable = true} = defineProps<{
+const {
+  type = 'info',
+  title,
+  message,
+  closeable = true,
+} = defineProps<{
   type?: AlertType
   title?: string
   message: string
   closeable?: boolean
-  }>()
+}>()
 
 const visible = ref(true)
 

@@ -13,8 +13,8 @@
     </div>
 
     <!-- User Info -->
-    <div v-show="showInfo" class=" flex-1 min-w-0 transition-opacity duration-200">
-      <div class=" text-sm font-medium text-white truncate">
+    <div v-show="showInfo" class="flex-1 min-w-0 transition-opacity duration-200">
+      <div class="text-sm font-medium text-white truncate">
         {{ userName }}
       </div>
       <div class="text-xs text-slate-400 truncate">
@@ -41,15 +41,18 @@ import { computed } from 'vue'
 import { User, LogOut } from 'lucide-vue-next'
 import router from '@/router'
 
+interface UserType {
+  displayName?: string
+  email?: string
+  photoURL?: string
+  gender?: 'male' | 'female'
+  role?: string
+}
+
 interface Props {
   showInfo?: boolean
   // Firebase user data (when ready)
-  user?: {
-    displayName?: string
-    email?: string
-    photoURL?: string
-    gender?: 'male' | 'female'
-  } | null
+  user?: UserType | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -62,11 +65,11 @@ const emit = defineEmits<{
 }>()
 
 // Mock user data (replace with Firebase auth when ready)
-const mockUser = {
+const mockUser: UserType = {
   displayName: 'Manoel Ribeiro',
   email: 'mneto@phoenixbusorlando.com',
   role: 'Administrator',
-  gender: 'male'
+  gender: 'male',
 }
 
 // User info computed properties
@@ -77,7 +80,6 @@ const userName = computed(() => {
 })
 
 const userRole = computed(() => {
-  // @ts-ignore - temporary mock data
   return currentUser.value.role || 'User'
 })
 

@@ -1,7 +1,8 @@
 <template>
-<div class="login min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden">
-
-    <!-- SVG Background com animação pulsante (círculo principal) -->
+  <div
+    class=" min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden"
+  >
+    <!-- SVG Background main pulsing circle  -->
     <svg
       class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none animate-pulse-slow"
       xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +17,7 @@
       <circle cx="50%" cy="50%" r="500" fill="url(#grad)" />
     </svg>
 
-    <!-- Círculo central pulsante com efeito glassmorphism (MAIOR e ATRÁS) -->
+    <!-- Central pulsing circle with glassmorphism effect  -->
     <div class="circle-container">
       <div class="circle-glow animate-pulse-glow">
         <div class="circle-inner"></div>
@@ -24,41 +25,37 @@
     </div>
 
     <!-- Login Card -->
-    <div class=" login__card bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-
+    <div class="login__card bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
       <!-- Header with Logo -->
       <div class="bg-slate-900 p-12 text-center">
-  <div class="flex flex-col items-center gap-6">
-    <div class="flex items-center gap-3">
-      <Truck class="w-10 h-10 text-blue-400 shrink-0" />
-      <h1 class="text-3xl font-bold text-white">
-        CharterSafe
-      </h1>
-    </div>
-    <p class="text-sm text-indigo-200">
-      DOT Compliance Management System
-    </p>
-  </div>
-</div>
-
+        <div class="flex flex-col items-center gap-6">
+          <div class="flex items-center gap-3">
+            <Truck class="w-10 h-10 text-blue-400 shrink-0" />
+            <h1 class="text-3xl font-bold text-white">CharterSafe</h1>
+          </div>
+          <p class="text-sm text-indigo-200">DOT Compliance Management System</p>
+        </div>
+      </div>
 
       <!-- Login Form -->
       <div class="p-8">
-        <h2 class="text-2xl font-semibold text-slate-800 mb-6 text-center">Sign In To CharterSafe</h2>
+        <h2 class="text-2xl font-semibold text-slate-800 mb-6 text-center">
+          Sign In To CharterSafe
+        </h2>
 
         <!-- Error Message -->
         <div
           v-if="errorMessage"
-          class="login__error bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center gap-2"
+          class=" bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center gap-2"
         >
           <AlertCircle class="w-5 h-5 shrink-0" />
           <span class="text-sm">{{ errorMessage }}</span>
         </div>
 
-        <form @submit.prevent="handleLogin" class="login__form space-y-5">
+        <form @submit.prevent="handleLogin" class=" space-y-5">
           <!-- Email Field -->
-          <div class="login__field">
-            <label for="email" class="login__label block text-sm font-medium text-slate-700 mb-2">
+          <div>
+            <label for="email" class=" block text-sm font-medium text-slate-700 mb-2">
               Email Address
             </label>
             <div class="relative">
@@ -71,15 +68,18 @@
                 type="email"
                 required
                 placeholder="you@example.com"
-                class="login__input w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+                class=" input-base pl-10 pr-4 py-3  rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
                 :disabled="isLoading"
               />
             </div>
           </div>
 
           <!-- Password Field -->
-          <div >
-            <label for="password" class="login__label block text-sm font-medium text-slate-700 mb-2">
+          <div>
+            <label
+              for="password"
+              class="block text-sm font-medium text-slate-700 mb-2"
+            >
               Password
             </label>
             <div class="relative">
@@ -125,7 +125,7 @@
 
           <!-- Login Button -->
           <button
-          v-cursor
+            v-cursor
             type="submit"
             :disabled="isLoading"
             class="login__submit w-full bg-linear-to-r from-indigo-600 to-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-indigo-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -134,7 +134,6 @@
             <span>{{ isLoading ? 'Signing in...' : 'Sign In' }}</span>
           </button>
         </form>
-
       </div>
     </div>
     <!-- Copyright -->
@@ -147,7 +146,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Bus, Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Truck } from 'lucide-vue-next'
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Truck } from 'lucide-vue-next'
 
 const router = useRouter()
 
@@ -175,102 +174,106 @@ async function handleLogin() {
   try {
     isLoading.value = true
 
-    // TODO: Replace with Firebase Authentication
-    // await signInWithEmailAndPassword(auth, email.value, password.value)
-
     // Mock delay
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    await new Promise((resolve) => setTimeout(resolve, 1500))
 
     // Mock success - save to localStorage and redirect
     localStorage.setItem('isAuthenticated', 'true')
     router.push('/dashboard')
-
-  } catch (error: any) {
-    errorMessage.value = error.message || 'Invalid email or password'
+  } catch (error) {
+    const err = error as Error
+    errorMessage.value = err.message || 'Invalid email or password'
   } finally {
     isLoading.value = false
   }
 }
 </script>
 
-  <style scoped>
-  /* Background Circle Animation  (principal) */
-  @keyframes pulse-slow {
-    0%, 100% {
-      opacity: 0.1;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.2;
-      transform: scale(1.05);
-    }
+<style scoped>
+/* Background Circle Animation  (principal) */
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 0.1;
+    transform: scale(1);
   }
+  50% {
+    opacity: 0.2;
+    transform: scale(1.05);
+  }
+}
 
-  .animate-pulse-slow {
-    animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
+.animate-pulse-slow {
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 
-  /* Circle Container  - CRITICAL: position fixed e z-index baixo */
-  .circle-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    z-index: 1;
-  }
+/* Circle Container  - CRITICAL: position fixed e z-index baixo */
+.circle-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
 
-  /* Login card needs to have a higher z-index */
-  .login__card {
-    position: relative;
-    z-index: 10;
-  }
+/* Login card needs to have a higher z-index */
+.login__card {
+  position: relative;
+  z-index: 10;
+}
 
-  /* Central circle with glow effect - LARGER (20% larger than r="500") */
-  .circle-glow {
-    width: 600px;   /* 20% larger than the main circle */
-    height: 600px;
-    position: relative;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.25), rgba(59, 130, 246, 0.08), transparent);
-    box-shadow:
-      0 0 80px rgba(99, 102, 241, 0.3),
-      0 0 160px rgba(59, 130, 246, 0.25),
-      inset 0 0 80px rgba(99, 102, 241, 0.15);
-  }
+/* Central circle with glow effect - LARGER (20% larger than r="500") */
+.circle-glow {
+  width: 600px; /* 20% larger than the main circle */
+  height: 600px;
+  position: relative;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.25),
+    rgba(59, 130, 246, 0.08),
+    transparent
+  );
+  box-shadow:
+    0 0 80px rgba(99, 102, 241, 0.3),
+    0 0 160px rgba(59, 130, 246, 0.25),
+    inset 0 0 80px rgba(99, 102, 241, 0.15);
+}
 
-  .circle-inner {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 450px;   /* 20% larger proportionally */
-    height: 450px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(59, 130, 246, 0.2));
-    backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
+.circle-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 450px; /* 20% larger proportionally */
+  height: 450px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(59, 130, 246, 0.2));
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-  /*  Pulse Glow Animation */
-  @keyframes pulse-glow {
-    0%, 100% {
-      transform: scale(1);
-      opacity: 0.5;
-      filter: blur(3px);
-    }
-    50% {
-      transform: scale(1.08);
-      opacity: 0.8;
-      filter: blur(0px);
-    }
+/*  Pulse Glow Animation */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+    filter: blur(3px);
   }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.8;
+    filter: blur(0px);
+  }
+}
 
-  .animate-pulse-glow {
-    animation: pulse-glow 3s ease-in-out infinite;
-  }
-  </style>
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+</style>

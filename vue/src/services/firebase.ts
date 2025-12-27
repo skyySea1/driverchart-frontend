@@ -21,7 +21,7 @@ export async function initAuth() {
     const errorCode = e instanceof FirebaseError ? e.code : 'unknown'
     console.error(
       `Failed to initialize anonymous authentication (code: ${errorCode}). Check Firebase configuration.`,
-      e
-    );
+      e,
+    )
   }
 }

@@ -26,9 +26,7 @@ function resolveShouldAdd(
   if (value === false) return false
 
   const props = vnode.props ?? {}
-  const hasClickProp = Object.keys(props).some((key) =>
-    key.toLowerCase().startsWith('onclick'),
-  )
+  const hasClickProp = Object.keys(props).some((key) => key.toLowerCase().startsWith('onclick'))
   const hasNativeClick = typeof el.onclick === 'function'
   const hasInteractiveTag = interactiveTags.includes(el.tagName)
   const hasButtonRole = el.getAttribute('role') === 'button'

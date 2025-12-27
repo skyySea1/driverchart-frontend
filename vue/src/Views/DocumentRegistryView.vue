@@ -1,7 +1,6 @@
 <template>
   <!-- Document Registry Card -->
   <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden print:hidden">
-
     <!-- Header -->
     <div class="p-6 border-b border-slate-100 flex flex-col space-y-4">
       <div class="flex justify-between items-center">
@@ -21,11 +20,11 @@
               'px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center',
               activeTab === tab.id
                 ? 'bg-white text-slate-800 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
+                : 'text-slate-500 hover:text-slate-700',
             ]"
             @click="activeTab = tab.id"
           >
-          <!-- TODO SET VISUALIZATIONS  -->
+            <!-- TODO SET VISUALIZATIONS  -->
             <component :is="tab.icon" class="w-4 h-4 mr-2" />
             {{ tab.label }}
           </button>
@@ -33,7 +32,7 @@
 
         <!-- Search Filter -->
         <div class="flex items-center relative">
-          <Search class="w-4 h-4 text-slate-400  absolute left-3 top-2.5" />
+          <Search class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
             v-model="filter"
             placeholder="Search by name or entity..."
@@ -111,7 +110,7 @@ async function fetchLogs() {
   try {
     entries.value = await dataService.getDocumentLogs()
   } catch (e) {
-    console.error("Error fetching logs:", e)
+    console.error('Error fetching logs:', e)
   } finally {
     loading.value = false
   }
@@ -124,9 +123,10 @@ onMounted(() => {
 const filtered = computed<DocumentLog[]>(() => {
   if (!filter.value) return entries.value
   const f = filter.value.toLowerCase()
-  return entries.value.filter((e) =>
-    (e.entityName || '').toLowerCase().includes(f) ||
-    (e.fileName || '').toLowerCase().includes(f),
+  return entries.value.filter(
+    (e) =>
+      (e.entityName || '').toLowerCase().includes(f) ||
+      (e.fileName || '').toLowerCase().includes(f),
   )
 })
 

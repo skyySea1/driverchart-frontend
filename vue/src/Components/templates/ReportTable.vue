@@ -22,16 +22,11 @@
         </tr>
 
         <tr v-for="(row, i) in rows" :key="i" class="hover:bg-slate-50">
-          <td
-            v-for="col in columns"
-            :key="col.key"
-            class="p-4"
-            :class="row[`${col.key}Class`]"
-          >
+          <td v-for="col in columns" :key="col.key" class="p-4" :class="row[`${col.key}Class`]">
             <!-- Check if slot exists for this column, otherwise default text -->
-             <slot :name="`cell(${col.key})`" :value="row[col.key]" :item="row">
-               {{ row[col.key] }}
-             </slot>
+            <slot :name="`cell(${col.key})`" :value="row[col.key]" :item="row">
+              {{ row[col.key] }}
+            </slot>
           </td>
         </tr>
       </tbody>
@@ -51,12 +46,12 @@ interface Column {
 defineProps({
   columns: {
     type: Array as PropType<Column[]>,
-    default: () => []
+    default: () => [],
   },
   rows: {
     type: Array as PropType<any[]>,
-    default: () => []
+    default: () => [],
   },
-  emptyText: { type: String, default: 'No data' }
+  emptyText: { type: String, default: 'No data' },
 })
 </script>

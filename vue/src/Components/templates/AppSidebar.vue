@@ -2,7 +2,7 @@
   <aside
     :class="[
       'sidebar h-screen fixed left-0 top-0 w-64 transition-transform bg-slate-900 text-white print:hidden z-40 flex flex-col',
-      collapsed ? '-translate-x-full md:-translate-x-56' : 'translate-x-0',
+      props.collapsed ? '-translate-x-full md:-translate-x-56' : 'translate-x-0',
     ]"
   >
     <!-- TODO CONFIGURE ROUTE -->
@@ -16,14 +16,14 @@
         <Truck class="sidebar__logo-icon w-8 h-8 text-blue-400 pointer-events-none" />
       </div>
 
-      <div v-show="!collapsed || collapsedMobile" class="sidebar__brand transition-opacity">
+      <div v-show="!props.collapsed || collapsedMobile" class="sidebar__brand transition-opacity">
         <div class="sidebar__brand-name font-bold leading-tight">CharterSafe</div>
         <div class="sidebar__brand-tagline text-xs text-slate-400">DOT Compliance System</div>
       </div>
     </div>
 
     <!-- Navigation -->
-    <nav class=" p-4 space-y-2 mt-2 flex-1">
+    <nav class="p-4 space-y-2 mt-2 flex-1">
       <button
         v-cursor
         v-for="item in visibleNavItems"
@@ -31,7 +31,7 @@
         @click="$emit('navigate', item.id)"
         :class="[
           '-item flex items-center gap-3 w-full text-left p-3 rounded-lg transition-colors duration-200',
-          currentRoute === item.id
+          props.currentRoute === item.id
             ? '-item--active bg-indigo-600 text-white shadow-md'
             : 'text-slate-300 hover:bg-slate-800 hover:text-white',
         ]"
@@ -40,7 +40,11 @@
         <span
           :class="[
             '-label transition-opacity duration-300 whitespace-nowrap',
-            { 'md:opacity-0': collapsed, 'md:opacity-100': !collapsed, 'opacity-100': true },
+            {
+              'md:opacity-0': props.collapsed,
+              'md:opacity-100': !props.collapsed,
+              'opacity-100': true,
+            },
           ]"
         >
           {{ item.label }}
@@ -50,8 +54,11 @@
 
     <!-- User Section (Footer) -->
     <footer class="sidebar__footer p-4 border-t border-slate-800">
-      <UserBadge :show-info="!collapsed || collapsedMobile" @click="handleLogout" />
-      <div v-show="!collapsed || collapsedMobile" class="text-xs text-slate-500 text-center mt-3">
+      <UserBadge :show-info="!props.collapsed || collapsedMobile" @click="handleLogout" />
+      <div
+        v-show="!props.collapsed || collapsedMobile"
+        class="text-xs text-slate-500 text-center mt-3"
+      >
         &copy; 2025 CharterSafe
       </div>
     </footer>
@@ -64,12 +71,12 @@ import UserBadge from '../ui/UserBadge.vue'
 import { LayoutDashboard, Code, Users, Truck, FileText, PieChart, Settings } from 'lucide-vue-next'
 import { useNav } from '@/Composables/useNav'
 
-const props = defineProps({
-  collapsed: Boolean,
-  currentRoute: String,
-})
+const props = defineProps<{
+  collapsed: boolean
+  currentRoute?: string
+}>()
 
-const emit = defineEmits(['navigate', 'logout'])
+defineEmits(['navigate', 'logout'])
 
 // Helper to detect if we are effectively collapsed on mobile
 const collapsedMobile = computed(() => !props.collapsed)
@@ -89,5 +96,5 @@ const navItems = [
   { id: 'settings', label: 'Settings', icon: Settings },
 ]
 // hidden items that are filtered out
-const visibleNavItems = computed(() => navItems.filter(item => !item.hidden))
+const visibleNavItems = computed(() => navItems.filter((item) => !item.hidden))
 </script>

@@ -19,7 +19,7 @@ const routes: RouteRecordRaw[] = [
     path: '/login',
     name: 'login',
     component: Login,
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: false },
   },
   {
     path: '/',
@@ -89,7 +89,6 @@ const routes: RouteRecordRaw[] = [
           title: ' Main Reports',
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
         },
-
       },
       {
         path: 'settings',

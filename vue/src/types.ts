@@ -3,7 +3,6 @@ export interface Alert {
   type: 'critical' | 'warning' | 'info'
   message: string
   entity?: string
-  // owner of alert, either driver id or vehicle id, v.busnumber ou v.driverid
   dueDate: string
 }
 
@@ -11,7 +10,7 @@ export interface ComplianceItem {
   documentNumber: string
   expiryDate?: string // ISO string YYYY-MM-DD
   file?: string // Filename mock
-  [key: string]: unknown // allow extra properties during transition
+  [key: string]: unknown
 }
 
 export interface DocumentLog {
@@ -29,7 +28,6 @@ export interface Driver {
   middleName: string
   lastName: string
   dob: string
-  birthDate?: string
   ssn: string
   phone: string
   email: string
@@ -55,7 +53,7 @@ export interface Driver {
   // Compliance
   cdl: ComplianceItem & { state: string; value?: string }
   medical: ComplianceItem & { registry?: string }
-  mvr: ComplianceItem // Annual review
+  mvr: ComplianceItem
   drugAlcohol: ComplianceItem
   roadTest: ComplianceItem & { examiner: string; date?: string }
 

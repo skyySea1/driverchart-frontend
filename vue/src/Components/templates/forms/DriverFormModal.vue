@@ -1,13 +1,13 @@
 <template>
   <!-- todo update modal title based on driver presence and add validation for existing drivers -->
-  <Modal
+  <BaseModal
     v-cursor
     :isOpen="true"
-    :title="driver ? 'Edit Driver' : 'New Driver'"
+    :title="props.driver ? 'Edit Driver' : 'New Driver'"
     size="w-full md:w-3/4 lg:w-2/3 xl:w-1/2"
     @close="$emit('close')"
   >
-    <Alert
+    <BaseAlert
       v-if="errorMsg"
       type="error"
       title="Error"
@@ -23,65 +23,66 @@
           <User class="w-5 h-5 text-slate-500" />
           <h3 class="font-bold text-slate-700">Personal Information</h3>
         </div>
-        <div
-          class="grid grid-cols-3  gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200"
-        >
+        <div class="grid grid-cols-3 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
               >First Name <span class="text-red-500">*</span></label
             >
-            <input
-              id="firstNameInput"
-              v-model="form.firstName"
-              required
-              class="w-full p-2 text-sm border bg-white border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input id="firstNameInput" v-model="form.firstName" required class="input-base" />
           </div>
+          <!-- todo migrate from primaryinput component -->
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Middle Name</label>
-            <input
-              v-model="form.middleName"
-              class="w-full p-2 text-sm border bg-white border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input id="middleNameInput" v-model="form.middleName" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
               >Last Name <span class="text-red-500">*</span></label
             >
-            <input
-              id="lastNameInput"
-              v-model="form.lastName"
-              required
-              class="w-full p-2 text-sm border bg-white border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input id="lastNameInput" v-model="form.lastName" required class="input-base" />
           </div>
 
           <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700">Date of Birth <span class="text-red-500">*</span></label>
-            <input
-              id="birthDateInput"
-              v-model="form.birthDate"
-              type="date"
-              class="w-full p-2 text-sm border bg-white border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <label class="block text-xs font-bold text-slate-700"
+              >Date of Birth <span class="text-red-500">*</span></label
+            >
+            <input id="birthDateInput" v-model="form.birthDate" type="date" class="input-base" />
           </div>
           <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700">Phone Number <span class="text-red-500">*</span></label>
-            <input
-              id="phoneInput"
-              v-model="form.phone"
-              type="tel"
-              class="w-full p-2 text-sm border bg-white border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <label class="block text-xs font-bold text-slate-700"
+              >Phone Number <span class="text-red-500">*</span></label
+            >
+            <input id="phoneInput" v-model="form.phone" type="tel" class="input-base" />
           </div>
           <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700">Email Address <span class="text-red-500">*</span> </label>
-            <input
-              id="emailInput"
-              v-model="form.email"
-              type="email"
-              class="w-full p-2 text-sm border bg-white border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <label class="block text-xs font-bold text-slate-700"
+              >Email Address <span class="text-red-500">*</span>
+            </label>
+            <input id="emailInput" v-model="form.email" type="email" class="input-base" />
+          </div>
+        </div>
+
+        <!-- Address  -->
+        <div
+          class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200"
+        >
+          <div class="md:col-span-2 space-y-1">
+            <label class="block text-xs font-bold text-slate-700">Street Address</label>
+            <input v-model="form.address" placeholder="123 Main St" class="input-base" />
+          </div>
+          <div class="space-y-1">
+            <label class="block text-xs font-bold text-slate-700">City</label>
+            <input v-model="form.city" placeholder="Orlando" class="input-base" />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-slate-700">State</label>
+              <input v-model="form.state" placeholder="FL" class="input-base" />
+            </div>
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-slate-700">Zip</label>
+              <input v-model="form.zip" placeholder="32801" class="input-base" />
+            </div>
           </div>
         </div>
       </div>
@@ -93,31 +94,19 @@
           <h3 class="font-bold text-x text-slate-700">Banking & Payroll Information</h3>
         </div>
         <div
-          class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200"
+          class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-2 rounded-lg border border-slate-200"
         >
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Bank Name</label>
-            <input
-              v-model="form.bankName"
-              placeholder="e.g. Chase"
-              class="w-full p-2 text-sm border bg-white border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input v-model="form.bankName" placeholder="e.g. Chase" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Routing Number</label>
-            <input
-              v-model="form.routingNumber"
-              placeholder="9 Digits"
-              class="w-full p-2 text-sm border bg-white border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input v-model="form.routingNumber" placeholder="9 Digits" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Account Number</label>
-            <input
-              v-model="form.accountNumber"
-              placeholder="Account #"
-              class="w-full p-2 text-sm border bg-white border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input v-model="form.accountNumber" placeholder="Account #" class="input-base" />
           </div>
         </div>
       </div>
@@ -128,30 +117,21 @@
           <Phone class="w-5 h-5 text-slate-500" />
           <h3 class="font-bold text-slate-700">Emergency Contact</h3>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200"
+        >
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Contact Name</label>
-            <input
-              v-model="form.emergencyName"
-              placeholder="Joana Smith"
-              class="w-full p-2 text-sm border bg-white border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input v-model="form.emergencyName" placeholder="Joana Smith" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Relationship</label>
-            <input
-              v-model="form.emergencyRel"
-              placeholder="Wife"
-              class="w-full p-2 text-sm border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input v-model="form.emergencyRelationship" placeholder="Wife" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Phone Number</label>
-            <input
-              v-model="form.emergencyPhone"
-              type="tel"
-              class="w-full p-2 text-sm border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input v-model="form.emergencyPhone" type="tel" class="input-base" />
           </div>
         </div>
       </div>
@@ -162,7 +142,9 @@
           <Users class="w-5 h-5 text-slate-500" />
           <h3 class="font-bold text-slate-700">Employment Status</h3>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div
+          class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200"
+        >
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
               >Hire Date <span class="text-red-500">*</span></label
@@ -172,32 +154,22 @@
               v-model="form.hireDate"
               type="date"
               required
-              class="w-full p-2 text-sm border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+              class="input-base"
             />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Termination Date</label>
-            <input
-              v-model="form.termDate"
-              type="date"
-              class="w-full p-2 text-sm border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            <input v-model="form.termDate" type="date" class="input-base" />
           </div>
-          <div class="space-y-1" v-if="form.status === 'Rehired'">
-            <label class="block text-xs font-bold text-slate-700">Rehire Date <span class="text-red-500">*</span></label>
-            <input
-              id="rehireDateInput"
-              v-model="form.rehireDate"
-              type="date"
-              class="w-full p-2 text-sm border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+          <div class="space-y-1" v-if="form.hireStatus === 'Rehired'">
+            <label class="block text-xs font-bold text-slate-700"
+              >Rehire Date <span class="text-red-500">*</span></label
+            >
+            <input id="rehireDateInput" v-model="form.rehireDate" type="date" class="input-base" />
           </div>
           <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-400 uppercase">Current Status</label>
-            <select
-              v-model="form.status"
-              class="w-full p-2 text-sm border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none font-semibold text-slate-700"
-            >
+            <label class="block text-xs font-bold text-slate-700">Current Status</label>
+            <select v-model="form.hireStatus" class="input-base">
               <option value="Active">Active</option>
               <option value="Terminated">Terminated</option>
               <option value="Rehired">Rehired</option>
@@ -209,50 +181,62 @@
 
       <!-- 5. LEGAL & TAX FORMS -->
       <div>
-        <div class="flex items-center  gap-1 pb-1 mb-2 border-b border-slate-200">
+        <div class="flex items-center mb-2 gap-1 pb-1 border-b border-slate-200">
           <Building class="w-5 h-5 text-slate-500" />
           <h3 class="font-bold text-slate-700">Legal & Tax Forms (USCIS / IRS)</h3>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4  bg-slate-50 p-3 rounded-lg border border-slate-200">
-             <InputGroup label="Social Security (SSN)" placeholder="XXX-XX-XXXX" v-model="form.ssn" />
-             <FileInput label="Upload SSN Card" :fileName="form.ssnDocName" @change="(e) => handleFileChange('ssnDoc', e)" />
-        </div>
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200"
+        >
+          <div>
+            <InputGroup
+              label="Social Security (SSN)"
+              placeholder="XXX-XX-XXXX"
+              v-model="form.ssn"
+            />
+            <FileInput
+              label="Upload SSN Card"
+              :fileName="form.ssnDocName"
+              @change="(event: Event) => handleFileChange('ssnDoc', event)"
+            />
+          </div>
 
-        <div class="flex flex-col md:flex-row gap-4">
-          <button
-            v-cursor
-            type="button"
-            @click="activeDocument = 'w9'"
-            class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-xl hover:border-purple-500 hover:shadow-md transition-all group flex-1"
-          >
-            <PenTool class="w-5 h-5 text-slate-400 group-hover:text-purple-600 mb-1" />
-            <span class="font-bold text-sm text-slate-700">Form W-9</span>
-            <span class="text-[10px] text-slate-400">Taxpayer ID & Cert</span>
-            <span
-              v-if="form.w9Signed"
-              class="mt-1 inline-flex items-center text-[10px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full"
+          <div class="flex justify-end mt-2 md:flex-row gap-4">
+            <button
+              v-cursor
+              type="button"
+              @click="activeDocument = 'w9'"
+              class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-xl hover:border-purple-500 hover:shadow-md transition-all group flex-1 max-w-xs"
             >
-              <CheckCircle class="w-3 h-3 mr-1" /> Signed
-            </span>
-          </button>
+              <PenTool class="w-5 h-5 text-slate-400 group-hover:text-purple-600 mb-1" />
+              <span class="font-bold text-sm text-slate-700">Form W-9</span>
+              <span class="text-[10px] text-slate-400">Taxpayer ID & Cert</span>
+              <span
+                v-if="form.w9Signed"
+                class="mt-1 inline-flex items-center text-[10px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full"
+              >
+                <CheckCircle class="w-3 h-3 mr-1" /> Signed
+              </span>
+            </button>
 
-          <button
-            v-cursor
-            type="button"
-            @click="activeDocument = 'i9'"
-            class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-xl hover:border-purple-500 hover:shadow-md transition-all group flex-1"
-          >
-            <PenTool class="w-6 h-6 text-slate-400 group-hover:text-purple-600 mb-1" />
-            <span class="font-bold text-sm text-slate-700">Form I-9</span>
-            <span class="text-[10px] text-slate-400">Employment Eligibility</span>
-            <span
-              v-if="form.i9EmployerSignature"
-              class="mt-1 inline-flex items-center text-[10px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full"
+            <button
+              v-cursor
+              type="button"
+              @click="activeDocument = 'i9'"
+              class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-xl hover:border-purple-500 hover:shadow-md transition-all group flex-1"
             >
-              <CheckCircle class="w-3 h-3 mr-1" /> Verified
-            </span>
-          </button>
+              <PenTool class="w-6 h-6 text-slate-400 group-hover:text-purple-600 mb-1" />
+              <span class="font-bold text-sm text-slate-700">Form I-9</span>
+              <span class="text-[10px] text-slate-400">Employment Eligibility</span>
+              <span
+                v-if="form.i9EmployerSignature"
+                class="mt-1 inline-flex items-center text-[10px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full"
+              >
+                <CheckCircle class="w-3 h-3 mr-1" /> Verified
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -275,25 +259,23 @@
             <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="flex space-x-2 col-span-2">
                 <div class="flex-1 space-y-1">
-                  <label class="block text-[10px] font-bold text-slate-500">Number <span class="text-red-500">*</span></label>
-                  <input v-model="form.cdlNumber" class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all" />
+                  <label class="block text-[10px] font-bold text-slate-500"
+                    >Number <span class="text-red-500">*</span></label
+                  >
+                  <input v-model="form.cdlNumber" class="input-base" />
                 </div>
                 <div class="w-20 space-y-1">
-                  <label class="block text-[10px] font-bold text-slate-500">State <span class="text-red-500">*</span></label>
-                  <input
-                    v-model="form.cdlState"
-                    placeholder="FL"
-                    class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
-                  />
+                  <label class="block text-[10px] font-bold text-slate-500"
+                    >State <span class="text-red-500">*</span></label
+                  >
+                  <input v-model="form.cdlState" placeholder="FL" class="input-base" />
                 </div>
               </div>
               <div class="space-y-1">
-                <label class="block text-[10px] font-bold text-slate-500">Expiration <span class="text-red-500">*</span></label>
-                <input
-                  v-model="form.cdlExp"
-                  type="date"
-                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
-                />
+                <label class="block text-[10px] font-bold text-slate-500"
+                  >Expiration <span class="text-red-500">*</span></label
+                >
+                <input v-model="form.cdlExp" type="date" class="input-base" />
               </div>
             </div>
           </div>
@@ -311,15 +293,13 @@
             <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="col-span-2 space-y-1">
                 <label class="block text-[10px] font-bold text-slate-500">Registry Number</label>
-                  <input v-model="form.medRegistry" class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all" />
+                <input v-model="form.medRegistry" class="input-base" />
               </div>
               <div class="space-y-1">
-                <label class="block text-[10px] font-bold text-slate-500">Expiration <span class="text-red-500">*</span></label>
-                <input
-                  v-model="form.medExp"
-                  type="date"
-                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
-                />
+                <label class="block text-[10px] font-bold text-slate-500"
+                  >Expiration <span class="text-red-500">*</span></label
+                >
+                <input v-model="form.medExp" type="date" class="input-base" />
               </div>
             </div>
           </div>
@@ -342,12 +322,10 @@
                 <div class="text-sm text-slate-500 py-1.5">Every 12 Months</div>
               </div>
               <div class="space-y-1">
-                <label class="block text-[10px] font-bold text-slate-500">Review Date <span class="text-red-500">*</span></label>
-                <input
-                  v-model="form.mvrDate"
-                  type="date"
-                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
-                />
+                <label class="block text-[10px] font-bold text-slate-500"
+                  >Review Date <span class="text-red-500">*</span></label
+                >
+                <input v-model="form.mvrDate" type="date" class="input-base" />
               </div>
             </div>
           </div>
@@ -370,12 +348,10 @@
                 <div class="text-sm text-slate-500 py-1.5">Clearinghouse Query</div>
               </div>
               <div class="space-y-1">
-                <label class="block text-[10px] font-bold text-slate-500">Last Query Date <span class="text-red-500">*</span></label>
-                <input
-                  v-model="form.lastDrugTest"
-                  type="date"
-                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
-                />
+                <label class="block text-[10px] font-bold text-slate-500"
+                  >Last Query Date <span class="text-red-500">*</span></label
+                >
+                <input v-model="form.lastDrugTest" type="date" class="input-base" />
               </div>
             </div>
           </div>
@@ -392,24 +368,20 @@
             </div>
             <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="col-span-2 space-y-1">
-                <label class="block text-[10px] font-bold text-slate-500">Examiner Name <span class="text-red-500">*</span></label>
-                <input
-                  v-model="form.roadTestExaminer"
-                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
-                />
+                <label class="block text-[10px] font-bold text-slate-500"
+                  >Examiner Name <span class="text-red-500">*</span></label
+                >
+                <input v-model="form.roadTestExaminer" class="input-base" />
               </div>
               <div class="space-y-1 relative">
-                <label class="block text-[10px] font-bold text-slate-500">Date of Test <span class="text-red-500">*</span></label>
-                <input
-                  v-model="form.roadTestDate"
-                  type="date"
-                  class="w-full text-sm border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all"
-                />
+                <label class="block text-[10px] font-bold text-slate-500"
+                  >Date of Test <span class="text-red-500">*</span></label
+                >
+                <input v-model="form.roadTestDate" type="date" class="input-base" />
 
                 <div class="absolute -top-1 right-0 flex space-x-1">
-
                   <button
-                  v-cursor
+                    v-cursor
                     type="button"
                     @click="activeDocument = 'roadtest'"
                     class="p-1 rounded bg-slate-200 hover:bg-blue-100 text-slate-600"
@@ -426,14 +398,12 @@
                   >
                     <Printer class="w-3.5 h-3.5" />
                   </button>
-
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
 
       <div class="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-6">
         <button
@@ -451,44 +421,45 @@
           v-cursor
           class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center shadow-sm shadow-blue-200 transition-all duration-200 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.99] active:translate-y-0 active:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
         >
-          <Save class="w-4 h-4 mr-2" /> {{ driver ? 'Update Driver File' : 'Save New Driver' }}
+          <Save class="w-4 h-4 mr-2" />
+          {{ props.driver ? 'Update Driver File' : 'Save New Driver' }}
         </button>
       </div>
     </form>
 
     <!-- Sub-Modals for Documents -->
-    <Modal
+    <BaseModal
       :isOpen="!!activeDocument"
       :title="activeDocumentTitle"
       size="max-w-4xl"
       @close="activeDocument = null"
     >
       <div v-if="activeDocument === 'w9'">
-        <FormW9 :data="form" @update:data="updateForm" />
+        <FormW9 :data="form as any" @update:data="updateForm" />
       </div>
       <div v-else-if="activeDocument === 'i9'">
-        <FormI9 :data="form" @update:data="updateForm" />
+        <FormI9 :data="form as any" @update:data="updateForm" />
       </div>
       <div v-else-if="activeDocument === 'roadtest'">
         <!-- Using the original certificate component structure but passing flat form data -->
         <!-- Note: The original certificate expects nested objects, but we flattened the form. -->
         <RoadTestCertificate :driver="formattedForCertificate" />
       </div>
-    </Modal>
-  </Modal>
+    </BaseModal>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { dataService } from '@/services/dataService'
 import type { Driver } from '@/types'
-import Alert from '@/Components/ui/Alert.vue'
-import Modal from '@/Components/ui/Modal.vue'
+import BaseAlert from '@/Components/ui/BaseAlert.vue'
+import BaseModal from '@/Components/ui/BaseModal.vue'
 import FormW9 from '@/Components/ui/FormW9.vue'
 import FormI9 from '@/Components/ui/FormI9.vue'
 import RoadTestCertificate from '@/Components/templates/RoadTestCertificate.vue'
-import InputGroup from '@/Components/ui/inputgroup.vue'
-import FileInput from '@/Components/ui/fileinput.vue'
+import InputGroup from '@/Components/ui/InputGroup.vue'
+import FileInput from '@/Components/ui/FileInput.vue'
 import {
   User,
   Users,
@@ -496,7 +467,6 @@ import {
   PenTool,
   CheckCircle,
   BadgeDollarSign,
-  UploadCloud,
   ShieldAlert,
   CreditCard,
   Stethoscope,
@@ -509,15 +479,15 @@ import {
   Save,
 } from 'lucide-vue-next'
 
-const props = defineProps<{ driver?: any }>()
+const props = defineProps<{ driver?: Driver }>()
 const emit = defineEmits<{ close: []; saved: [] }>()
 
 const isSaving = ref(false)
 const errorMsg = ref('')
 const activeDocument = ref<string | null>(null)
 
-// form states
-const form = ref<any>({
+// form states - internal flattened structure
+const form = ref({
   firstName: '',
   middleName: '',
   lastName: '',
@@ -525,73 +495,61 @@ const form = ref<any>({
   email: '',
   phone: '',
   ssn: '',
-  ssnDoc: '',
-
-  // Banking
-  bankName: '',
-  routingNumber: '',
-  accountNumber: '',
-
-  // Employment
+  address: '',
+  city: '',
+  state: '',
+  zip: '',
+  hireStatus: 'Active',
   hireDate: '',
   termDate: '',
   rehireDate: '',
-  status: 'Active',
-
-  // Emergency
   emergencyName: '',
   emergencyPhone: '',
-  emergencyRel: '',
-
-  // Compliance
+  emergencyRelationship: '',
   cdlNumber: '',
   cdlState: '',
   cdlExp: '',
-  cdlDoc: '',
-  mvrDate: '',
-  mvrDoc: '',
   medRegistry: '',
   medExp: '',
-  medDoc: '',
+  mvrDate: '',
   lastDrugTest: '',
-  drugDoc: '',
-
-  // Road Test
   roadTestDate: '',
   roadTestExaminer: '',
-  roadTestDoc: '',
-
-  // W9
-  w9Address: '',
-  w9CityStateZip: '',
+  bankName: '',
+  routingNumber: '',
+  accountNumber: '',
   w9Signed: false,
-  w9Signature: '',
-  w9Date: '',
   businessName: '',
   taxClassification: 'individual',
-
-  // I9 (Add fields as needed based on FormI9.vue)
   i9EmployerSignature: '',
+  ssnDocName: '',
+  ssnDocFile: null as File | null,
+  ssnDocPreviewUrl: '',
 })
 
 onMounted(() => {
   if (props.driver) {
-    // Merge existing driver data into form
-    // We might need to map nested fields from the old structure if the DB has them nested
-    // For now, assuming direct mapping or flat structure in DB
-    form.value = { ...form.value, ...props.driver }
-
-    // Legacy mapping if needed (e.g. if driver has nested cdl object)
-    if (props.driver.cdl) {
-      form.value.cdlNumber = props.driver.cdl.value
-      form.value.cdlState = props.driver.cdl.state
-      form.value.cdlExp = props.driver.cdl.expiryDate
+    // Map nested to flat
+    form.value = {
+      ...form.value,
+      ...props.driver,
+      birthDate: props.driver.dob || '',
+      cdlNumber: props.driver.cdl?.documentNumber || '',
+      cdlState: props.driver.cdl?.state || '',
+      cdlExp: props.driver.cdl?.expiryDate || '',
+      medRegistry: props.driver.medical?.registry || '',
+      medExp: props.driver.medical?.expiryDate || '',
+      mvrDate: props.driver.mvr?.expiryDate || '',
+      lastDrugTest: props.driver.drugAlcohol?.expiryDate || '',
+      roadTestDate: props.driver.roadTest?.date || '',
+      roadTestExaminer: props.driver.roadTest?.examiner || '',
+      emergencyName: props.driver.emergencyContact?.name || '',
+      emergencyPhone: props.driver.emergencyContact?.phone || '',
+      emergencyRelationship: props.driver.emergencyContact?.relationship || '',
     }
-    // Add similar mappings for other nested objects if the DB schema is mixed
   }
 })
 
-// Computed for modal title
 const activeDocumentTitle = computed(() => {
   if (activeDocument.value === 'w9') return 'Form W-9 (Request for Taxpayer ID)'
   if (activeDocument.value === 'i9') return 'Form I-9 (Employment Eligibility)'
@@ -599,61 +557,42 @@ const activeDocumentTitle = computed(() => {
   return ''
 })
 
-// Helper to update form from sub-components
-function updateForm(newData: any) {
+function updateForm(newData: Partial<typeof form.value>) {
   form.value = { ...form.value, ...newData }
 }
 
-// Helper to format flat data back to nested structure for RoadTestCertificate
 const formattedForCertificate = computed(() => {
   return {
-    firstName: form.value.firstName,
-    lastName: form.value.lastName,
+    ...form.value,
     roadTest: {
       examiner: form.value.roadTestExaminer,
       date: form.value.roadTestDate,
-      expiryDate: '', // logic for expiry?
+      expiryDate: '',
     },
     cdl: {
-      value: form.value.cdlNumber,
+      documentNumber: form.value.cdlNumber,
       state: form.value.cdlState,
     },
-    ...form.value,
-  }
+  } as any
 })
 
-// Helper to handle file selection for FileInput components
-function handleFileChange(fieldName: string, event: Event) {
+function handleFileChange(fieldName: 'ssnDoc', event: Event) {
   const target = event.target as HTMLInputElement
   if (target.files && target.files[0]) {
     const file = target.files[0]
-    // In a real app, you would upload the file here and get a URL
-    // For now, we'll simulate it by storing the file name
     if (fieldName === 'ssnDoc') {
-      const previousUrl = form.value.ssnDoc
-      if (previousUrl) {
-        try {
-          URL.revokeObjectURL(previousUrl as string)
-        } catch (e) {
-          // Ignore errors in case the stored value is not an object URL
-        }
-      }
-      form.value.ssnDoc = URL.createObjectURL(file) // Simulating a URL
-      form.value.ssnDocName = file.name // Store name for display
+      form.value.ssnDocPreviewUrl = URL.createObjectURL(file)
+      form.value.ssnDocName = file.name
+      form.value.ssnDocFile = file
     }
-    // Add logic for other file fields if needed
   }
 }
-
-// Validation logic handled in save()
-
 
 async function save() {
   try {
     errorMsg.value = ''
     let errorFieldId = ''
 
-    // Validation
     if (!form.value.firstName?.trim()) {
       errorMsg.value = 'First Name is required.'
       errorFieldId = 'firstNameInput'
@@ -668,14 +607,10 @@ async function save() {
       errorFieldId = 'phoneInput'
     } else if (!form.value.hireDate) {
       errorMsg.value = 'Hire Date is required.'
-      errorFieldId = 'hireDateInput' // Need to add this ID to template if missing
-    } else if (form.value.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) {
-      errorMsg.value = 'Please enter a valid email address.'
-      errorFieldId = 'emailInput'
+      errorFieldId = 'hireDateInput'
     }
 
     if (errorMsg.value) {
-      // Scroll to error field
       if (errorFieldId) {
         const element = document.getElementById(errorFieldId)
         if (element) {
@@ -688,34 +623,55 @@ async function save() {
 
     isSaving.value = true
 
-    // Prepare data to save - handling legacy nested structure vs flat structure
-    // We'll save flat structure as primary, but maybe keep some nested for backward compatibility if other views depend on it
-    // For this refactor, we'll try to save both or transition to flat.
-    // Let's constructing the nested objects that other views might expect:
-    const dataToSave = {
-      ...form.value,
-      // Re-construct nested objects for compatibility with DefaultTable and other views
+    // nested structure required by the API/Type
+    const dataToSave: Driver = {
+      ...(form.value as any),
+      dob: form.value.birthDate,
       cdl: {
-        value: form.value.cdlNumber,
+        documentNumber: form.value.cdlNumber,
         state: form.value.cdlState,
         expiryDate: form.value.cdlExp,
       },
-      medical: { registry: form.value.medRegistry, expiryDate: form.value.medExp },
-      mvr: { expiryDate: form.value.mvrDate },
-      drugAlcohol: { expiryDate: form.value.lastDrugTest }, // Mapped for clearinghouse
-      roadTest: { examiner: form.value.roadTestExaminer, date: form.value.roadTestDate },
-      updatedAt: new Date().toISOString(),
+      medical: {
+        documentNumber: '',
+        registry: form.value.medRegistry,
+        expiryDate: form.value.medExp,
+      },
+      mvr: {
+        documentNumber: '',
+        expiryDate: form.value.mvrDate,
+      },
+      drugAlcohol: {
+        documentNumber: '',
+        expiryDate: form.value.lastDrugTest,
+      },
+      roadTest: {
+        documentNumber: '',
+        examiner: form.value.roadTestExaminer,
+        date: form.value.roadTestDate,
+      },
+      emergencyContact: {
+        name: form.value.emergencyName,
+        phone: form.value.emergencyPhone,
+        relationship: form.value.emergencyRelationship,
+      },
     }
 
+    // Remove internal UI-only fields before saving
+    const finalData = { ...dataToSave } as any
+    delete finalData.ssnDocFile
+    delete finalData.ssnDocPreviewUrl
+
     if (props.driver?.id) {
-      await dataService.updateDriver({ id: props.driver.id, ...dataToSave })
+      await dataService.updateDriver({ ...finalData, id: props.driver.id })
     } else {
-      await dataService.addDriver({ ...dataToSave, createdAt: new Date().toISOString() })
+      await dataService.addDriver({ ...finalData } as any)
     }
     emit('saved')
     emit('close')
-  } catch (err: any) {
-    errorMsg.value = err.message || 'Error saving driver'
+  } catch (err) {
+    const error = err as Error
+    errorMsg.value = error.message || 'Error saving driver'
     console.error('Save error:', err)
   } finally {
     isSaving.value = false

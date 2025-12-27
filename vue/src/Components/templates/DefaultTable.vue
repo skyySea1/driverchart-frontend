@@ -10,7 +10,13 @@
               :key="col.key"
               :class="[
                 'p-4 whitespace-nowrap',
-                col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : col.align === 'left' ? 'text-left' : ''  ,
+                col.align === 'center'
+                  ? 'text-center'
+                  : col.align === 'right'
+                    ? 'text-right'
+                    : col.align === 'left'
+                      ? 'text-left'
+                      : '',
               ]"
             >
               {{ col.label }}
@@ -19,17 +25,17 @@
         </thead>
         <tbody class="divide-y divide-slate-100">
           <!-- Skeleton State -->
-          <template v-if="loading">
+          <template v-if="props.loading">
             <tr v-for="i in 5" :key="i">
-              <td
-                v-for="col in columns"
-                :key="col.key"
-                class="p-4"
-              >
-                <div 
+              <td v-for="col in props.columns" :key="col.key" class="p-4">
+                <div
                   :class="[
                     'h-4 skeleton rounded',
-                    col.align === 'center' ? 'mx-auto w-12' : col.align === 'right' ? 'ml-auto w-16' : 'w-24'
+                    col.align === 'center'
+                      ? 'mx-auto w-12'
+                      : col.align === 'right'
+                        ? 'ml-auto w-16'
+                        : 'w-24',
                   ]"
                 ></div>
               </td>
@@ -38,16 +44,20 @@
 
           <template v-else>
             <tr
-              v-for="(item, index) in items"
+              v-for="(item, index) in props.items"
               :key="item.id || index"
               class="hover:bg-slate-50 transition-colors"
             >
               <td
-                v-for="col in columns"
+                v-for="col in props.columns"
                 :key="col.key"
                 :class="[
                   'p-4 whitespace-nowrap',
-                  col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : '',
+                  col.align === 'center'
+                    ? 'text-center'
+                    : col.align === 'right'
+                      ? 'text-right'
+                      : '',
                 ]"
               >
                 <slot :name="`cell(${col.key})`" :item="item" :value="item[col.key]">
@@ -56,8 +66,8 @@
               </td>
             </tr>
 
-            <tr v-if="items.length === 0">
-              <td :colspan="columns.length" class="p-8 text-center text-slate-500">
+            <tr v-if="props.items.length === 0">
+              <td :colspan="props.columns.length" class="p-8 text-center text-slate-500">
                 <slot name="empty">No records found.</slot>
               </td>
             </tr>
@@ -69,9 +79,12 @@
 </template>
 
 <script setup lang="ts">
+import type { Column } from '@/types'
+
 const props = defineProps<{
- readonly columns: any[]
- readonly items: any[]
- readonly loading?: boolean
+  readonly columns: Column[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly items: any[]
+  readonly loading?: boolean
 }>()
 </script>

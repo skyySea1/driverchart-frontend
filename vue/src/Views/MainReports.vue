@@ -5,9 +5,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Expiration Forecast -->
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-        <h3 class="text-lg font-bold mb-4 text-slate-700">
-          90-Day Expiration Forecast
-        </h3>
+        <h3 class="text-lg font-bold mb-4 text-slate-700">90-Day Expiration Forecast</h3>
 
         <div class="overflow-y-auto max-h-64">
           <table class="w-full text-sm">
@@ -19,16 +17,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(item, i) in expiringSoon"
-                :key="i"
-                class="border-b border-slate-50"
-              >
+              <tr v-for="(item, i) in expiringSoon" :key="i" class="border-b border-slate-50">
                 <td class="py-2">{{ item.driver }}</td>
                 <td class="py-2">
-                  <span
-                    class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-xs"
-                  >
+                  <span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-xs">
                     {{ item.type }}
                   </span>
                 </td>
@@ -41,14 +33,10 @@
 
       <!-- Missing Documentation -->
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-        <h3 class="text-lg font-bold mb-4 text-red-700">
-          Missing Documentation Audit
-        </h3>
+        <h3 class="text-lg font-bold mb-4 text-red-700">Missing Documentation Audit</h3>
 
         <div class="overflow-y-auto max-h-64">
-          <p v-if="missingDocs.length === 0" class="text-green-600">
-            All clean!
-          </p>
+          <p v-if="missingDocs.length === 0" class="text-green-600">All clean!</p>
 
           <ul v-else class="space-y-2">
             <li
@@ -56,27 +44,14 @@
               :key="d.id"
               class="flex justify-between items-center p-2 bg-red-50 rounded"
             >
-              <span class="font-medium text-slate-700">
-                {{ d.firstName }} {{ d.lastName }}
-              </span>
+              <span class="font-medium text-slate-700"> {{ d.firstName }} {{ d.lastName }} </span>
 
               <div class="flex gap-1">
-                <span
-                  v-if="!d.cdl.file"
-                  class="text-[10px] bg-red-200 px-1 rounded"
-                >
-                  CDL
-                </span>
-                <span
-                  v-if="!d.medical.file"
-                  class="text-[10px] bg-red-200 px-1 rounded"
-                >
+                <span v-if="!d.cdl.file" class="text-[10px] bg-red-200 px-1 rounded"> CDL </span>
+                <span v-if="!d.medical.file" class="text-[10px] bg-red-200 px-1 rounded">
                   MED
                 </span>
-                <span
-                  v-if="!d.roadTest.file"
-                  class="text-[10px] bg-red-200 px-1 rounded"
-                >
+                <span v-if="!d.roadTest.file" class="text-[10px] bg-red-200 px-1 rounded">
                   ROAD
                 </span>
               </div>
@@ -104,10 +79,8 @@
           </thead>
 
           <tbody class="divide-y">
-            <tr v-for="d in drivers" :key="d.id">
-              <td class="p-3 text-left font-medium">
-                {{ d.lastName }}, {{ d.firstName }}
-              </td>
+            <tr v-for="d in props.drivers" :key="d.id">
+              <td class="p-3 text-left font-medium">{{ d.lastName }}, {{ d.firstName }}</td>
 
               <td class="p-3">
                 <StatusDot :ok="!!d.cdl.expiryDate" />
@@ -119,10 +92,7 @@
                 <StatusDot :ok="!!d.mvr.expiryDate" />
               </td>
               <td class="p-3">
-                <StatusDot
-                  :ok="!!d.drugAlcohol.expiryDate"
-                  neutral
-                />
+                <StatusDot :ok="!!d.drugAlcohol.expiryDate" neutral />
               </td>
               <td class="p-3">
                 <StatusDot :ok="!!d.roadTest.date" />
@@ -137,39 +107,23 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-
-interface Driver {
-  id: string
-  firstName: string
-  lastName: string
-  cdl: { expiryDate?: string; file?: string }
-  medical: { expiryDate?: string; file?: string }
-  mvr: { expiryDate?: string; file?: string }
-  drugAlcohol: { expiryDate?: string }
-  roadTest: { date?: string; file?: string }
-}
-
-interface Vehicle {
-  id: string
-  [key: string]: any
-}
+import type { Driver, Vehicle } from '@/types'
+import dayjs from 'dayjs'
 
 const props = defineProps<{
   drivers: Driver[]
   vehicles?: Vehicle[]
 }>()
 
-
 const expiringSoon = computed(() => {
-  const items: any[] = []
+  const items: { driver: string; type: string; date: string }[] = []
 
-  const now = Date.now()
-  const days = 1000 * 3600 * 24
+  const now = dayjs()
 
   for (const d of props.drivers) {
     const check = (date: string | undefined, type: string) => {
       if (!date) return
-      const diff = (new Date(date).getTime() - now) / days
+      const diff = dayjs(date).diff(now, 'day')
       if (diff > 0 && diff < 90) {
         items.push({
           driver: `${d.firstName} ${d.lastName}`,
@@ -187,19 +141,14 @@ const expiringSoon = computed(() => {
 })
 
 const missingDocs = computed(() =>
-  props.drivers.filter(
-    d =>
-      !d.cdl.file ||
-      !d.medical.file ||
-      !d.mvr.file ||
-      !d.roadTest.file,
-  ),
+  props.drivers.filter((d) => !d.cdl.file || !d.medical.file || !d.mvr.file || !d.roadTest.file),
 )
 </script>
 
 <!-- Componente pequeno e reutilizável -->
 <script lang="ts">
-export const StatusDot = {
+import { defineComponent } from 'vue'
+export const StatusDot = defineComponent({
   props: {
     ok: Boolean,
     neutral: Boolean,
@@ -214,5 +163,6 @@ export const StatusDot = {
       "
     ></div>
   `,
-}
+})
+export default {}
 </script>

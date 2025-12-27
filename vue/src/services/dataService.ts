@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { mockDrivers } from './mocks/drivers'
 import { mockVehicles } from './mocks/vehicles'
 import { mockAlerts } from './mocks/alerts'
@@ -12,30 +13,38 @@ const logsState = [...mockDocumentLogs]
 
 export const dataService = {
   // --- Drivers ---
-  getDrivers: async (): Promise<any[]> => {
+  getDrivers: async (): Promise<
+    (Driver & {
+      contact: string
+      cdlExp?: string
+      medicalExp?: string
+      mvrDate?: string
+      clearinghouseDate?: string
+    })[]
+  > => {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500))
     // Return flat structure for the view
-    return driversState.map(d => ({
+    return (driversState as any[]).map((d) => ({
       ...d,
+      hireStatus: d.hireStatus || 'Active',
       contact: d.phone,
       cdlExp: d.cdl?.expiryDate,
       medicalExp: d.medical?.expiryDate,
       mvrDate: d.mvr?.expiryDate,
-      clearinghouseDate: d.drugAlcohol?.expiryDate
+      clearinghouseDate: d.drugAlcohol?.expiryDate,
     }))
   },
 
   addDriver: async (driver: Driver): Promise<void> => {
     await new Promise((resolve) => setTimeout(resolve, 500))
-    // todo use more robust uuid generation
-    driver.id = Math.random().toString(36).substr(2, 9) // Generate temp ID
+    driver.id = Math.random().toString(36).substr(2, 9)
     driversState.push(driver)
   },
 
   updateDriver: async (driver: Driver): Promise<void> => {
     await new Promise((resolve) => setTimeout(resolve, 500))
-    const index = driversState.findIndex(d => d.id === driver.id)
+    const index = driversState.findIndex((d) => d.id === driver.id)
     if (index !== -1) {
       driversState[index] = driver
     }
@@ -43,7 +52,7 @@ export const dataService = {
 
   deleteDriver: async (id: string): Promise<void> => {
     await new Promise((resolve) => setTimeout(resolve, 500))
-    driversState = driversState.filter(d => d.id !== id)
+    driversState = driversState.filter((d) => d.id !== id)
   },
 
   // --- Vehicles ---
@@ -60,7 +69,7 @@ export const dataService = {
 
   updateVehicle: async (vehicle: Vehicle): Promise<void> => {
     await new Promise((resolve) => setTimeout(resolve, 500))
-    const index = vehiclesState.findIndex(v => v.id === vehicle.id)
+    const index = vehiclesState.findIndex((v) => v.id === vehicle.id)
     if (index !== -1) {
       vehiclesState[index] = vehicle
     }
@@ -68,7 +77,7 @@ export const dataService = {
 
   deleteVehicle: async (id: string): Promise<void> => {
     await new Promise((resolve) => setTimeout(resolve, 500))
-    vehiclesState = vehiclesState.filter(v => v.id !== id)
+    vehiclesState = vehiclesState.filter((v) => v.id !== id)
   },
 
   // --- Alerts & Logs ---
@@ -89,20 +98,17 @@ export const dataService = {
     const vehicles = vehiclesState
     const alerts = alertsState
 
-    const today = new Date()
-    const thirtyDaysFromNow = new Date()
-    thirtyDaysFromNow.setDate(today.getDate() + 30)
+    const today = dayjs().startOf('day')
 
     const isExpiringSoon = (dateStr?: string) => {
       if (!dateStr) return false
-      const date = new Date(dateStr)
-      return date >= today && date <= thirtyDaysFromNow
+      const diff = dayjs(dateStr).diff(today, 'day')
+      return diff >= 0 && diff <= 30
     }
 
     const isExpired = (dateStr?: string) => {
       if (!dateStr) return false
-      const date = new Date(dateStr)
-      return date < today
+      return dayjs(dateStr).isBefore(today, 'day')
     }
 
     return {
@@ -110,12 +116,13 @@ export const dataService = {
       totalVehicles: vehicles.length,
       alertsCount: alerts.length,
       alerts: alerts,
-      expiringMedCards: drivers.filter(d => isExpiringSoon(d.medical?.expiryDate)).length,
-      expiringLicenses: drivers.filter(d => isExpiringSoon(d.cdl?.expiryDate)).length,
-      expiringClearinghouse: drivers.filter(d => isExpiringSoon(d.drugAlcohol?.expiryDate)).length,
+      expiringMedCards: drivers.filter((d) => isExpiringSoon(d.medical?.expiryDate)).length,
+      expiringLicenses: drivers.filter((d) => isExpiringSoon(d.cdl?.expiryDate)).length,
+      expiringClearinghouse: drivers.filter((d) => isExpiringSoon(d.drugAlcohol?.expiryDate))
+        .length,
       auditScore: '94%',
       newApplications: 3,
-      annualRecordReview: drivers.filter(d => isExpired(d.mvr?.expiryDate)).length
+      annualRecordReview: drivers.filter((d) => isExpired(d.mvr?.expiryDate)).length,
     }
-  }
+  },
 }

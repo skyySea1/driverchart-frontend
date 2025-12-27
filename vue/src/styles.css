@@ -27,7 +27,7 @@
   left: -150%;
   height: 100%;
   width: 150%;
-  background: linear-gradient(90deg, transparent, rgba(200,200,200,0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(200, 200, 200, 0.15), transparent);
   animation: skeleton-shimmer 1.2s infinite;
 }
 @keyframes skeleton-shimmer {
@@ -35,4 +35,3 @@
     left: 100%;
   }
 }
-

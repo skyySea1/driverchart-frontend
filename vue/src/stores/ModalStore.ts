@@ -1,19 +1,19 @@
 // stores/modalStore.ts
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'
 
 export const useModalStore = defineStore('modal', {
   state: () => ({
     activeModal: null as 'vehicle' | 'driver' | null,
-    data: null as unknown | null
+    data: null as unknown | null,
   }),
   actions: {
     openModal(type: 'vehicle' | 'driver', payload: unknown = null) {
-      this.activeModal = type;
-      this.data = payload;
+      this.activeModal = type
+      this.data = payload
     },
     closeModal() {
-      this.activeModal = null;
-      this.data = null;
-    }
-  }
+      this.activeModal = null
+      this.data = null
+    },
+  },
 })

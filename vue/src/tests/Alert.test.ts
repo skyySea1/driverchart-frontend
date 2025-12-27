@@ -9,8 +9,8 @@ describe('Alert', () => {
       props: {
         type: 'error',
         title: 'Erro',
-        message: 'Algo deu errado'
-      }
+        message: 'Algo deu errado',
+      },
     })
     expect(wrapper.text()).toContain('Erro')
     expect(wrapper.text()).toContain('Algo deu errado')
@@ -20,8 +20,8 @@ describe('Alert', () => {
     const wrapper = mount(Alert, {
       props: {
         message: 'Test',
-        closeable: true
-      }
+        closeable: true,
+      },
     })
     await wrapper.find('button').trigger('click')
     expect(wrapper.find('[role="alert"]').exists()).toBe(false)

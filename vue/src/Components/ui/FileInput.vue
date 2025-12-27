@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <label class="block text-xs font-medium text-slate-500 mb-1">{{ label }}</label>
     <div class="flex items-center space-x-2">
       <label

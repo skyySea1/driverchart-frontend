@@ -7,7 +7,7 @@ export const mockDocumentLogs: DocumentLog[] = [
     fileName: 'medical_card_john.pdf',
     type: 'Medical Card',
     entityName: 'John Doe',
-    user: 'henri'
+    user: 'henri',
   },
   {
     id: 'l2',
@@ -15,7 +15,7 @@ export const mockDocumentLogs: DocumentLog[] = [
     fileName: 'annual_inspection_101.pdf',
     type: 'Annual Inspection',
     entityName: 'Bus 101',
-    user: 'admin'
+    user: 'admin',
   },
   {
     id: 'l3',
@@ -23,14 +23,14 @@ export const mockDocumentLogs: DocumentLog[] = [
     fileName: 'mvr_report_alice.pdf',
     type: 'MVR',
     entityName: 'Alice Smith',
-    user: 'henri'
+    user: 'henri',
   },
-  { 
-    id: '1', 
-    date: new Date().toISOString(), 
-    fileName: 'cdl_ribeiro.pdf', 
-    type: 'CDL', 
-    entityName: 'Ribeiro, Manoel', 
-    user: 'Admin' 
-  }
+  {
+    id: '1',
+    date: new Date().toISOString(),
+    fileName: 'cdl_ribeiro.pdf',
+    type: 'CDL',
+    entityName: 'Ribeiro, Manoel',
+    user: 'Admin',
+  },
 ]

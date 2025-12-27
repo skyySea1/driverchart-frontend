@@ -27,7 +27,7 @@ withDefaults(
     type: 'text',
     required: false,
     placeholder: '',
-  }
+  },
 )
 
 defineEmits<{
