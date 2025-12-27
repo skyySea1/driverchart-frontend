@@ -19,9 +19,10 @@ export function useAuth() {
       const credential = await signInWithEmailAndPassword(auth, email, password)
       currentUser.value = credential.user
       return credential.user
-    } catch (err: any) {
-      error.value = err.message
-      throw err
+    } catch (e) {
+      const errorObj = e as Error
+      error.value = errorObj.message
+      throw e
     } finally {
       isLoading.value = false
     }
@@ -33,8 +34,9 @@ export function useAuth() {
       currentUser.value = null
       // Clean localStorage
       localStorage.removeItem('isAuthenticated')
-    } catch (err: any) {
-      error.value = err.message
+    } catch (err) {
+      const errorObj = err as Error
+      error.value = errorObj.message
       throw err
     }
   }

@@ -40,21 +40,15 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
-
-interface Column {
-  key: string
-  label: string
-  align?: 'left' | 'right' | 'center'
-}
+import type { Column } from '@/types'
 
 defineProps({
   columns: {
-    type: Array as PropType<Column[]>,
+    type: Array as () => Column[],
     default: () => []
   },
   rows: {
-    type: Array as PropType<any[]>,
+    type: Array as () => Record<string, unknown>[],
     default: () => []
   },
   emptyText: { type: String, default: 'No data' }

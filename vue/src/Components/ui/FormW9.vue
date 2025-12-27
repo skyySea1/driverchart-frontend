@@ -18,7 +18,7 @@
     <div class="space-y-0 border border-black">
       <!-- 1. Name -->
       <div class="p-2 border-b border-black">
-        <label class="text-xs font-bold block">1 Name (as shown on your income tax return). Name is required on this line; do not leave this line blank.</label>
+        <label class="text-xs font-bold block">1. Name (as shown on your income tax return). do not leave this line blank.</label>
         <input
           type="text"
           class="w-full font-mono text-lg uppercase bg-transparent border-none focus:ring-0"
@@ -29,7 +29,7 @@
 
       <!-- 2. Business name -->
       <div class="p-2 border-b border-black">
-        <label class="text-xs font-bold block">2 Business name/disregarded entity name, if different from above</label>
+        <label class="text-xs font-bold block">2. Business name/disregarded entity name, if different from above</label>
         <input
           type="text"
           class="w-full font-mono bg-transparent focus:ring-0 border-b border-dotted border-slate-300"
@@ -42,7 +42,7 @@
       <!-- 3. Tax classification + 4. Exemptions -->
       <div class="p-2 border-b border-black flex">
         <div class="w-2/3 border-r border-black pr-2">
-          <label class="text-xs font-bold block mb-1">3 Check appropriate box for federal tax classification of the person whose name is entered on line 1. Check only one of the following seven boxes.</label>
+          <label class="text-xs font-bold block mb-1">3. Check appropriate box for federal tax classification of the person whose name is entered on line 1. Check only one of the following seven boxes.</label>
           <div class="flex flex-wrap gap-3 text-xs">
             <label class="flex items-center gap-1">
               <input type="radio" name="taxClass" :checked="data.taxClassification === 'individual'" @change="onInput('taxClassification', 'individual')" />
@@ -71,13 +71,13 @@
           </div>
         </div>
         <div class="w-1/3 pl-2">
-          <label class="text-xs font-bold block">4 Exemptions (codes apply only to certain entities, not individuals)</label>
+          <label class="text-xs font-bold block">4. Exemptions (codes apply only to certain entities, not individuals)</label>
         </div>
       </div>
 
       <!-- 5. Address -->
       <div class="p-2 border-b border-black">
-        <label class="text-xs font-bold block">5 Address (number, street, and apt. no.)</label>
+        <label class="text-xs font-bold block">5. Address (number, street, and apt. no.)</label>
         <input
           type="text"
           class="w-full font-mono bg-transparent border-none focus:ring-0"
@@ -90,7 +90,7 @@
       <!-- 6. City/State/ZIP + 7. Account numbers -->
       <div class="flex border-b border-black">
         <div class="w-2/3 p-2 border-r border-black">
-          <label class="text-xs font-bold block">6 City, state, and ZIP code</label>
+          <label class="text-xs font-bold block">6. City, state, and ZIP code</label>
           <input
             type="text"
             class="w-full font-mono bg-transparent border-none focus:ring-0"
@@ -100,7 +100,7 @@
           />
         </div>
         <div class="w-1/3 p-2">
-          <label class="text-xs font-bold block">7 List account number(s) here (optional)</label>
+          <label class="text-xs font-bold block">7. List account number(s) here (optional)</label>
           <input
             type="text"
             class="w-full font-mono bg-transparent border-b border-dotted border-slate-300 focus:ring-0"

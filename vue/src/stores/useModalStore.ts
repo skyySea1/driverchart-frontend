@@ -1,6 +1,6 @@
 // stores/modalStore.ts
 import { defineStore } from 'pinia';
-
+// share status between components
 export const useModalStore = defineStore('modal', {
   state: () => ({
     activeModal: null as 'vehicle' | 'driver' | null,

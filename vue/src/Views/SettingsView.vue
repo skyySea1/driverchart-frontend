@@ -82,10 +82,9 @@
 
           <div class="pt-6 border-t border-slate-100 flex justify-end">
             <BaseButton
-            label='Save Changes'
+              label="Save Changes"
               class="px-6 py-2 text-white rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-200"
             />
-
           </div>
         </div>
       </div>

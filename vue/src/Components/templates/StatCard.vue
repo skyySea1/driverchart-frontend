@@ -24,7 +24,7 @@
       </div>
 
       <div class="min-w-0 flex-1 py-1">
-        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tight leading-tight mb-1">
+        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-tight leading-tight mb-1">
           {{ title }}
         </div>
         <div class="text-xl font-black text-slate-800 leading-none">
@@ -34,17 +34,18 @@
 
       <!-- Auto-configured Badge -->
       <div v-if="config.badgeText" class="absolute bottom-2 right-4">
-        <Badge :variant="config.badgeVariant">
+        <BaseBadge :variant="config.badgeVariant">
           {{ config.badgeText }}
-        </Badge>
+        </BaseBadge>
       </div>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import Badge from '../ui/Badge.vue'
+import { computed, type Component } from 'vue'
+import BaseBadge from '../ui/BaseBadge.vue'
+import type { BadgeVariant } from '@/types'
 import {
   Users,
   ShieldAlert,
@@ -52,10 +53,25 @@ import {
   Bell,
   FileCheck,
   FileText,
-  ClipboardList
+  ClipboardList,
+  Bus,
+  Activity,
+  AlertOctagon
 } from 'lucide-vue-next'
 
-export type CardType = 'inspections' | 'drivers' | 'medical' | 'alerts' | 'audit' | 'applications' | 'reviews'
+// CardType expansion to support multiple views
+export type CardType =
+  | 'inspections'
+  | 'licenses'
+  | 'clearinghouse'
+  | 'drivers'
+  | 'medical'
+  | 'alerts'
+  | 'audit'
+  | 'applications'
+  | 'reviews'
+  | 'fleet'
+  | 'active_fleet'
 
 const props = defineProps<{
   type: CardType
@@ -64,14 +80,38 @@ const props = defineProps<{
   loading?: boolean
 }>()
 
+interface StatConfig {
+  icon: Component
+  bgClass: string
+  iconClass: string
+  badgeText: string | null
+  badgeVariant: BadgeVariant
+}
+
+// Internal mapping configuration
 const config = computed(() => {
-  const mappings: Record<CardType, any> = {
+  const mappings: Record<CardType, StatConfig> = {
+    // --- DASHBOARD ORIGINAL TYPES (Do not change icons/colors) ---
     inspections: {
       icon: ShieldAlert,
       bgClass: 'bg-rose-50',
       iconClass: 'text-rose-600',
       badgeText: 'Within 30d',
       badgeVariant: 'destructive'
+    },
+    licenses: {
+      icon: AlertOctagon,
+      bgClass: 'bg-red-50',
+      iconClass: 'text-red-600',
+      badgeText: 'Within 30d',
+      badgeVariant: 'destructive'
+    },
+    clearinghouse: {
+      icon: ShieldAlert,
+      bgClass: 'bg-green-50',
+      iconClass: 'text-green-600',
+      badgeText: 'Within 30d',
+      badgeVariant: 'green'
     },
     drivers: {
       icon: Users,
@@ -114,9 +154,24 @@ const config = computed(() => {
       iconClass: 'text-blue-600',
       badgeText: 'Annual',
       badgeVariant: 'outline'
+    },
+    // --- NEW TYPES FOR REPORTS AND OTHER VIEWS ---
+    fleet: {
+      icon: Bus,
+      bgClass: 'bg-slate-100',
+      iconClass: 'text-slate-600',
+      badgeText: 'Registered',
+      badgeVariant: 'secondary'
+    },
+    active_fleet: {
+      icon: Activity,
+      bgClass: 'bg-cyan-50',
+      iconClass: 'text-cyan-600',
+      badgeText: 'On Road',
+      badgeVariant: 'success'
     }
   }
 
-  return mappings[props.type]
+  return mappings[props.type] || mappings['drivers']
 })
 </script>

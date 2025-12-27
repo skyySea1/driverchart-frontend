@@ -26,7 +26,7 @@
                 :key="col.key"
                 class="p-4"
               >
-                <div 
+                <div
                   :class="[
                     'h-4 skeleton rounded',
                     col.align === 'center' ? 'mx-auto w-12' : col.align === 'right' ? 'ml-auto w-16' : 'w-24'
@@ -69,9 +69,12 @@
 </template>
 
 <script setup lang="ts">
+import type { Column } from '@/types'
+
 const props = defineProps<{
- readonly columns: any[]
- readonly items: any[]
- readonly loading?: boolean
+  readonly columns: Column[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly items: any[]
+  readonly loading?: boolean
 }>()
 </script>

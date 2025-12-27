@@ -151,7 +151,6 @@ interface Driver {
 
 interface Vehicle {
   id: string
-  [key: string]: any
 }
 
 const props = defineProps<{
@@ -161,7 +160,7 @@ const props = defineProps<{
 
 
 const expiringSoon = computed(() => {
-  const items: any[] = []
+  const items: { driver: string; type: string; date: string }[] = []
 
   const now = Date.now()
   const days = 1000 * 3600 * 24

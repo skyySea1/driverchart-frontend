@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { mockDrivers } from './mocks/drivers'
 import { mockVehicles } from './mocks/vehicles'
 import { mockAlerts } from './mocks/alerts'
@@ -12,12 +13,19 @@ const logsState = [...mockDocumentLogs]
 
 export const dataService = {
   // --- Drivers ---
-  getDrivers: async (): Promise<any[]> => {
+  getDrivers: async (): Promise<(Driver & {
+    contact: string;
+    cdlExp?: string;
+    medicalExp?: string;
+    mvrDate?: string;
+    clearinghouseDate?: string;
+  })[]> => {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500))
     // Return flat structure for the view
     return driversState.map(d => ({
       ...d,
+      hireStatus: d.hireStatus || 'Active', // Ensure hireStatus is present
       contact: d.phone,
       cdlExp: d.cdl?.expiryDate,
       medicalExp: d.medical?.expiryDate,
@@ -89,20 +97,17 @@ export const dataService = {
     const vehicles = vehiclesState
     const alerts = alertsState
 
-    const today = new Date()
-    const thirtyDaysFromNow = new Date()
-    thirtyDaysFromNow.setDate(today.getDate() + 30)
+    const today = dayjs().startOf('day')
 
     const isExpiringSoon = (dateStr?: string) => {
       if (!dateStr) return false
-      const date = new Date(dateStr)
-      return date >= today && date <= thirtyDaysFromNow
+      const diff = dayjs(dateStr).diff(today, 'day')
+      return diff >= 0 && diff <= 30
     }
 
     const isExpired = (dateStr?: string) => {
       if (!dateStr) return false
-      const date = new Date(dateStr)
-      return date < today
+      return dayjs(dateStr).isBefore(today, 'day')
     }
 
     return {

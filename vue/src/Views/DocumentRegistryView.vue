@@ -1,3 +1,4 @@
+<!--  src/Views/DocumentRegistryView.vue -->
 <template>
   <!-- Document Registry Card -->
   <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden print:hidden">
@@ -110,8 +111,8 @@ async function fetchLogs() {
   loading.value = true
   try {
     entries.value = await dataService.getDocumentLogs()
-  } catch (e) {
-    console.error("Error fetching logs:", e)
+  } catch (err) {
+    console.error("Error fetching logs:", err)
   } finally {
     loading.value = false
   }
@@ -135,11 +136,9 @@ function formatDate(value: unknown): string {
   if (typeof value === 'string') {
     return value.slice(0, 10)
   }
-  try {
-    const d = new Date(value as any)
-    return isNaN(d.getTime()) ? '-' : d.toISOString().slice(0, 10)
-  } catch {
-    return '-'
+  if (value instanceof Date) {
+    return value.toISOString().slice(0, 10)
   }
+  return '-'
 }
 </script>

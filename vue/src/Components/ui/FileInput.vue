@@ -1,6 +1,6 @@
 <template>
   <div >
-    <label class="block text-xs font-medium text-slate-500 mb-1">{{ label }}</label>
+    <label class="block text-xs font-medium text-slate-500 mb-2">{{ label }}</label>
     <div class="flex items-center space-x-2">
       <label
         class="cursor-pointer flex items-center justify-center px-4 py-2 border border-slate-300 rounded-md shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 w-full transition-colors group"
@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { Upload, CheckCircle } from 'lucide-vue-next'
 
-const props = defineProps<{
+defineProps<{
   label: string
   fileName?: string
 }>()

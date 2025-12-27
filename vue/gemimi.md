@@ -2,7 +2,12 @@
 
 ## Introduction
 
-A Single Page Application (SPA) for Charter Bus companies to manage documentation and compliance with US DOT (Department of Transportation) and FMCSA regulations. The system provides comprehensive driver qualification file management, fleet maintenance tracking, document registry, and compliance reporting capabilities.
+- for this project you need always fallow the DRY, KISS principle and the Single Source of truth also single responsability.
+- **Props Standardization**: Always define props using a constant (e.g., `const props = defineProps(...)`) and access them in the template using the `props.` prefix (e.g., `props.myValue`) to ensure clarity and avoid ambiguity.
+- **Naming**: Use multi-word names for Vue components.
+- **Types**: Centralize shared interfaces in `src/types.ts` and avoid `any`.
+- **Safety**: Never use `rm` commands.
+
 
 ## Glossary
 
@@ -112,7 +117,7 @@ A Single Page Application (SPA) for Charter Bus companies to manage documentatio
 #### Acceptance Criteria
 
 1. THE Charter_Bus_System SHALL provide a Compliance Matrix showing all regulatory requirements status by driver
-2. THE Charter_Bus_System SHALL generate an Expiration Forecast for items expiring within 90 days
+2. THE Charter_Bus_System SHALL generate an Expiration Forecast for items expiring within 30 days
 3. THE Charter_Bus_System SHALL create a Missing Documentation Audit for active drivers/vehicles without required files
 4. THE Charter_Bus_System SHALL provide a Fleet Readiness report summarizing vehicle inspection status
 5. THE Charter_Bus_System SHALL update all reports in real-time as data changes
@@ -128,15 +133,3 @@ A Single Page Application (SPA) for Charter Bus companies to manage documentatio
 3. THE Charter_Bus_System SHALL store data in structured Firestore collections: drivers, vehicles, and document_logs
 4. THE Charter_Bus_System SHALL use onSnapshot for real-time data updates
 5. THE Charter_Bus_System SHALL simulate file uploads by storing filename strings in the database
-
-### Requirement 10
-
-**User Story:** As a fleet manager, I want AI-powered compliance assistance, so that I can get instant guidance on regulatory requirements and risk assessment.
-
-#### Acceptance Criteria
-
-1. THE Charter_Bus_System SHALL provide a DOT Regulation Assistant widget that answers regulatory questions
-2. WHEN a user asks about FMCSA regulations, THE Charter_Bus_System SHALL provide accurate responses based on current DOT standards
-3. THE Charter_Bus_System SHALL include an AI Risk Audit feature for individual drivers
-4. WHEN the AI audit is triggered, THE Charter_Bus_System SHALL analyze driver data and generate risk reports with actionable recommendations
-5. THE Charter_Bus_System SHALL present AI insights in an easily understandable format for management decisions

@@ -5,15 +5,18 @@
     <div v-if="!sidebarCollapsed" class="fixed inset-0 bg-black/50 z-30 md:hidden" @click="sidebarCollapsed = true"
       v-cursor></div>
 
-    <Sidebar :collapsed="sidebarCollapsed" :currentRoute="$route.name?.toString()" @navigate="handleNavigate" />
+    <AppSidebar :collapsed="sidebarCollapsed" :currentRoute="$route.name?.toString()" @navigate="handleNavigate" />
 
     <!-- Main Content Area -->
     <div :class="[
       'h-screen flex-1 transition-all duration-300 ease-in-out',
       sidebarCollapsed ? 'md:ml-20' : 'md:ml-64',
     ]">
+      <!-- access route title and subtitle by route meta -->
       <div class="p-4 md:p-8">
-        <Header :title="($route.meta.title as string) || 'Safety Dashboard'" :subtitle="$route.meta.subtitle as string"
+        <AppHeader :title="($route.meta.title as string) || 'Safety Dashboard'"
+          :subtitle="$route.meta.subtitle as string"
+          @vue:mounted="console.log(` actual route : ${$route.name?.toString()}`)"
           @open-mobile="sidebarCollapsed = !sidebarCollapsed" />
 
         <main class="mt-4">
@@ -25,7 +28,7 @@
     </div>
 
     <!-- Desktop Collapse Toggle Button -->
-    <button v-cursor @click="toggleSidebar" :class="[
+    <button v-cursor @contextmenu.prevent="toggleSidebar" @keydown.tab="toggleSidebar" @click="toggleSidebar" :class="[
       'hidden btn-up-hover-effect md:flex fixed top-1/2 z-40 bg-slate-800 shadow-md border border-indigo-600 rounded-full p-1.5 items-center justify-center text-white hover:text-indigo-600 hover:border-indigo-600 transition-all duration-300 ease-in-out',
       sidebarCollapsed ? 'left-10' : 'left-60',
     ]" title="Toggle Sidebar">
@@ -35,19 +38,14 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue'
-  import { useRouter, useRoute } from 'vue-router'
+  import { ref, onMounted } from 'vue'
+  import { useRouter } from 'vue-router'
   import { ChevronLeft } from 'lucide-vue-next'
-  import Sidebar from './Sidebar.vue'
-  import Header from './Header.vue'
+  import AppSidebar from './AppSidebar.vue'
+  import AppHeader from './AppHeader.vue'
   import { MOBILE_BREAKPOINT } from '@/utils/constants'
 
   const router = useRouter()
-  const currentRoute = useRoute()
-
-  // Router metadata for header
-  const hTitle = computed<string>(() => (currentRoute.meta.title as string) || '')
-  const hSubtitle = computed<string | undefined>(() => (currentRoute.meta.subtitle as string) || '')
 
   // Sidebar state: closed on mobile (< 768px)
   const sidebarCollapsed = ref(window.innerWidth < MOBILE_BREAKPOINT)

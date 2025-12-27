@@ -13,8 +13,8 @@
     </div>
 
     <!-- User Info -->
-    <div v-show="showInfo" class=" flex-1 min-w-0 transition-opacity duration-200">
-      <div class=" text-sm font-medium text-white truncate">
+    <div v-show="showInfo" class="flex-1 min-w-0 transition-opacity duration-200">
+      <div class="text-sm font-medium text-white truncate">
         {{ userName }}
       </div>
       <div class="text-xs text-slate-400 truncate">
@@ -49,6 +49,7 @@ interface Props {
     email?: string
     photoURL?: string
     gender?: 'male' | 'female'
+    role?: string
   } | null
 }
 
@@ -77,7 +78,6 @@ const userName = computed(() => {
 })
 
 const userRole = computed(() => {
-  // @ts-ignore - temporary mock data
   return currentUser.value.role || 'User'
 })
 

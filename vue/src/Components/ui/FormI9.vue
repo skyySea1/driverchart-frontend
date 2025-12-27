@@ -101,7 +101,7 @@
             <label class="block text-xs font-bold mb-1">Today's Date</label>
             <input
               type="date"
-              class="w-full border-b-2 border-black bg-transparent font-mono"
+              class="w-full border-b-2 border-black font-mono"
               :value="data.i9Date || ''"
               @input="onInput('i9Date', ($event.target as HTMLInputElement).value)"
             />
@@ -129,12 +129,17 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { Driver } from '@/types'
 
-const props = defineProps<{ data: any }>()
-const emit = defineEmits<{ 'update:data': [any] }>()
+const props = defineProps<{ data: Partial<Driver> & Record<string, unknown> }>()
+const emit = defineEmits<{ 'update:data': [Record<string, unknown>] }>()
 
 const fullName = computed(() => {
-  const parts = [props.data.firstName, props.data.middleName, props.data.lastName]
+  const parts = [
+    props.data.firstName as string | undefined,
+    props.data.middleName as string | undefined,
+    props.data.lastName as string | undefined
+  ]
   return parts.filter(Boolean).join(' ')
 })
 

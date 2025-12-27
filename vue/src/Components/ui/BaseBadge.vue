@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' | 'purple'
+import type { BadgeVariant } from '@/types'
 
 defineProps<{
   variant?: BadgeVariant
@@ -22,6 +22,7 @@ const variantClasses: Record<BadgeVariant, string> = {
   success: 'border-transparent bg-emerald-500 text-slate-50 shadow hover:bg-emerald-500/80',
   warning: 'border-transparent bg-amber-500 text-slate-50 shadow hover:bg-amber-500/80',
   purple: 'border-transparent bg-purple-500 text-slate-50 shadow hover:bg-purple-500/80',
-  outline: 'text-slate-950 border-slate-200'
+  outline: 'text-slate-950 border-slate-200',
+  green: 'border-transparent bg-green-500 text-slate-50 shadow hover:bg-green-500/80'
 }
 </script>

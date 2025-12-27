@@ -9,21 +9,21 @@
     <!-- Logo Section -->
     <div
       v-cursor
-      class="sidebar__header p-6 flex items-center gap-3 border-b border-slate-800 cursor-pointer"
+      class="sidebarheader p-6 flex items-center gap-3 border-b border-slate-800 cursor-pointer"
       @click="$emit('navigate', 'dashboard')"
     >
-      <div class="sidebar__logo w-10 h-10 rounded flex items-center justify-center shadow-lg">
-        <Truck class="sidebar__logo-icon w-8 h-8 text-blue-400 pointer-events-none" />
+      <div class="sidebarlogo w-10 h-10 rounded flex items-center justify-center shadow-lg">
+        <Truck class="sidebarlogo-icon w-8 h-8 text-blue-400 pointer-events-none" />
       </div>
 
-      <div v-show="!collapsed || collapsedMobile" class="sidebar__brand transition-opacity">
-        <div class="sidebar__brand-name font-bold leading-tight">CharterSafe</div>
-        <div class="sidebar__brand-tagline text-xs text-slate-400">DOT Compliance System</div>
+      <div v-show="!collapsed || collapsedMobile" class="sidebarbrand transition-opacity">
+        <div class="sidebarbrand-name font-bold leading-tight">CharterSafe</div>
+        <div class="sidebarbrand-tagline text-xs text-slate-400">DOT Compliance System</div>
       </div>
     </div>
 
     <!-- Navigation -->
-    <nav class=" p-4 space-y-2 mt-2 flex-1">
+    <nav class="p-4 space-y-2 mt-2 flex-1">
       <button
         v-cursor
         v-for="item in visibleNavItems"
@@ -49,8 +49,8 @@
     </nav>
 
     <!-- User Section (Footer) -->
-    <footer class="sidebar__footer p-4 border-t border-slate-800">
-      <UserBadge :show-info="!collapsed || collapsedMobile" @click="handleLogout" />
+    <footer class="sidebarfooter p-4 border-t border-slate-800">
+      <UserBadge :show-info="!collapsed || collapsedMobile" @logout="handleLogout" />
       <div v-show="!collapsed || collapsedMobile" class="text-xs text-slate-500 text-center mt-3">
         &copy; 2025 CharterSafe
       </div>
@@ -62,32 +62,36 @@
 import { computed } from 'vue'
 import UserBadge from '../ui/UserBadge.vue'
 import { LayoutDashboard, Code, Users, Truck, FileText, PieChart, Settings } from 'lucide-vue-next'
-import { useNav } from '@/Composables/useNav'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const props = defineProps({
   collapsed: Boolean,
   currentRoute: String,
 })
 
-const emit = defineEmits(['navigate', 'logout'])
+defineEmits(['navigate', 'logout'])
 
 // Helper to detect if we are effectively collapsed on mobile
 const collapsedMobile = computed(() => !props.collapsed)
 
-const handleLogout = () => {
-  useNav().go('login')
+function handleLogout() {
+  localStorage.setItem('isAuthenticated', 'false')
+  localStorage.removeItem('isAuthenticated')
+  localStorage.removeItem('user_token')
+  router.push('/login')
 }
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'drivers', label: 'Drivers (DQ Files)', icon: Users },
   { id: 'vehicles', label: 'Fleet Maintenance', icon: Truck, hidden: true },
-  { id: 'reports', label: ' Audit Reports', icon: PieChart },
+  { id: 'audit', label: ' Audit Reports', icon: PieChart },
   { id: 'docs', label: 'Document Registry', icon: FileText },
   { id: 'specs', label: 'System Specs', icon: Code },
-  { id: 'mainreports', label: 'Main Reports', icon: FileText },
   { id: 'settings', label: 'Settings', icon: Settings },
+  { id: 'applications', label: 'Applications', icon: FileText },
 ]
 // hidden items that are filtered out
-const visibleNavItems = computed(() => navItems.filter(item => !item.hidden))
+const visibleNavItems = computed(() => navItems.filter((item) => !item.hidden))
 </script>
