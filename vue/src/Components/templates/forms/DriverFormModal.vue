@@ -473,7 +473,6 @@ import {
   Download,
   Phone,
   Save,
-  Compass,
 } from 'lucide-vue-next'
 
 const props = defineProps<{ driver?: Driver }>()
@@ -574,7 +573,7 @@ const formattedForCertificate = computed(() => {
       documentNumber: form.value.cdlNumber,
       state: form.value.cdlState,
     },
-  } as any
+  } as unknown
 })
 
 function handleFileChange(fieldName: 'ssnDoc', event: Event) {
@@ -626,7 +625,7 @@ async function save() {
 
     // nested structure required by the API/Type
     const dataToSave: Driver = {
-      ...(form.value as any),
+      ...(form.value as unknown as Driver),
       dob: form.value.birthDate,
       cdl: {
         documentNumber: form.value.cdlNumber,
@@ -659,14 +658,14 @@ async function save() {
     }
 
     // Remove internal UI-only fields before saving
-    const finalData = { ...dataToSave } as any
+    const finalData = { ...dataToSave }
     delete finalData.ssnDocFile
     delete finalData.ssnDocPreviewUrl
 
     if (props.driver?.id) {
       await dataService.updateDriver({ ...finalData, id: props.driver.id })
     } else {
-      await dataService.addDriver({ ...finalData } as any)
+      await dataService.addDriver({ ...finalData })
     }
     emit('saved')
     emit('close')
