@@ -1,9 +1,9 @@
 // Alert.test.ts
-import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import Alert from '@/Components/ui/Alert.vue'
+import { describe, it, expect } from 'vitest'
+import Alert from '@/Components/ui/BaseAlert.vue'
 
-describe('Alert Component', () => {
+describe('Alert', () => {
   it('renders error alert', () => {
     const wrapper = mount(Alert, {
       props: {

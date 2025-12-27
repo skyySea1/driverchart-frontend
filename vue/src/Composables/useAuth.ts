@@ -1,11 +1,6 @@
 // src/composables/useAuth.ts
 import { ref, computed } from 'vue'
-import {
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  type User
-} from 'firebase/auth'
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, type User } from 'firebase/auth'
 import { auth } from '../services/firebase'
 
 const currentUser = ref<User | null>(null)
@@ -62,6 +57,6 @@ export function useAuth() {
     isAuthenticated,
     login,
     logout,
-    initAuth
+    initAuth,
   }
 }
