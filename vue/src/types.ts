@@ -11,6 +11,7 @@ export interface ComplianceItem {
   documentNumber: string
   expiryDate?: string // ISO string YYYY-MM-DD
   file?: string // Filename mock
+  [key: string]: unknown // allow extra properties during transition
 }
 
 export interface DocumentLog {
@@ -22,24 +23,38 @@ export interface DocumentLog {
   user: string
 }
 
-
-
 export interface Driver {
   id: string
   firstName: string
   middleName: string
   lastName: string
   dob: string
+  birthDate?: string
   ssn: string
   phone: string
   email: string
+  address: string
+  city: string
+  state: string
+  zip: string
   hireDate: string
   terminationDate?: string
-  status: 'Active' | 'Inactive' | 'Terminated'
+  hireStatus: 'Active' | 'Inactive' | 'Terminated' | 'Rehired' | 'On Leave'
+  bankName?: string
+  routingNumber?: string
+  accountNumber?: string
+  w9Signed?: boolean
+  businessName?: string
+  taxClassification?: string
+  i9EmployerSignature?: string
+  ssnDoc?: string
+  ssnDocName?: string
+  ssnDocFile?: File | null
+  ssnDocPreviewUrl?: string
 
   // Compliance
-  cdl: ComplianceItem & { state: string }
-  medical: ComplianceItem
+  cdl: ComplianceItem & { state: string; value?: string }
+  medical: ComplianceItem & { registry?: string }
   mvr: ComplianceItem // Annual review
   drugAlcohol: ComplianceItem
   roadTest: ComplianceItem & { examiner: string; date?: string }
@@ -47,9 +62,19 @@ export interface Driver {
   emergencyContact: {
     name: string
     phone: string
-    relation: string
+    relationship: string
   }
 }
+
+export type BadgeVariant =
+  | 'default'
+  | 'secondary'
+  | 'destructive'
+  | 'outline'
+  | 'success'
+  | 'warning'
+  | 'purple'
+  | 'green'
 
 export interface Column {
   key: string
@@ -61,7 +86,7 @@ export interface Vehicle {
   id: string
   busNumber: string
   vin: string
-  status: 'Active' | 'Maintenance' | 'Inactive'
+  vehicleStatus: 'Active' | 'Maintenance' | 'Inactive'
   lastAnnualInspection: string // YYYY-MM-DD
   mileage: number
   inspectionFile?: string
@@ -77,4 +102,3 @@ export type ViewState =
   | 'specs'
   | 'login'
   | 'settings'
-

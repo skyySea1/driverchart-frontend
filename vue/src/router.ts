@@ -2,25 +2,29 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 // Lazy load views
-const Login = () => import('@/Views/Login.vue')
+const Login = () => import('@/Views/LoginView.vue')
 const AppLayout = () => import('@/Components/templates/AppLayout.vue')
-const Dashboard = () => import('@/Views/Dashboard.vue')
-const Drivers = () => import('@/Views/Drivers.vue')
-const Vehicles = () => import('@/Views/Vehicles.vue')
-const DocumentRegistry = () => import('@/Views/DocumentRegistry.vue')
-const Reports = () => import('@/Views/Reports.vue')
-const SystemSpecs = () => import('@/Views/SystemSpecs.vue')
-const Settings = () => import('@/Views/Settings.vue')
+const Dashboard = () => import('@/Views/DashboardView.vue')
+const Drivers = () => import('@/Views/DriversView.vue')
+const Vehicles = () => import('@/Views/VehiclesView.vue')
+const DocumentRegistry = () => import('@/Views/DocumentRegistryView.vue')
+const MainReports = () => import('@/Views/MainReports.vue')
+const AuditReports = () => import('@/Views/AuditReportsView.vue')
+const SystemSpecs = () => import('@/Views/SystemSpecsView.vue')
+const Settings = () => import('@/Views/SettingsView.vue')
 
+// todo add navigation guards for auth using meta.requiresAuth(meta fields) on routes that need auth
 const routes: RouteRecordRaw[] = [
   {
     path: '/login',
     name: 'login',
     component: Login,
+    meta: { requiresAuth: false }
   },
   {
     path: '/',
     component: AppLayout,
+    meta: { requiresAuth: true },
     children: [
       { path: '', redirect: '/dashboard' },
       {
@@ -60,9 +64,9 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'reports',
-        name: 'reports',
-        component: Reports,
+        path: 'audit',
+        name: 'audit',
+        component: AuditReports,
         meta: {
           title: 'Management & Audit Reports',
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
@@ -76,6 +80,16 @@ const routes: RouteRecordRaw[] = [
           title: ' System Specs',
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
         },
+      },
+      {
+        path: 'reports',
+        name: 'reports',
+        component: MainReports,
+        meta: {
+          title: ' Main Reports',
+          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
+        },
+
       },
       {
         path: 'settings',
