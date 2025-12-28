@@ -1,51 +1,81 @@
-backend/
+# API - US DOT Compliance Management System
+
+## Project Structure
+
+```x
+api/
 ├── src/
-│   ├── plugins/            # JWT, CORS, Helmet, Swagger, request-context
-│   ├── routes/             # endpoints por domínio
+│   ├── plugins/            # Fastify plugins: JWT, AUTH, CORS, Helmet, Swagger, request-context
+│   ├── routes/             # Domain endpoints
 │   │   ├── drivers.ts
 │   │   ├── documents.ts
 │   │   ├── alerts.ts
 │   │   └── users.ts
-│   ├── schemas/            # Zod schemas compartilháveis
+│   ├── schemas/            # Shared Zod schemas
 │   │   ├── driver.ts
 │   │   ├── document.ts
 │   │   ├── alert.ts
 │   │   └── user.ts
-│   ├── services/           # regras de negócio e integração com DB
+│   ├── services/           # Business logic and DB integration
 │   │   ├── driverService.ts
 │   │   ├── documentService.ts
 │   │   └── alertService.ts
-│   ├── utils/              # logger, request-id, env validation
+│   ├── utils/              # Logger, request-id, env validation
 │   ├── jobs/               # Cloud Functions / scheduled tasks
-│   ├── index.ts            # bootstrap Fastify
-│   └── types.ts            # tipos globais
+│   ├── index.ts            # Fastify bootstrap
+│   └── types.ts            # Global types
 ├── package.json
 ├── tsconfig.json
 └── .env
+```
 
+## Elements explanation
 
-endpoints
+- plugins: extra resources and extensions that are registered during init point
+- services: define and expose database and logic operations for endpoint handlingt
+- schemas: padronize  data typing, map object elements, define expect data
+- jobs: routines that work with scheduling on the server
+- utils: designed for general use and shared functions like logger, validations, env configs, helpers
 
-Endpoints principais previstos
-Domínio	Endpoints	Observações
-Drivers	GET /drivers, GET /drivers/:id, POST /drivers, PUT /drivers/:id, DELETE /drivers/:id	CRUD completo, validação Zod
-Documents	GET /documents, POST /documents, PATCH /documents/:id/status	Controle de expiração, links de download
-Alerts	GET /alerts, POST /alerts	Jobs de expiração e notificações
-Users	GET /users, POST /users	Autenticação / roles / permissões
+## Main Endpoints
 
+| Domain    | Endpoints                                                                | Notes                                      |
+|-----------|--------------------------------------------------------------------------|--------------------------------------------|
+| Drivers   | GET /drivers, GET /drivers/:id, POST /drivers, PUT /drivers/:id, DELETE /drivers/:id | Full CRUD, Zod validation                  |
+| Documents | GET /documents, POST /documents, PATCH /documents/:id/status             | Expiration control, download links         |
+| Alerts    | GET /alerts, POST /alerts                                                | Expiration jobs and notifications          |
+| Users     | GET /users, POST /users                                                  | Authentication, roles, permissions         |
 
+## Key Dependencies
 
-dependências:
+- **Fastify + TypeScript:** Lightweight, secure, and auditable framework
+- **Zod:** Request/response validation and OpenAPI generation
+- **Fastify Plugins:** JWT, Helmet, CORS, Swagger, request-context
+- **Logging:** Pino structured logging with request-id
+- **Cloud Functions:** Scheduled jobs (document expiration, alert triggers)
+- **Env:** dotenv for local, Fastify Env/Zod for production
 
+## How to Test the API
 
-astify + TS → framework leve, seguro e auditável
+1. Start the server:
 
-Zod → validação de request/response + geração OpenAPI
+   ```bash
+   pnpm ts-node src/index.ts
+   ```
 
-Plugins Fastify → JWT, Helmet, CORS, Swagger, request-context
+2. Example endpoint test:
 
-Logging → Pino estruturado com request-id
+   ```bash
+   curl -X POST http://localhost:3000/drivers \
+     -H "Content-Type: application/json" \
+     -d '{"name":"John Doe","licenseNumber":"ABC123"}'
+   ```
 
-Cloud Functions → jobs agendados (document expiration, alert triggers)
+## Next Steps
 
-Env → dotenv local, Fastify Env/Zod produção
+- Integrate JWT and authentication
+- Create Cloud Functions / scheduled jobs
+- Add complete OpenAPI / Swagger documentation
+- Expand routes for documents, alerts, users
+- Configure logger with request-id
+- Integrate Vue frontend via Axios or fetch
