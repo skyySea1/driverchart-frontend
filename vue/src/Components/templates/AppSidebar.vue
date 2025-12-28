@@ -32,14 +32,14 @@
         :class="[
           '-item flex items-center gap-3 w-full text-left p-3 rounded-lg transition-colors duration-200',
           props.currentRoute === item.id
-            ? '-item--active bg-indigo-600 text-white shadow-md'
+            ? 'bg-indigo-600 text-white shadow-md'
             : 'text-slate-300 hover:bg-slate-800 hover:text-white',
         ]"
       >
         <component :is="item.icon" class="-icon w-5 h-5 shrink-0 pointer-events-none" />
         <span
           :class="[
-            '-label transition-opacity duration-300 whitespace-nowrap',
+            'transition-opacity duration-300 whitespace-nowrap',
             {
               'md:opacity-0': props.collapsed,
               'md:opacity-100': !props.collapsed,
@@ -69,13 +69,13 @@
 import { computed } from 'vue'
 import UserBadge from '../ui/UserBadge.vue'
 import { LayoutDashboard, Code, Users, Truck, FileText, PieChart, Settings } from 'lucide-vue-next'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 const props = defineProps<{
   collapsed: boolean
   currentRoute?: string
 }>()
 
-const router = useRouter();
+const router = useRouter()
 defineEmits(['navigate', 'logout'])
 
 // Helper to detect if we are effectively collapsed on mobile

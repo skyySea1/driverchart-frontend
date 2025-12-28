@@ -1,6 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { dataService } from '../services/dataService'
-import dayjs from 'dayjs'
 
 describe('dataService Logic', () => {
   it('correctly identifies expiring soon and expired items in getDashboardStats', async () => {
@@ -16,8 +15,6 @@ describe('dataService Logic', () => {
     expect(stats).toHaveProperty('annualRecordReview')
 
     // Since we are using mock data, let's verify if the numbers make sense with today's date
-    const today = dayjs().startOf('day')
-
     // If a driver has a date in the past, it should be in annualRecordReview (isExpired)
     // If a driver has a date within the next 30 days, it should be in expiring counts
 

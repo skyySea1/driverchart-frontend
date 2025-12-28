@@ -6,10 +6,10 @@ import { mockDocumentLogs } from './mocks/documentLogs'
 import type { Driver, Vehicle, Alert, DocumentLog } from '../types'
 
 // In-memory state initialized from mocks
-let driversState = [...mockDrivers]
-let vehiclesState = [...mockVehicles]
-const alertsState = [...mockAlerts]
-const logsState = [...mockDocumentLogs]
+let driversState: Driver[] = [...mockDrivers]
+let vehiclesState: Vehicle[] = [...mockVehicles]
+const alertsState: Alert[] = [...mockAlerts]
+const logsState: DocumentLog[] = [...mockDocumentLogs]
 
 export const dataService = {
   // --- Drivers ---
@@ -25,7 +25,7 @@ export const dataService = {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500))
     // Return flat structure for the view
-    return (driversState as any[]).map((d) => ({
+    return driversState.map((d) => ({
       ...d,
       hireStatus: d.hireStatus || 'Active',
       contact: d.phone,
