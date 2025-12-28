@@ -5,16 +5,16 @@ import {
 } from "fastify-type-provider-zod";
 
 // Plugins
-import cors from "./plugins/cors";
-import jwt from "./plugins/jwt";
+import cors from "@/plugins/cors";
+import jwt from "@/plugins/jwt";
 import swagger from "./plugins/open-api/swagger";
 
 // Routes
-import driverRoutes from "./routes/drivers/drivers";
-import vehicleRoutes from "./routes/vehicles/vehicles";
-import documentRoutes from "./routes/documents";
-import userRoutes from "./routes/users/users";
-import expirationRoutes from "./routes/expiration";
+import driverRoutes from "@/routes/drivers";
+import vehicleRoutes from "@/routes/vehicles";
+import documentRoutes from "@/routes/documents";
+import userRoutes from "@/routes/users";
+import expirationRoutes from "@/routes/expirations";
 
 const fastify = Fastify({
   logger: true,

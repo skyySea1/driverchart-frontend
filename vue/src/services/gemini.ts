@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai'
-import type { Driver } from '../types'
+import type { Driver } from '@/types'
 
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY
 

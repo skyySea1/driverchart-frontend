@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { dataService } from '../services/dataService'
+import { dataService } from '@/services/dataService'
 
 describe('dataService Logic', () => {
   it('correctly identifies expiring soon and expired items in getDashboardStats', async () => {

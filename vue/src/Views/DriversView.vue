@@ -79,10 +79,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import DriverFormModal from '../Components/templates/forms/DriverFormModal.vue'
+import DriverFormModal from '@/Components/templates/forms/DriverFormModal.vue'
 import DeleteConfirmation from '@/Components/ui/DeleteConfirmation.vue'
 import { dataService } from '@/services/dataService'
-import { statusColorFor } from '../Composables/useDotHelpers'
+import { statusColorFor } from '@/Composables/useDotHelpers'
 import { Edit, Trash2, Bot } from 'lucide-vue-next'
 import BaseButton from '@/Components/ui/BaseButton.vue'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'

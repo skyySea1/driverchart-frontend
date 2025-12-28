@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import UserBadge from '../ui/UserBadge.vue'
+import UserBadge from '@/Components/ui/UserBadge.vue'
 import { LayoutDashboard, Code, Users, Truck, FileText, PieChart, Settings } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 const props = defineProps<{

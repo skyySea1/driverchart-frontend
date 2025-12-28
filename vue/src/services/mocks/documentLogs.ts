@@ -1,4 +1,4 @@
-import type { DocumentLog } from '../../types'
+import type { DocumentLog } from '@/types'
 
 export const mockDocumentLogs: DocumentLog[] = [
   {

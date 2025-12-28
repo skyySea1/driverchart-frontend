@@ -90,9 +90,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import StatCard from '../Components/templates/StatCard.vue'
+import StatCard from '@/Components/templates/StatCard.vue'
 import { dataService } from '@/services/dataService'
-import AiAssistant from '../Components/templates/AiAssistant.vue'
+import AiAssistant from '@/Components/templates/AiAssistant.vue'
 import { Bell } from 'lucide-vue-next'
 import type { Alert } from '@/types'
 

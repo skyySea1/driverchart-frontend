@@ -1,7 +1,7 @@
 // src/composables/useAuth.ts
 import { ref, computed } from 'vue'
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, type User } from 'firebase/auth'
-import { auth } from '../services/firebase'
+import { auth } from '@/services/firebase'
 
 const currentUser = ref<User | null>(null)
 // prevent show login while checking auth state on app start

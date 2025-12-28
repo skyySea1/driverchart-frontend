@@ -1,4 +1,4 @@
-# VueBus Style Guide
+# CharterSafe Style Guide
 
 This style guide outlines the visual and interaction conventions for the VueBus project, ensuring consistency across new and existing features for lean and assertive development.
 The system use Declarative component methodology

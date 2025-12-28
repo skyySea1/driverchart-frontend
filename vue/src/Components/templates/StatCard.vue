@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { computed, type Component } from 'vue'
-import BaseBadge from '../ui/BaseBadge.vue'
+import BaseBadge from '@/Components/ui/BaseBadge.vue'
 import type { BadgeVariant } from '@/types'
 import {
   Users,

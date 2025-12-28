@@ -3,7 +3,7 @@ import { mockDrivers } from './mocks/drivers'
 import { mockVehicles } from './mocks/vehicles'
 import { mockAlerts } from './mocks/alerts'
 import { mockDocumentLogs } from './mocks/documentLogs'
-import type { Driver, Vehicle, Alert, DocumentLog } from '../types'
+import type { Driver, Vehicle, Alert, DocumentLog } from '@/types'
 
 // In-memory state initialized from mocks
 let driversState: Driver[] = [...mockDrivers]
