@@ -39,12 +39,12 @@ api/
 
 ## Main Endpoints
 
-| Domain    | Endpoints                                                                | Notes                                      |
-|-----------|--------------------------------------------------------------------------|--------------------------------------------|
-| Drivers   | GET /drivers, GET /drivers/:id, POST /drivers, PUT /drivers/:id, DELETE /drivers/:id | Full CRUD, Zod validation                  |
-| Documents | GET /documents, POST /documents, PATCH /documents/:id/status             | Expiration control, download links         |
-| Alerts    | GET /alerts, POST /alerts                                                | Expiration jobs and notifications          |
-| Users     | GET /users, POST /users                                                  | Authentication, roles, permissions         |
+| Domain    | Endpoints                                                                            | Notes                              |
+| --------- | ------------------------------------------------------------------------------------ | ---------------------------------- |
+| Drivers   | GET /drivers, GET /drivers/:id, POST /drivers, PUT /drivers/:id, DELETE /drivers/:id | Full CRUD, Zod validation          |
+| Documents | GET /documents, POST /documents, PATCH /documents/:id/status                         | Expiration control, download links |
+| Alerts    | GET /alerts, POST /alerts                                                            | Expiration jobs and notifications  |
+| Users     | GET /users, POST /users                                                              | Authentication, roles, permissions |
 
 ## Key Dependencies
 
