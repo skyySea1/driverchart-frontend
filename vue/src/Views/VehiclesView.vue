@@ -142,7 +142,7 @@ function confirmDelete(v: Vehicle) {
 async function deleteVehicle() {
   if (!toDelete.value) return
   try {
-    await dataService.deleteVehicle(toDelete.value.id)
+    await dataService.deleteVehicle(toDelete.value.vehicleId)
     toDelete.value = null
     fetchVehicles()
   } catch (err) {

@@ -1,6 +1,3 @@
-import type { Firestore } from "firebase/firestore"
-import type { un } from "vue-router/dist/router-CWoNjPRp.mjs"
-
 export interface Alert {
   id: string
   type: 'critical' | 'warning' | 'info'
@@ -33,7 +30,7 @@ export interface FirestoreDoc {
 }
 
 export interface Driver extends FirestoreDoc {
-  driverId: string
+  driverId?: string
   firstName: string
   middleName: string
   lastName: string
@@ -73,6 +70,55 @@ export interface Driver extends FirestoreDoc {
     phone: string
     relationship: string
   }
+}
+
+export type DriverForm = {
+
+  firstName: string
+  middleName: string
+  lastName: string
+  dob: string
+  email: string
+  phone: string
+  ssn: string
+  address: string
+  city: string
+  state: string
+  zip: string
+  hireStatus: 'Active' | 'Inactive' | 'Terminated' | 'Rehired' | 'On Leave'
+  hireDate: string
+  termDate: string
+  rehireDate: string
+  emergencyName: string
+  emergencyPhone: string
+  emergencyRelationship: string
+  cdlNumber: string
+  cdlState: string
+  cdlExp: string
+  medRegistry: string
+  medExp: string
+  mvrDate: string
+  lastDrugTest: string
+  roadTestDate: string
+  roadTestExaminer: string
+  bankName: string
+  routingNumber: string
+  accountNumber: string
+  w9Signed: boolean
+  businessName: string
+  taxClassification: string
+  i9EmployerSignature: string
+  ssnDocName: string
+  ssnDocFile: File | null
+  ssnDocPreviewUrl: string
+}
+
+export interface DriverRow extends Driver {
+  contact?: string
+  cdlExp?: string
+  medicalExp?: string
+  mvrDate?: string
+  clearinghouseDate?: string
 }
 
 export type BadgeVariant =
