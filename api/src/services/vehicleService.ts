@@ -28,7 +28,10 @@ export const vehicleService = {
   async createVehicle(data: Vehicle): Promise<string> {
     if (!data) throw new Error("Invalid vehicle data");
     const validatedData = VehicleSchema.parse(data);
-    const docRef = await db.collection(COLLECTION_PATH).add(validatedData);
+    const docRef = await db.collection(COLLECTION_PATH).add({
+      ...validatedData,
+      createdAt: new Date().toISOString(),
+    });
     return docRef.id;
   },
 

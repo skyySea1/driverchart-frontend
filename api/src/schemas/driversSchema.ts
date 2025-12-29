@@ -55,6 +55,7 @@ export const DriverSchema = z.object({
   roadTest: ComplianceItemSchema.extend({
     examiner: z.string().default(""),
     date: z.string().optional(),
+    expiryDate: z.string().optional(), // Override mandatory expiryDate
   }),
 
   emergencyContact: z.object({
@@ -62,6 +63,7 @@ export const DriverSchema = z.object({
     phone: z.string().default(""),
     relationship: z.string().default(""),
   }),
+  createdAt: z.string().optional(),
 });
 
 export type Driver = z.infer<typeof DriverSchema>;
