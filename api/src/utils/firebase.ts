@@ -7,9 +7,9 @@ if (!admin.apps.length) {
   try {
     admin.initializeApp({
       credential: admin.credential.applicationDefault(),
-      // databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+      projectId: env.FIREBASE_PROJECT_ID,
     });
-    console.log('Firebase Admin initialized');
+    console.log('Firebase Admin initialized with Service Account');
   } catch (error) {
     console.error('Firebase Admin initialization error:', error);
   }

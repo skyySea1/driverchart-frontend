@@ -1,7 +1,8 @@
 import { db } from "../utils/firebase";
 import { VehicleSchema, type Vehicle } from "../schemas/vehiclesSchema";
+import { env } from "../utils/env";
 
-const APP_ID = process.env.FIREBASE_APP_ID || "dot-compliance-app";
+const APP_ID = env.APP_ID;
 const COLLECTION_PATH = `artifacts/${APP_ID}/public/data/vehicles`;
 
 // added schema parsing to ensure data integrity and return, input validation
