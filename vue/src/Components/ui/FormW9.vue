@@ -250,16 +250,15 @@ type W9Data = {
   accountNumber?: string
 }
 
-const props = defineProps<{ data: W9Data }>()
-const emit = defineEmits<{ 'update:data': [W9Data] }>()
+const props = defineProps<{ data: any }>()
+const emit = defineEmits<{ 'update:data': [any] }>()
 
-const data = props.data
 
 const fullName = computed(() =>
-  [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' '),
+  [props.data.firstName, props.data.middleName, props.data.lastName].filter(Boolean).join(' '),
 )
 
-function onInput<K extends keyof W9Data>(key: K, value: W9Data[K]) {
-  emit('update:data', { ...data, [key]: value })
+function onInput(key: string, value: any) {
+  emit('update:data', { ...props.data, [key]: value })
 }
 </script>
