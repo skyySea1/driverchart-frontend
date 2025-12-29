@@ -1,5 +1,5 @@
-import { db } from "@/utils/firebase";
-import { DriverSchema, type Driver } from "@/schemas/driversSchema";
+import { db } from "../utils/firebase";
+import { DriverSchema, type Driver } from "../schemas/driversSchema";
 
 const APP_ID = process.env.FIREBASE_APP_ID || "dot-compliance-app";
 const COLLECTION_PATH = `artifacts/${APP_ID}/public/data/drivers`;

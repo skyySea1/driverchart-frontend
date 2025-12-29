@@ -1,5 +1,5 @@
-import { driverService } from "@/services/driverService";
-import { documentService } from "@/services/documentService";
+import { driverService } from "../services/driverService";
+import { documentService } from "../services/documentService";
 import dayjs from "dayjs";
 
 // This job checks for driver document expirations daily and creates alerts on specific days.
@@ -20,7 +20,7 @@ export async function runExpirationCheck() {
       if (diff === 30 || diff === 7 || diff === 0) {
         // Create a log entry for the alert
         await documentService.createLog({
-          date: today.toISOString(),
+          date: today.toDate(),
           fileName: `ALERT: ${label} expiring in ${diff} days`,
           type: "Compliance Alert",
           entityName: `${d.firstName} ${d.lastName}`,

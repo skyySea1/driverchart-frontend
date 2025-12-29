@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { DriverSchema } from "@/schemas/driversSchema";
-import { driverService } from "@/services/driverService";
+import { DriverSchema } from "../../schemas/driversSchema";
+import { driverService } from "../../services/driverService";
 import { z } from "zod";
 
 export default async function (fastify: FastifyInstance) {

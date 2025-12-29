@@ -1,5 +1,5 @@
-import { db } from "@/utils/firebase";
-import { VehicleSchema, type Vehicle } from "@/schemas/vehiclesSchema";
+import { db } from "../utils/firebase";
+import { VehicleSchema, type Vehicle } from "../schemas/vehiclesSchema";
 
 const APP_ID = process.env.FIREBASE_APP_ID || "dot-compliance-app";
 const COLLECTION_PATH = `artifacts/${APP_ID}/public/data/vehicles`;

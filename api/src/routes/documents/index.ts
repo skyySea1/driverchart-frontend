@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { DocumentLogSchema } from "@/schemas/documentsSchema";
-import { documentService } from "@/services/documentService";
+import { DocumentLogSchema } from "../../schemas/documentsSchema";
+import { documentService } from "../../services/documentService";
 import { z } from "zod";
 
 export default async function (fastify: FastifyInstance) {

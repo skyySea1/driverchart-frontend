@@ -1,5 +1,5 @@
-import { db } from '@/utils/firebase';
-import { DocumentLogSchema, type DocumentLog } from '@/schemas/documentsSchema';
+import { db } from '../utils/firebase';
+import { DocumentLogSchema, type DocumentLog } from '../schemas/documentsSchema';
 
 const APP_ID = process.env.FIREBASE_APP_ID || 'dot-compliance-app';
 const COLLECTION_PATH = `artifacts/${APP_ID}/public/data/document_logs`;

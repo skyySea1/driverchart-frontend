@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { VehicleSchema } from "@/schemas/vehiclesSchema";
-import { vehicleService } from "@/services/vehicleService";
+import { VehicleSchema } from "../../schemas/vehiclesSchema";
+import { vehicleService } from "../../services/vehicleService";
 import { z } from "zod";
 
 export default async function (fastify: FastifyInstance) {
