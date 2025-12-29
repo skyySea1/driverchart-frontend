@@ -25,7 +25,7 @@
     </div>
 
     <!-- Login Card -->
-    <div class="login__card bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="logincard bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
       <!-- Header with Logo -->
       <div class="bg-slate-900 p-12 text-center">
         <div class="flex flex-col items-center gap-6">
@@ -68,7 +68,7 @@
                 type="email"
                 required
                 placeholder="you@example.com"
-                class=" input-base pl-10 pr-4 py-3  rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+                class="w-full pl-10 pr-4 py-3 border input-base"
                 :disabled="isLoading"
               />
             </div>
@@ -92,7 +92,7 @@
                 :type="showPassword ? 'text' : 'password'"
                 required
                 placeholder="••••••••"
-                class="login__input w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+                class="login__input w-full pl-10 pr-12 py-3 border border-slate-300 input-base"
                 :disabled="isLoading"
               />
               <button
@@ -174,10 +174,11 @@ async function handleLogin() {
   try {
     isLoading.value = true
 
-    // Mock delay
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    // TODO: Replace with Firebase Authentication
 
-    // Mock success - save to localStorage and redirect
+    // Mock delay
+
+    // save to localStorage and redirect
     localStorage.setItem('isAuthenticated', 'true')
     router.push('/dashboard')
   } catch (error) {
@@ -188,9 +189,8 @@ async function handleLogin() {
   }
 }
 </script>
-
 <style scoped>
-/* Background Circle Animation  (principal) */
+/* Background Circle Animation */
 @keyframes pulse-slow {
   0%,
   100% {
@@ -207,7 +207,7 @@ async function handleLogin() {
   animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Circle Container  - CRITICAL: position fixed e z-index baixo */
+/* Circle Container  */
 .circle-container {
   position: fixed;
   top: 0;
@@ -222,12 +222,12 @@ async function handleLogin() {
 }
 
 /* Login card needs to have a higher z-index */
-.login__card {
+.logincard {
   position: relative;
   z-index: 10;
 }
 
-/* Central circle with glow effect - LARGER (20% larger than r="500") */
+/* Central circle with glow effect - LARGER  */
 .circle-glow {
   width: 600px; /* 20% larger than the main circle */
   height: 600px;
