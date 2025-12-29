@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const DocumentLogSchema = z.object({
   id: z.string().optional(),
-  date: z.string().min(1, "Date is required"), // ISO string
+  date: z.date({ error: "Date is required" }), // ISO string
   fileName: z.string().min(1, "File name is required"),
   type: z.string().min(1, "Type is required"), // e.g., 'Driver' | 'Vehicle'
   entityName: z.string().min(1, "Entity name is required"), // Driver Name or Bus Number
