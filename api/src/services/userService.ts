@@ -1,7 +1,8 @@
 import { db } from "../utils/firebase";
 import { UserSchema, type User } from "../schemas/usersSchema";
+import { env } from "../utils/env";
 
-const APP_ID = process.env.FIREBASE_APP_ID || "dot-compliance-app";
+const APP_ID = env.APP_ID;
 const COLLECTION_PATH = `artifacts/${APP_ID}/public/data/users`;
 
 // added schema parsing to ensure data integrity and validation

@@ -5,7 +5,7 @@ import swaggerUi from '@fastify/swagger-ui';
 import { jsonSchemaTransform } from 'fastify-type-provider-zod';
 
 // Swagger plugin for OpenAPI documentation
-export default fp(async (fastify: FastifyInstance) => {
+export const swaggerPlugin = fp(async (fastify: FastifyInstance) => {
   await fastify.register(swagger, {
     openapi: {
       info: {

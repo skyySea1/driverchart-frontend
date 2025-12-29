@@ -1,13 +1,9 @@
 import Fastify from "fastify";
-import {
-  serializerCompiler,
-  validatorCompiler,
-} from "fastify-type-provider-zod";
+import { serializerCompiler,  validatorCompiler} from "fastify-type-provider-zod";
 
-// Plugins
 import { corsPlugin } from "./plugins/corsPlugin";
-import jwt from "./plugins/jwt";
-import swagger from "./plugins/swagger";
+import {jwtPlugin} from "./plugins/jwt";
+import {swaggerPlugin} from "./plugins/swagger";
 
 // Routes
 import driverRoutes from "./routes/drivers";
@@ -29,8 +25,8 @@ async function start() {
   try {
     // Register Plugins
     await fastify.register(corsPlugin);
-    await fastify.register(jwt);
-    await fastify.register(swagger);
+    await fastify.register(jwtPlugin);
+    await fastify.register(swaggerPlugin);
 
     // Register Routes
     await fastify.register(driverRoutes, { prefix: "/api/drivers" });

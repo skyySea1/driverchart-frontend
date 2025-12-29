@@ -1,7 +1,8 @@
 import { db } from "../utils/firebase";
 import { DriverSchema, type Driver } from "../schemas/driversSchema";
+import { env } from "../utils/env";
 
-const APP_ID = process.env.FIREBASE_APP_ID || "dot-compliance-app";
+const APP_ID = env.APP_ID;
 const COLLECTION_PATH = `artifacts/${APP_ID}/public/data/drivers`;
 // added schema parsing to ensure data integrity and validation
 // todo add error handling for create and update operations
@@ -9,7 +10,7 @@ const COLLECTION_PATH = `artifacts/${APP_ID}/public/data/drivers`;
 export const driverService = {
   async getAll(): Promise<Driver[]> {
     if (!COLLECTION_PATH) throw new Error("Invalid collection path");
-
+    console.log(`Querying Firestore path: ${COLLECTION_PATH}`);
     const snapshot = await db.collection(COLLECTION_PATH).get();
     return snapshot.docs.map((doc) =>
       DriverSchema.parse({ id: doc.id, ...doc.data() })
@@ -28,7 +29,10 @@ export const driverService = {
     if (!data) throw new Error("Invalid driver data");
 
     const validatedData = DriverSchema.parse(data);
-    const docRef = await db.collection(COLLECTION_PATH).add(validatedData);
+    const docRef = await db.collection(COLLECTION_PATH).add({
+      ...validatedData,
+      createdAt: new Date().toISOString(),
+    });
     return docRef.id;
   },
 
