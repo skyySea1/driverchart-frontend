@@ -1,3 +1,6 @@
+import type { Firestore } from "firebase/firestore"
+import type { un } from "vue-router/dist/router-CWoNjPRp.mjs"
+
 export interface Alert {
   id: string
   type: 'critical' | 'warning' | 'info'
@@ -22,8 +25,15 @@ export interface DocumentLog {
   user: string
 }
 
-export interface Driver {
+// Define a generic Firestore document type, add new fields as needed, todo: improve
+
+export interface FirestoreDoc {
   id: string
+  [key: string]: unknown
+}
+
+export interface Driver extends FirestoreDoc {
+  driverId: string
   firstName: string
   middleName: string
   lastName: string
@@ -49,6 +59,7 @@ export interface Driver {
   ssnDocName?: string
   ssnDocFile?: File | null
   ssnDocPreviewUrl?: string
+  [key: string]: unknown
 
   // Compliance
   cdl: ComplianceItem & { state: string; value?: string }
@@ -80,14 +91,15 @@ export interface Column {
   align?: 'left' | 'center' | 'right'
 }
 
-export interface Vehicle {
-  id: string
+export interface Vehicle extends FirestoreDoc {
+  vehicleId: string
   busNumber: string
   vin: string
   vehicleStatus: 'Active' | 'Maintenance' | 'Inactive'
   lastAnnualInspection: string // YYYY-MM-DD
   mileage: number
   inspectionFile?: string
+  [key: string]: unknown
 }
 
 export type ViewState =
