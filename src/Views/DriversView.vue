@@ -26,7 +26,25 @@
           </template>
 
           <template #cell(cdlExp)="{ value }">
-            <span :class="['px-2 py-1 rounded text-xs font-medium', statusColor(value)]">{{
+            <span :class="['px-2 py-1 rounded text-xs font-medium', getStatusColor(value)]">{{
+              value || '-'
+            }}</span>
+          </template>
+
+          <template #cell(medicalExp)="{ value }">
+            <span :class="['px-2 py-1 rounded text-xs font-medium', getStatusColor(value)]">{{
+              value || '-'
+            }}</span>
+          </template>
+
+          <template #cell(mvrDate)="{ value }">
+            <span :class="['px-2 py-1 rounded text-xs font-medium', getStatusColor(value)]">{{
+              value || '-'
+            }}</span>
+          </template>
+
+          <template #cell(clearinghouseDate)="{ value }">
+            <span :class="['px-2 py-1 rounded text-xs font-medium', getStatusColor(value)]">{{
               value || '-'
             }}</span>
           </template>
@@ -82,7 +100,7 @@ import DriverFormModal from '@/Components/templates/forms/DriverFormModal.vue'
 import DeleteConfirmation from '@/Components/ui/DeleteConfirmation.vue'
 import { dataService } from '@/services/dataService'
 import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
-import { statusColorFor } from '@/Composables/useDotHelpers'
+import { useCompliance } from '@/Composables/useCompliance'
 import { Edit, Trash2, Bot } from 'lucide-vue-next'
 import BaseButton from '@/Components/ui/BaseButton.vue'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
@@ -90,6 +108,7 @@ import { useModalStore } from '@/stores/ModalStore'
 import type { Driver, Column, DriverRow } from '@/types'
 
 const modalStore = useModalStore()
+const { getStatusColor } = useCompliance()
 
 const tableColumns: Column[] = [
   { key: 'firstName', label: 'Name' },
@@ -119,17 +138,6 @@ const drivers = computed<DriverRow[]>(() => {
 })
 
 const toDelete = ref<Driver | null>(null)
-
-// Map dates to status colors
-function statusColor(date: string) {
-  if (!date) return 'text-slate-500'
-  const statusClass = statusColorFor(date)
-  if (statusClass.includes('bg-red')) return 'bg-red-100 text-red-800'
-  if (statusClass.includes('bg-yellow') || statusClass.includes('bg-amber'))
-    return 'bg-amber-100 text-amber-800'
-  if (statusClass.includes('bg-green')) return 'bg-green-100 text-green-800'
-  return 'text-slate-500'
-}
 
 // Store-based modal controls
 function openNew() {
