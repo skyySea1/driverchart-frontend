@@ -1,1 +1,1 @@
-cd vue && pnpm lint
+pnpm lint
