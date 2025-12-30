@@ -22,7 +22,7 @@
     <!-- Logout Button -->
     <button
       v-cursor
-      v-show="showInfo"
+      v-show="props.showInfo"
       @click.stop="handleLogout"
       class="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded transition-all duration-200 opacity-0 group-hover:opacity-100 cursor-pointer"
       title="Logout"
@@ -35,25 +35,19 @@
 
 <script setup lang="ts">
 import { User, LogOut } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
-
-interface Props {
-  showInfo?: boolean
-}
 
  const props = defineProps({
   showInfo: {
     type: Boolean,
     default: true,
-  },
+  }
 })
 
 const emit = defineEmits<{
   logout: []
 }>()
 
-const router = useRouter()
 const authStore = useAuthStore()
 
 // Logout handler
