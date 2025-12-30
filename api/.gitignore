@@ -32,6 +32,7 @@ coverage
 # Cypress
 /cypress/videos/
 /cypress/screenshots/
+/conductor
 
 # Vitest
 __screenshots__/
