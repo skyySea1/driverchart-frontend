@@ -1,6 +1,6 @@
 <template>
   <div
-    class=" min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden"
+    class="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden"
   >
     <!-- SVG Background main pulsing circle  -->
     <svg
@@ -46,16 +46,16 @@
         <!-- Error Message -->
         <div
           v-if="errorMessage"
-          class=" bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center gap-2"
+          class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center gap-2"
         >
           <AlertCircle class="w-5 h-5 shrink-0" />
           <span class="text-sm">{{ errorMessage }}</span>
         </div>
 
-        <form @submit.prevent="handleLogin" class=" space-y-5">
+        <form @submit.prevent="handleLogin" class="space-y-5">
           <!-- Email Field -->
           <div>
-            <label for="email" class=" block text-sm font-medium text-slate-700 mb-2">
+            <label for="email" class="block text-sm font-medium text-slate-700 mb-2">
               Email Address
             </label>
             <div class="relative">
@@ -76,10 +76,7 @@
 
           <!-- Password Field -->
           <div>
-            <label
-              for="password"
-              class="block text-sm font-medium text-slate-700 mb-2"
-            >
+            <label for="password" class="block text-sm font-medium text-slate-700 mb-2">
               Password
             </label>
             <div class="relative">
@@ -146,9 +143,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Bus } from 'lucide-vue-next';
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Bus } from 'lucide-vue-next'
+import { useAuthStore } from '@/stores/AuthStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 // Form state
 const email = ref('')
@@ -156,11 +155,10 @@ const password = ref('')
 const rememberMe = ref(false)
 const showPassword = ref(false)
 
-// UI state
+// UI state mapped to store
 const isLoading = ref(false)
 const errorMessage = ref('')
 
-// Mock login handler (replace with Firebase Auth)
 async function handleLogin() {
   // Clear previous errors
   errorMessage.value = ''
@@ -173,17 +171,14 @@ async function handleLogin() {
 
   try {
     isLoading.value = true
-
-    // TODO: Replace with Firebase Authentication
-
-    // Mock delay
-
-    // save to localStorage and redirect
-    localStorage.setItem('isAuthenticated', 'true')
+    await authStore.login(email.value, password.value)
     router.push('/dashboard')
   } catch (error) {
-    const err = error as Error
-    errorMessage.value = err.message || 'Invalid email or password'
+    if (error instanceof Error) {
+      errorMessage.value = 'Invalid email or password'
+    } else {
+      errorMessage.value = 'An unexpected error occurred'
+    }
   } finally {
     isLoading.value = false
   }

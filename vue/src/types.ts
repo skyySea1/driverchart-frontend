@@ -56,7 +56,6 @@ export interface Driver extends FirestoreDoc {
   ssnDocName?: string
   ssnDocFile?: File | null
   ssnDocPreviewUrl?: string
-  [key: string]: unknown
 
   // Compliance
   cdl: ComplianceItem & { state: string; value?: string }
@@ -145,7 +144,6 @@ export interface Vehicle extends FirestoreDoc {
   lastAnnualInspection: string // YYYY-MM-DD
   mileage: number
   inspectionFile?: string
-  [key: string]: unknown
 }
 
 export type ViewState =
@@ -155,6 +153,6 @@ export type ViewState =
   | 'auditreports '
   | 'documentregistry'
   | 'applications'
-  | 'specs'
   | 'login'
   | 'settings'
+

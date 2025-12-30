@@ -95,6 +95,7 @@ import StatCard from '@/Components/templates/StatCard.vue'
 import AiAssistant from '@/Components/templates/AiAssistant.vue'
 import { Bell } from 'lucide-vue-next'
 import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
+import { useCompliance } from '@/Composables/useCompliance'
 import type { Driver, Vehicle } from '@/types'
 
 // Real-time data
@@ -108,6 +109,7 @@ const { loading: loadingVehicles } = useRealtimeCollection<Vehicle>(
 )
 
 const isLoading = computed(() => loadingDrivers.value || loadingVehicles.value)
+const { isExpiringSoon, isExpired } = useCompliance()
 
 // Single-pass calculation for all stats
 const stats = computed(() => {
@@ -119,20 +121,12 @@ const stats = computed(() => {
     annualRecordReview: 0,
   }
 
-  const today = dayjs().startOf('day')
   const thirtyDaysAgo = dayjs().subtract(30, 'day')
 
   drivers.value.forEach((d) => {
-    // Check expirations (isExpiringSoon logic inlined for performance/context)
-    const checkExpiring = (dateStr?: string) => {
-      if (!dateStr) return false
-      const diff = dayjs(dateStr).diff(today, 'day')
-      return diff <= 30
-    }
-
-    if (checkExpiring(d.medical?.expiryDate)) result.expiringMedCards++
-    if (checkExpiring(d.cdl?.expiryDate)) result.expiringLicenses++
-    if (checkExpiring(d.drugAlcohol?.expiryDate)) result.expiringClearinghouse++
+    if (isExpiringSoon(d.medical?.expiryDate)) result.expiringMedCards++
+    if (isExpiringSoon(d.cdl?.expiryDate)) result.expiringLicenses++
+    if (isExpiringSoon(d.drugAlcohol?.expiryDate)) result.expiringClearinghouse++
 
     // Check new applications
     if (d.hireDate && dayjs(d.hireDate).isAfter(thirtyDaysAgo)) {
@@ -140,7 +134,7 @@ const stats = computed(() => {
     }
 
     // Check annual record review (expired MVR)
-    if (d.mvr?.expiryDate && dayjs(d.mvr.expiryDate).isBefore(today, 'day')) {
+    if (isExpired(d.mvr?.expiryDate)) {
       result.annualRecordReview++
     }
   })
@@ -162,29 +156,23 @@ const auditScore = computed(() => {
 // Alerts Logic
 const alerts = computed(() => {
   const list: { id: string; text: string; when: string }[] = []
-  const today = dayjs().startOf('day')
 
   drivers.value.forEach((d) => {
-    // Check if active or default to active if missing
-    const status = d.hireStatus || 'unknown'
-    if (status !== 'Active') return
+    // Only check active drivers
+    if (d.hireStatus && d.hireStatus !== 'Active') return
 
     const check = (dateStr: string | undefined, label: string) => {
       if (!dateStr) return
-      const due = dayjs(dateStr)
-      if (!due.isValid()) return
 
-      const diff = due.diff(today, 'day')
-
-      if (diff < 0) {
+      if (isExpired(dateStr)) {
         list.push({
-          id: `${d.driverId}-${label}`,
+          id: `${d.id}-${label}`,
           text: `${d.firstName} ${d.lastName}: ${label} expired`,
           when: dateStr,
         })
-      } else if (diff <= 30) {
+      } else if (isExpiringSoon(dateStr)) {
         list.push({
-          id: `${d.driverId}-${label}`,
+          id: `${d.id}-${label}`,
           text: `${d.firstName} ${d.lastName}: ${label} expiring soon`,
           when: dateStr,
         })
@@ -201,4 +189,5 @@ const alerts = computed(() => {
 })
 
 const alertsCount = computed(() => alerts.value.length)
+
 </script>

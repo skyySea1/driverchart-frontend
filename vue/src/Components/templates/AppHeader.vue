@@ -150,9 +150,9 @@
           <div
             class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-indigo-100 group-hover:scale-105 transition-transform"
           >
-            H
+            {{ userInitial }}
           </div>
-          <span class="text-sm font-bold text-slate-700 hidden sm:inline">Henri</span>
+          <span class="text-sm font-bold text-slate-700 hidden sm:inline">{{ userName }}</span>
           <ChevronDown
             class="w-4 h-4 text-slate-400 group-hover:text-indigo-500 transition-colors"
           />
@@ -164,7 +164,7 @@
         >
           <div class="px-4 py-3 border-b border-slate-50 mb-1">
             <p class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Connected as</p>
-            <p class="text-sm font-bold text-slate-800">Henri Admin</p>
+            <p class="text-sm font-bold text-slate-800">{{ userName }}</p>
           </div>
           <button
             class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-xl transition-all"
@@ -190,9 +190,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useModalStore } from '@/stores/ModalStore'
+import { useAuthStore } from '@/stores/AuthStore'
 import { Bell, Plus, Menu, Bus, UserPlus, Settings, LogOut, ChevronDown } from 'lucide-vue-next'
 
 const props = withDefaults(
@@ -215,7 +216,21 @@ const emit = defineEmits<{
 
 const router = useRouter()
 const modalStore = useModalStore()
+const authStore = useAuthStore()
 const activeDropdown = ref<'add' | 'profile' | 'notifications' | null>(null)
+
+// Compute user display name/initial
+const userInitial = computed(() => {
+  const email = authStore.user?.email
+    if (!email) {
+    return 'U'
+  }
+  return email.charAt(0).toUpperCase()
+})
+
+const userName = computed(() => {
+  return authStore.user?.displayName || authStore.user?.email?.split('@')[0] || 'User'
+})
 
 // Mock notifications data
 const notifications = ref([
@@ -263,9 +278,9 @@ function goToSettings() {
   router.push({ name: 'settings' })
 }
 
-function handleLogout() {
-  localStorage.setItem('isAuthenticated', 'false')
-  router.push('/login')
+async function handleLogout() {
+  await authStore.logout()
+  
 }
 
 // Close dropdowns when clicking outside

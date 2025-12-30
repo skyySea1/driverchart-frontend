@@ -33,15 +33,39 @@
         </div>
 
         <div class="p-6 space-y-6">
+          <!-- Alert Feedback -->
+          <div
+            v-if="statusMsg"
+            :class="[
+              'px-4 py-3 rounded-lg mb-4 text-sm font-medium flex items-center gap-2',
+              statusType === 'success'
+                ? 'bg-green-50 text-green-700 border border-green-200'
+                : 'bg-red-50 text-red-700 border border-red-200',
+            ]"
+          >
+            <span>{{ statusMsg }}</span>
+          </div>
+
           <template v-if="activeSection === 'profile'">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form @submit.prevent="saveProfile" class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="space-y-1">
-                <InputGroup label="Administrator Name" type="text" modelValue="Henri Admin" />
+                <InputGroup
+                  label="Display Name"
+                  type="text"
+                  v-model="formProfile.displayName"
+                  placeholder="Enter your name"
+                />
               </div>
               <div class="space-y-1">
-                <InputGroup label="Email Address" type="email" modelValue="admin@vuebus.com" />
+                <InputGroup
+                  label="Email Address"
+                  type="email"
+                  :modelValue="authStore.user?.email || ''"
+                  disabled
+                  class="opacity-70 cursor-not-allowed"
+                />
               </div>
-            </div>
+            </form>
           </template>
 
           <template v-if="activeSection === 'notifications'">
@@ -79,8 +103,10 @@
 
           <div class="pt-6 border-t border-slate-100 flex justify-end">
             <BaseButton
-              label="Save Changes"
-              class="px-6 py-2 text-white rounded-xl font-bold hover:bg-slate-800"
+              @click="saveProfile"
+              :label="authStore.isLoading ? 'Saving...' : 'Save Changes'"
+              :disabled="authStore.isLoading"
+              class="px-6 py-2 text-white rounded-xl font-bold hover:bg-slate-800 disabled:opacity-50"
             />
           </div>
         </div>
@@ -90,12 +116,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { User, Bell, LucideShieldX, Globe, ShieldAlert } from 'lucide-vue-next'
 import InputGroup from '@/Components/ui/InputGroup.vue'
 import BaseButton from '@/Components/ui/BaseButton.vue'
+import { useAuthStore } from '@/stores/AuthStore'
 
+const authStore = useAuthStore()
 const activeSection = ref('profile')
+
+const statusMsg = ref('')
+const statusType = ref<'success' | 'error'>('success')
+
+const formProfile = ref({
+  displayName: '',
+})
 
 const menuItems = [
   { id: 'profile', label: 'User Profile', icon: User },
@@ -111,4 +146,42 @@ const notifyOpts = [
   { label: 'Push Notifications', desc: 'In-app alerts for urgent compliance issues.' },
   { label: 'Weekly Summary', desc: 'Get a management report every Monday.' },
 ]
+
+// Initialize form data
+onMounted(() => {
+  if (authStore.user?.displayName) {
+    formProfile.value.displayName = authStore.user.displayName
+  }
+})
+
+// Watch for user changes (e.g. reload) to populate if not ready on mount
+watch(
+  () => authStore.user,
+  (newUser) => {
+    if (newUser?.displayName && !formProfile.value.displayName) {
+      formProfile.value.displayName = newUser.displayName
+    }
+  },
+  { immediate: true },
+)
+
+async function saveProfile() {
+  if (activeSection.value !== 'profile') return
+
+  try {
+    statusMsg.value = ''
+    await authStore.updateUserProfile({ displayName: formProfile.value.displayName })
+    statusType.value = 'success'
+    statusMsg.value = 'Profile updated successfully!'
+
+    // Clear message after 3 seconds
+    setTimeout(() => {
+      statusMsg.value = ''
+    }, 3000)
+  } catch (error) {
+    statusType.value = 'error'
+    statusMsg.value = 'Failed to update profile.'
+    console.error(error)
+  }
+}
 </script>

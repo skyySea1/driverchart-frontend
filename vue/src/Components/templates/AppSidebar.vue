@@ -33,7 +33,7 @@
           '-item flex items-center gap-3 w-full text-left p-3 rounded-lg transition-colors duration-200',
           props.currentRoute === item.id
             ? 'bg-indigo-600 text-white shadow-md'
-            : 'text-slate-400 hover:bg-slate-800 hover:text-white',
+            : 'text-slate-300 hover:bg-slate-800 hover:text-white',
         ]"
       >
         <component :is="item.icon" class="-icon w-5 h-5 shrink-0 pointer-events-none" />
@@ -54,10 +54,11 @@
 
     <!-- User Section (Footer) -->
     <footer class="sidebar__footer p-4 border-t border-slate-800">
-      <UserBadge :show-info="!props.collapsed || collapsedMobile" @click="handleLogout" />
+      <UserBadge :show-info="!props.collapsed || collapsedMobile" />
       <div
         v-show="!props.collapsed || collapsedMobile"
         class="text-xs text-slate-500 text-center mt-3"
+        @click="handleLogout"
       >
         &copy; 2025 CharterSafe
       </div>
@@ -67,22 +68,33 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useAuthStore } from '@/stores/AuthStore'
 import UserBadge from '@/Components/ui/UserBadge.vue'
-import { LayoutDashboard, Code, Users, Truck, FileText, PieChart, Settings, Bus } from 'lucide-vue-next'
+import {
+  LayoutDashboard,
+  Code,
+  Users,
+  Truck,
+  FileText,
+  PieChart,
+  Settings,
+  Bus,
+} from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
+
 const props = defineProps<{
   collapsed: boolean
   currentRoute?: string
 }>()
-
+const authStore = useAuthStore()
 const router = useRouter()
 defineEmits(['navigate', 'logout'])
 
 // Helper to detect if we are effectively collapsed on mobile
 const collapsedMobile = computed(() => !props.collapsed)
 
-const handleLogout = () => {
-  router.push('login')
+async function handleLogout() {
+  await authStore.logout()
 }
 
 const navItems = [
@@ -91,10 +103,9 @@ const navItems = [
   { id: 'vehicles', label: 'Fleet Maintenance', icon: Truck, hidden: true },
   { id: 'audit', label: ' Audit Reports', icon: PieChart },
   { id: 'docs', label: 'Document Registry', icon: FileText },
-  { id: 'specs', label: 'System Specs', icon: Code },
+  // { id: 'specs', label: 'System Specs', icon: Code },
   { id: 'reports', label: 'Main Reports', icon: FileText },
   { id: 'settings', label: 'Settings', icon: Settings },
-  
 ]
 // hidden items that are filtered out
 const visibleNavItems = computed(() => navItems.filter((item) => !item.hidden))
