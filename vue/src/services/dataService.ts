@@ -115,9 +115,10 @@ export const dataService = {
       totalVehicles: vehicles.length,
       alertsCount: alerts.length,
       alerts: alerts,
-      expiringMedCards: drivers.filter(d => isExpiringSoon(d.medical?.expiryDate)).length,
-      expiringLicenses: drivers.filter(d => isExpiringSoon(d.cdl?.expiryDate)).length,
-      expiringClearinghouse: drivers.filter(d => isExpiringSoon(d.drugAlcohol?.expiryDate)).length,
+      expiringMedCards: drivers.filter((d) => isExpiringSoon(d.medical?.expiryDate)).length,
+      expiringLicenses: drivers.filter((d) => isExpiringSoon(d.cdl?.expiryDate)).length,
+      expiringClearinghouse: drivers.filter((d) => isExpiringSoon(d.drugAlcohol?.expiryDate))
+        .length,
       auditScore: '94%',
       newApplications: 3,
       annualRecordReview: drivers.filter(d => isExpired(d.mvr?.expiryDate)).length
