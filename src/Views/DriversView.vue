@@ -25,10 +25,25 @@
             </span>
           </template>
 
+          <template #cell(contact)="{ item }">
+            <div class="font-medium text-slate-800">{{ item.phone }}</div>
+            <div class="font-extralight text-slate-800">{{ item.email }}</div>
+          </template>
+
           <template #cell(cdlExp)="{ value }">
-            <span :class="['px-2 py-1 rounded text-xs font-medium', getStatusColor(value)]">{{
-              value || '-'
-            }}</span>
+            <div
+              :class="[
+                'py-1 rounded text-xs font-medium max-w-20 truncate',
+                getStatusColor(value),
+              ]"
+            >
+              <div >
+                {{ value || '-' }}
+              </div>
+              <div v-if="value" class="text-slate-500 text-[10px] whitespace-nowrap">
+                {{ daysToExpire(value) }}
+              </div>
+            </div>
           </template>
 
           <template #cell(medicalExp)="{ value }">
@@ -106,6 +121,7 @@ import BaseButton from '@/Components/ui/BaseButton.vue'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
 import { useModalStore } from '@/stores/ModalStore'
 import type { Driver, Column, DriverRow } from '@/types'
+import { daysToExpire } from '@/utils/helpers'
 
 const modalStore = useModalStore()
 const { getStatusColor } = useCompliance()
@@ -113,7 +129,7 @@ const { getStatusColor } = useCompliance()
 const tableColumns: Column[] = [
   { key: 'firstName', label: 'Name' },
   { key: 'hireStatus', label: 'Status' },
-  { key: 'contact', label: 'Contact' },
+  { key: 'contact', label: 'Contact', align: 'center' },
   { key: 'cdlExp', label: 'CDL Exp', align: 'center' },
   { key: 'medicalExp', label: 'Medical Exp', align: 'center' },
   { key: 'mvrDate', label: 'Annual MVR', align: 'center' },
