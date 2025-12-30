@@ -72,7 +72,6 @@ import { useAuthStore } from '@/stores/AuthStore'
 import UserBadge from '@/Components/ui/UserBadge.vue'
 import {
   LayoutDashboard,
-  Code,
   Users,
   Truck,
   FileText,
@@ -80,14 +79,12 @@ import {
   Settings,
   Bus,
 } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
 
 const props = defineProps<{
   collapsed: boolean
   currentRoute?: string
 }>()
 const authStore = useAuthStore()
-const router = useRouter()
 defineEmits(['navigate', 'logout'])
 
 // Helper to detect if we are effectively collapsed on mobile
