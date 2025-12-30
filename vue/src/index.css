@@ -1,3 +1,19 @@
 @import "tailwindcss";
 @import "./styles.css";
 
+@import 'tailwindcss';
+@import './styles.css';
+
+@layer components {
+  .input-base {
+    @apply w-full text-sm border bg-white border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all;
+  }
+
+  .input-half {
+    @apply w-1/2 text-sm border bg-white border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all;
+  }
+
+  .button-primary {
+    @apply bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md border border-transparent;
+  }
+}

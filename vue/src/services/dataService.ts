@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { mockDrivers } from './mocks/drivers'
 import { mockVehicles } from './mocks/vehicles'
 import { mockAlerts } from './mocks/alerts'
@@ -7,17 +8,24 @@ import type { Driver, Vehicle, Alert, DocumentLog } from '../types'
 // In-memory state initialized from mocks
 let driversState = [...mockDrivers]
 let vehiclesState = [...mockVehicles]
-let alertsState = [...mockAlerts]
-let logsState = [...mockDocumentLogs]
+const alertsState = [...mockAlerts]
+const logsState = [...mockDocumentLogs]
 
 export const dataService = {
   // --- Drivers ---
-  getDrivers: async (): Promise<any[]> => {
+  getDrivers: async (): Promise<(Driver & {
+    contact: string;
+    cdlExp?: string;
+    medicalExp?: string;
+    mvrDate?: string;
+    clearinghouseDate?: string;
+  })[]> => {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500))
     // Return flat structure for the view
     return driversState.map(d => ({
       ...d,
+      hireStatus: d.hireStatus || 'Active', // Ensure hireStatus is present
       contact: d.phone,
       cdlExp: d.cdl?.expiryDate,
       medicalExp: d.medical?.expiryDate,
@@ -89,24 +97,30 @@ export const dataService = {
     const vehicles = vehiclesState
     const alerts = alertsState
 
+    const today = dayjs().startOf('day')
+
+    const isExpiringSoon = (dateStr?: string) => {
+      if (!dateStr) return false
+      const diff = dayjs(dateStr).diff(today, 'day')
+      return diff >= 0 && diff <= 30
+    }
+
+    const isExpired = (dateStr?: string) => {
+      if (!dateStr) return false
+      return dayjs(dateStr).isBefore(today, 'day')
+    }
+
     return {
       totalDrivers: drivers.length,
       totalVehicles: vehicles.length,
       alertsCount: alerts.length,
       alerts: alerts,
-      expiringMedCards: drivers.filter(d => {
-        if (!d.medical?.expiryDate) return false
-        const expiry = new Date(d.medical.expiryDate)
-        const today = new Date()
-        const diff = expiry.getTime() - today.getTime()
-        return diff < 30 * 24 * 60 * 60 * 1000 // less than 30 days
-      }).length,
+      expiringMedCards: drivers.filter(d => isExpiringSoon(d.medical?.expiryDate)).length,
+      expiringLicenses: drivers.filter(d => isExpiringSoon(d.cdl?.expiryDate)).length,
+      expiringClearinghouse: drivers.filter(d => isExpiringSoon(d.drugAlcohol?.expiryDate)).length,
       auditScore: '94%',
       newApplications: 3,
-      annualRecordReview: drivers.filter(d => {
-        if (!d.mvr?.expiryDate) return false
-        return new Date(d.mvr.expiryDate) < new Date()
-      }).length
+      annualRecordReview: drivers.filter(d => isExpired(d.mvr?.expiryDate)).length
     }
   }
 }

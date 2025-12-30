@@ -3,7 +3,6 @@ export interface Alert {
   type: 'critical' | 'warning' | 'info'
   message: string
   entity?: string
-  // owner of alert, either driver id or vehicle id, v.busnumber ou v.driverid
   dueDate: string
 }
 
@@ -11,6 +10,7 @@ export interface ComplianceItem {
   documentNumber: string
   expiryDate?: string // ISO string YYYY-MM-DD
   file?: string // Filename mock
+  [key: string]: unknown
 }
 
 export interface DocumentLog {
@@ -22,10 +22,15 @@ export interface DocumentLog {
   user: string
 }
 
+// Define a generic Firestore document type, add new fields as needed, todo: improve
 
-
-export interface Driver {
+export interface FirestoreDoc {
   id: string
+  [key: string]: unknown
+}
+
+export interface Driver extends FirestoreDoc {
+  driverId?: string
   firstName: string
   middleName: string
   lastName: string
@@ -33,23 +38,97 @@ export interface Driver {
   ssn: string
   phone: string
   email: string
+  address: string
+  city: string
+  state: string
+  zip: string
   hireDate: string
   terminationDate?: string
-  status: 'Active' | 'Inactive' | 'Terminated'
+  hireStatus: 'Active' | 'Inactive' | 'Terminated' | 'Rehired' | 'On Leave'
+  bankName?: string
+  routingNumber?: string
+  accountNumber?: string
+  w9Signed?: boolean
+  businessName?: string
+  taxClassification?: string
+  i9EmployerSignature?: string
+  ssnDoc?: string
+  ssnDocName?: string
+  ssnDocFile?: File | null
+  ssnDocPreviewUrl?: string
 
   // Compliance
-  cdl: ComplianceItem & { state: string }
-  medical: ComplianceItem
-  mvr: ComplianceItem // Annual review
+  cdl: ComplianceItem & { state: string; value?: string }
+  medical: ComplianceItem & { registry?: string }
+  mvr: ComplianceItem
   drugAlcohol: ComplianceItem
   roadTest: ComplianceItem & { examiner: string; date?: string }
 
   emergencyContact: {
     name: string
     phone: string
-    relation: string
+    relationship: string
   }
 }
+
+export type DriverForm = {
+
+  firstName: string
+  middleName: string
+  lastName: string
+  dob: string
+  email: string
+  phone: string
+  ssn: string
+  address: string
+  city: string
+  state: string
+  zip: string
+  hireStatus: 'Active' | 'Inactive' | 'Terminated' | 'Rehired' | 'On Leave'
+  hireDate: string
+  termDate: string
+  rehireDate: string
+  emergencyName: string
+  emergencyPhone: string
+  emergencyRelationship: string
+  cdlNumber: string
+  cdlState: string
+  cdlExp: string
+  medRegistry: string
+  medExp: string
+  mvrDate: string
+  lastDrugTest: string
+  roadTestDate: string
+  roadTestExaminer: string
+  bankName: string
+  routingNumber: string
+  accountNumber: string
+  w9Signed: boolean
+  businessName: string
+  taxClassification?: string
+  i9EmployerSignature: string
+  ssnDocName: string
+  ssnDocFile: File | null
+  ssnDocPreviewUrl: string
+}
+
+export interface DriverRow extends Driver {
+  contact?: string
+  cdlExp?: string
+  medicalExp?: string
+  mvrDate?: string
+  clearinghouseDate?: string
+}
+
+export type BadgeVariant =
+  | 'default'
+  | 'secondary'
+  | 'destructive'
+  | 'outline'
+  | 'success'
+  | 'warning'
+  | 'purple'
+  | 'green'
 
 export interface Column {
   key: string
@@ -57,11 +136,11 @@ export interface Column {
   align?: 'left' | 'center' | 'right'
 }
 
-export interface Vehicle {
-  id: string
+export interface Vehicle extends FirestoreDoc {
+  vehicleId: string
   busNumber: string
   vin: string
-  status: 'Active' | 'Maintenance' | 'Inactive'
+  vehicleStatus: 'Active' | 'Maintenance' | 'Inactive'
   lastAnnualInspection: string // YYYY-MM-DD
   mileage: number
   inspectionFile?: string
@@ -70,10 +149,9 @@ export interface Vehicle {
 export type ViewState =
   | 'dashboard'
   | 'drivers'
-  | 'fleet'
-  | 'registry'
-  | 'reports'
-  | 'specs'
+  | 'vehicles'
+  | 'auditreports '
+  | 'documentregistry'
+  | 'applications'
   | 'login'
   | 'settings'
-

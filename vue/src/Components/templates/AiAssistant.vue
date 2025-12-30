@@ -76,7 +76,7 @@ const handleAskAI = async () => {
   try {
     const answer = await askRegulatoryAssistant(query);
     chatResponse.value = answer;
-  } catch (error) {
+  } catch {
     chatResponse.value = "Error connecting to regulatory assistant.";
   } finally {
     isThinking.value = false;

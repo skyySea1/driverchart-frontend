@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { Upload, CheckCircle } from 'lucide-vue-next'
 
-const props = defineProps<{
+defineProps<{
   label: string
   fileName?: string
 }>()
