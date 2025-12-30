@@ -137,6 +137,7 @@ export interface Column {
 }
 
 export interface Vehicle extends FirestoreDoc {
+  vehicleId: string
   busNumber: string
   vin: string
   vehicleStatus: 'Active' | 'Maintenance' | 'Inactive'

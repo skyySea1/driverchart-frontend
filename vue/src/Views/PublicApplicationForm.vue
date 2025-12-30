@@ -145,7 +145,10 @@ async function submit() {
     submitted.value = true
   } catch (err) {
     console.error('Error submitting application:', err)
-    alert('Failed to submit application. Please try again.')
+    window.alert(
+      'We could not submit your application due to a temporary problem. ' +
+      'Your information was not saved. Please check your internet connection and try again in a few minutes.'
+    )
   } finally {
     loading.value = false
   }

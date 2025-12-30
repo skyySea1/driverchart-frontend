@@ -68,7 +68,7 @@
                 type="email"
                 required
                 placeholder="you@example.com"
-                class="logininput w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+                class=" w-full pl-10 pr-4 py-3 border border-slate-300 input-base"
                 :disabled="isLoading"
               />
             </div>
@@ -89,10 +89,11 @@
                 :type="showPassword ? 'text' : 'password'"
                 required
                 placeholder="••••••••"
-                class="logininput w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+                class=" w-full pl-10 pr-12 py-3 border border-slate-300 rounded-lg input-base"
                 :disabled="isLoading"
               />
               <button
+              v-cursor
                 type="button"
                 @click="showPassword = !showPassword"
                 class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
@@ -108,6 +109,7 @@
           <div class="flex items-center justify-between text-sm">
             <label class="flex items-center cursor-pointer">
               <input
+              v-cursor
                 v-model="rememberMe"
                 type="checkbox"
                 class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"

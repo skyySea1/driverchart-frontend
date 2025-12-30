@@ -81,7 +81,7 @@
       </div>
 
       <!-- AI Assistant Section -->
-      <div class="rounded shadow bg-white overflow-hidden min-h-[300px]">
+      <div class="rounded shadow bg-white overflow-hidden min-h-75">
         <AiAssistant />
       </div>
     </div>
@@ -140,10 +140,10 @@ async function loadCounts() {
   } catch (error) {
     console.error("Error loading dashboard counts:", error)
   } finally {
-    // Artificial delay to show skeleton if it's too fast
+     // Simulated load time for consistency
     setTimeout(() => {
       isLoading.value = false
-    }, 600)
+    }, 100)
   }
 }
 

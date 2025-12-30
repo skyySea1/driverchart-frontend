@@ -5,7 +5,7 @@
       <div class="h-48 skeleton rounded-xl border border-slate-200 w-full"></div>
       <div class="h-64 skeleton rounded-xl border border-slate-200 w-full"></div>
     </div>
-    
+
     <div v-else class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
       <h3 class="font-bold text-lg text-slate-800 flex items-center">
         <Database class="w-5 h-5 mr-2 text-blue-500" />
@@ -39,9 +39,9 @@ import { Database } from 'lucide-vue-next'
 const loading = ref(true)
 
 onMounted(() => {
-  // Simulate minor load time for consistency
+  // Simulated load time for consistency
   setTimeout(() => {
     loading.value = false
-  }, 400)
+  }, 100)
 })
 </script>

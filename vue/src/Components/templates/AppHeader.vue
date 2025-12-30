@@ -148,9 +148,9 @@
           <div
             class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-indigo-100 group-hover:scale-105 transition-transform"
           >
-            H
+            M
           </div>
-          <span class="text-sm font-bold text-slate-700 hidden sm:inline">Henri</span>
+          <span class="text-sm font-bold text-slate-700 hidden sm:inline">Manoel Ribeiro</span>
           <ChevronDown
             class="w-4 h-4 text-slate-400 group-hover:text-indigo-500 transition-colors"
           />
