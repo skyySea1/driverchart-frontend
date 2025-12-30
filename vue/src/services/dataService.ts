@@ -3,99 +3,116 @@ import { mockDrivers } from './mocks/drivers'
 import { mockVehicles } from './mocks/vehicles'
 import { mockAlerts } from './mocks/alerts'
 import { mockDocumentLogs } from './mocks/documentLogs'
-import type { Driver, Vehicle, Alert, DocumentLog } from '../types'
+import { mockApplications } from './mocks/applications'
+import type { Driver, Vehicle, Alert, DocumentLog, Application } from '../types'
 
 // In-memory state initialized from mocks
 let driversState = [...mockDrivers]
 let vehiclesState = [...mockVehicles]
+let applicationsState = [...mockApplications]
 const alertsState = [...mockAlerts]
 const logsState = [...mockDocumentLogs]
 
 export const dataService = {
   // --- Drivers ---
-  getDrivers: async (): Promise<(Driver & {
-    contact: string;
-    cdlExp?: string;
-    medicalExp?: string;
-    mvrDate?: string;
-    clearinghouseDate?: string;
-  })[]> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
+  getDrivers: async (): Promise<
+    (Driver & {
+      contact: string
+      cdlExp?: string
+      medicalExp?: string
+      mvrDate?: string
+      clearinghouseDate?: string
+    })[]
+  > => {
     // Return flat structure for the view
-    return driversState.map(d => ({
+    return driversState.map((d) => ({
       ...d,
       hireStatus: d.hireStatus || 'Active', // Ensure hireStatus is present
       contact: d.phone,
       cdlExp: d.cdl?.expiryDate,
       medicalExp: d.medical?.expiryDate,
       mvrDate: d.mvr?.expiryDate,
-      clearinghouseDate: d.drugAlcohol?.expiryDate
+      clearinghouseDate: d.drugAlcohol?.expiryDate,
     }))
   },
 
   addDriver: async (driver: Driver): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 500))
     // todo use more robust uuid generation
     driver.id = Math.random().toString(36).substr(2, 9) // Generate temp ID
     driversState.push(driver)
   },
 
   updateDriver: async (driver: Driver): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    const index = driversState.findIndex(d => d.id === driver.id)
+    const index = driversState.findIndex((d) => d.id === driver.id)
     if (index !== -1) {
       driversState[index] = driver
     }
   },
 
   deleteDriver: async (id: string): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    driversState = driversState.filter(d => d.id !== id)
+    driversState = driversState.filter((d) => d.id !== id)
   },
 
   // --- Vehicles ---
   getVehicles: async (): Promise<Vehicle[]> => {
-    await new Promise((resolve) => setTimeout(resolve, 500))
     return [...vehiclesState]
   },
 
   addVehicle: async (vehicle: Vehicle): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 500))
     vehicle.id = Math.random().toString(36).substr(2, 9)
     vehiclesState.push(vehicle)
   },
 
   updateVehicle: async (vehicle: Vehicle): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    const index = vehiclesState.findIndex(v => v.id === vehicle.id)
+    const index = vehiclesState.findIndex((v) => v.id === vehicle.id)
     if (index !== -1) {
       vehiclesState[index] = vehicle
     }
   },
 
   deleteVehicle: async (id: string): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    vehiclesState = vehiclesState.filter(v => v.id !== id)
+    vehiclesState = vehiclesState.filter((v) => v.id !== id)
+  },
+
+  // --- Applications ---
+  getApplications: async (): Promise<Application[]> => {
+    return [...applicationsState]
+  },
+
+  submitApplication: async (
+    application: Omit<Application, 'id' | 'status' | 'appliedDate'>,
+  ): Promise<void> => {
+    const newApp: Application = {
+      ...application,
+      id: Math.random().toString(36).substr(2, 9),
+      status: 'Pending',
+      appliedDate: dayjs().format('YYYY-MM-DD'),
+    }
+    applicationsState.push(newApp)
+  },
+
+  updateApplicationStatus: async (id: string, status: 'Approved' | 'Rejected'): Promise<void> => {
+    const index = applicationsState.findIndex((a) => a.id === id)
+    if (index !== -1) {
+      applicationsState[index].status = status
+    }
   },
 
   // --- Alerts & Logs ---
   getAlerts: async (): Promise<Alert[]> => {
-    await new Promise((resolve) => setTimeout(resolve, 500))
     return [...alertsState]
   },
 
   getDocumentLogs: async (): Promise<DocumentLog[]> => {
-    await new Promise((resolve) => setTimeout(resolve, 500))
     return [...logsState]
   },
 
   // Helper for dashboard
   getDashboardStats: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 800))
     const drivers = driversState
     const vehicles = vehiclesState
     const alerts = alertsState
+    const pendingApps = applicationsState.filter((a) => a.status === 'Pending').length
 
     const today = dayjs().startOf('day')
 
@@ -120,8 +137,8 @@ export const dataService = {
       expiringClearinghouse: drivers.filter((d) => isExpiringSoon(d.drugAlcohol?.expiryDate))
         .length,
       auditScore: '94%',
-      newApplications: 3,
-      annualRecordReview: drivers.filter(d => isExpired(d.mvr?.expiryDate)).length
+      newApplications: pendingApps,
+      annualRecordReview: drivers.filter((d) => isExpired(d.mvr?.expiryDate)).length,
     }
-  }
+  },
 }

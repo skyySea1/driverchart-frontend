@@ -88,9 +88,9 @@ const navItems = [
   { id: 'vehicles', label: 'Fleet Maintenance', icon: Bus, hidden: true},
   { id: 'audit', label: ' Audit Reports', icon: PieChart },
   { id: 'docs', label: 'Document Registry', icon: FileText },
+  { id: 'applications', label: 'Applications', icon: FileText },
   { id: 'specs', label: 'System Specs', icon: Code },
   { id: 'settings', label: 'Settings', icon: Settings },
-  { id: 'applications', label: 'Applications', icon: FileText },
 ]
 // hidden items that are filtered out
 const visibleNavItems = computed(() => navItems.filter((item) => !item.hidden))

@@ -137,13 +137,24 @@ export interface Column {
 }
 
 export interface Vehicle extends FirestoreDoc {
-  vehicleId: string
   busNumber: string
   vin: string
   vehicleStatus: 'Active' | 'Maintenance' | 'Inactive'
   lastAnnualInspection: string // YYYY-MM-DD
   mileage: number
   inspectionFile?: string
+}
+
+export interface Application extends FirestoreDoc {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  appliedDate: string;
+  experienceYears?: number;
+  cdlNumber?: string;
+  notes?: string;
 }
 
 export type ViewState =

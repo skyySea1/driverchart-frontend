@@ -12,6 +12,8 @@ const MainReports = () => import('@/Views/MainReports.vue')
 const AuditReports = () => import('@/Views/AuditReportsView.vue')
 const SystemSpecs = () => import('@/Views/SystemSpecsView.vue')
 const Settings = () => import('@/Views/SettingsView.vue')
+const Applications = () => import('@/Views/ApplicationsView.vue')
+const PublicApplicationForm = () => import('@/Views/PublicApplicationForm.vue')
 
 // todo add navigation guards for auth using meta.requiresAuth(meta fields) on routes that need auth
 const routes: RouteRecordRaw[] = [
@@ -20,6 +22,12 @@ const routes: RouteRecordRaw[] = [
     name: 'login',
     component: Login,
     meta: { requiresAuth: false },
+  },
+  {
+    path: '/apply',
+    name: 'apply',
+    component: PublicApplicationForm,
+    meta: { requiresAuth: false, title: 'Apply Now' },
   },
   {
     path: '/',
@@ -96,6 +104,15 @@ const routes: RouteRecordRaw[] = [
         component: Settings,
         meta: {
           title: 'System Settings',
+          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
+        },
+      },
+      {
+        path: 'applications',
+        name: 'applications',
+        component: Applications,
+        meta: {
+          title: 'Driver Applications',
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
         },
       },
