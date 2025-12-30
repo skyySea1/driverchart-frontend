@@ -9,7 +9,7 @@ export function useCompliance(today = dayjs().startOf('day')) {
    * @param warningDays Days threshold for warning
    * @returns true if expired or expiring soon
    */
-  function isExpiringSoon(dateStr?: string, warningDays = 30): boolean {
+  function isExpiringSoon(dateStr?: string, warningDays = 60): boolean {
     if (!dateStr) return false
     const diff = dayjs(dateStr).diff(today, 'day')
     // diff < 0 is expired
@@ -34,7 +34,7 @@ export function useCompliance(today = dayjs().startOf('day')) {
   function getStatusColor(dateStr?: string): string {
     if (!dateStr) return 'text-slate-500' // Unknown/Missing
     if (isExpired(dateStr)) return 'bg-red-100 text-red-800'
-    if (isExpiringSoon(dateStr)) return 'bg-amber-100 text-amber-800'
+    if (isExpiringSoon(dateStr)) return 'bg-amber-100 text-amber-800' // expire in 60 days
     return 'bg-green-100 text-green-800'
   }
 
