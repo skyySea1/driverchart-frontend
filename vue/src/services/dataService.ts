@@ -79,21 +79,20 @@ export const dataService = {
     return [...applicationsState]
   },
 
-  submitApplication: async (
-    application: Omit<Application, 'id' | 'status' | 'appliedDate'>,
-  ): Promise<void> => {
+  submitApplication: async (application: Omit<Application, 'id' | 'status' | 'appliedDate'>): Promise<void> => {
+    await new Promise((resolve) => setTimeout(resolve, 500))
     const newApp: Application = {
       ...application,
       id: Math.random().toString(36).substr(2, 9),
       status: 'Pending',
-      appliedDate: dayjs().format('YYYY-MM-DD'),
-    }
+      appliedDate: dayjs().format('YYYY-MM-DD')
+    } as Application
     applicationsState.push(newApp)
   },
 
   updateApplicationStatus: async (id: string, status: 'Approved' | 'Rejected'): Promise<void> => {
     const index = applicationsState.findIndex((a) => a.id === id)
-    if (index !== -1) {
+    if (index !== -1 && applicationsState[index]) {
       applicationsState[index].status = status
     }
   },

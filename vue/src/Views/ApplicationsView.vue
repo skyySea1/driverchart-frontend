@@ -97,28 +97,11 @@ async function fetchApplications() {
 }
 
 async function updateStatus(id: string, status: 'Approved' | 'Rejected') {
-  // Optimistically update local state to avoid refetching the full list
-  const index = applications.value.findIndex(app => app.id === id)
-  if (index === -1) {
-    console.warn(`Application with id ${id} not found`)
-    return
-  }
-
-  const previousStatus = applications.value[index].status
-  applications.value[index] = {
-    ...applications.value[index],
-    status,
-  }
-
   try {
     await dataService.updateApplicationStatus(id, status)
+    fetchApplications()
   } catch (err) {
     console.error('Error updating status:', err)
-    // Revert optimistic update on error to keep local state consistent
-    applications.value[index] = {
-      ...applications.value[index],
-      status: previousStatus,
-    }
   }
 }
 

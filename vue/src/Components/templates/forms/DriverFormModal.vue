@@ -671,8 +671,8 @@ async function save() {
     delete finalData.ssnDocFile
     delete finalData.ssnDocPreviewUrl
 
-    if (props.driver?.driverId) {
-      await dataService.updateDriver({ ...finalData, driverId: props.driver.driverId })
+    if (props.driver?.id) {
+      await dataService.updateDriver({ ...finalData, id: props.driver.id })
     } else {
       await dataService.addDriver({ ...finalData })
     }

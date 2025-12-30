@@ -30,7 +30,7 @@ export interface FirestoreDoc {
 }
 
 export interface Driver extends FirestoreDoc {
-  driverId?: string
+  id: string
   firstName: string
   middleName: string
   lastName: string
@@ -72,7 +72,6 @@ export interface Driver extends FirestoreDoc {
 }
 
 export type DriverForm = {
-
   firstName: string
   middleName: string
   lastName: string
@@ -137,7 +136,7 @@ export interface Column {
 }
 
 export interface Vehicle extends FirestoreDoc {
-  vehicleId: string
+  id: string
   busNumber: string
   vin: string
   vehicleStatus: 'Active' | 'Maintenance' | 'Inactive'
@@ -147,15 +146,15 @@ export interface Vehicle extends FirestoreDoc {
 }
 
 export interface Application extends FirestoreDoc {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
-  appliedDate: string;
-  experienceYears?: number;
-  cdlNumber?: string;
-  notes?: string;
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  status: 'Pending' | 'Approved' | 'Rejected'
+  appliedDate: string
+  experienceYears?: number
+  cdlNumber?: string
+  notes?: string
 }
 
 export type ViewState =
