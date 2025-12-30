@@ -4,7 +4,7 @@ export const DriverFormSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   middleName: z.string().default(''),
   lastName: z.string().min(1, 'Last name is required'),
-  birthDate: z.date({ error: 'Date of birth is required' }),
+  dob: z.date({ error: 'Date of birth is required' }),
   phone: z.string().min(1, 'Phone number is required'),
   email: z.email('Invalid email address').or(z.literal('')),
   hireDate: z.date({ error: 'Hire date is required' }),

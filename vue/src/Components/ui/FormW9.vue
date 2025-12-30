@@ -235,29 +235,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-type W9Data = {
-  firstName?: string
-  middleName?: string
-  lastName?: string
-  ssn?: string
-  w9Address?: string
-  w9CityStateZip?: string
-  w9Signed?: boolean
-  w9Signature?: string
-  w9Date?: string
-  businessName?: string
-  taxClassification?: 'individual' | 'c_corp' | 's_corp' | 'partnership' | 'trust_estate' | 'llc'
-  accountNumber?: string
-}
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const props = defineProps<{ data: any }>()
 const emit = defineEmits<{ 'update:data': [any] }>()
-
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 const fullName = computed(() =>
   [props.data.firstName, props.data.middleName, props.data.lastName].filter(Boolean).join(' '),
 )
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function onInput(key: string, value: any) {
   emit('update:data', { ...props.data, [key]: value })
 }

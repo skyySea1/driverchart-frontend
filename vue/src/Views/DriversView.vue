@@ -63,7 +63,6 @@
       v-if="modalStore.activeModal === 'driver'"
       :driver="modalStore.data as Driver"
       @close="closeModal"
-      @saved="reload"
     />
 
     <!-- Delete confirmation component -->
@@ -78,16 +77,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import DriverFormModal from '@/Components/templates/forms/DriverFormModal.vue'
 import DeleteConfirmation from '@/Components/ui/DeleteConfirmation.vue'
 import { dataService } from '@/services/dataService'
+import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
 import { statusColorFor } from '@/Composables/useDotHelpers'
 import { Edit, Trash2, Bot } from 'lucide-vue-next'
 import BaseButton from '@/Components/ui/BaseButton.vue'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
 import { useModalStore } from '@/stores/ModalStore'
-import type { Driver, Column } from '@/types'
+import type { Driver, Column, DriverRow } from '@/types'
 
 const modalStore = useModalStore()
 
@@ -102,24 +102,26 @@ const tableColumns: Column[] = [
   { key: 'actions', label: 'Actions', align: 'right' },
 ]
 
-const drivers = ref<Driver[]>([])
-const loading = ref(false)
+const { items: driversItems, loading } = useRealtimeCollection<Driver>(
+  `artifacts/${import.meta.env.VITE_APP_ID}/public/data/drivers`,
+)
+
+const drivers = computed<DriverRow[]>(() => {
+  return driversItems.value.map((d) => ({
+    ...d,
+    hireStatus: d.hireStatus || 'Active',
+    contact: d.phone,
+    cdlExp: d.cdl?.expiryDate,
+    medicalExp: d.medical?.expiryDate,
+    mvrDate: d.mvr?.expiryDate,
+    clearinghouseDate: d.drugAlcohol?.expiryDate,
+  }))
+})
+
 const toDelete = ref<Driver | null>(null)
 
-// Fetch drivers from API
-async function fetchDrivers() {
-  loading.value = true
-  try {
-    drivers.value = (await dataService.getDrivers()) as any
-  } catch (err) {
-    console.error('Error fetching drivers:', err)
-  } finally {
-    loading.value = false
-  }
-}
-
 // Map dates to status colors
-function statusColor(date: any) {
+function statusColor(date: string) {
   if (!date) return 'text-slate-500'
   const statusClass = statusColorFor(date)
   if (statusClass.includes('bg-red')) return 'bg-red-100 text-red-800'
@@ -142,10 +144,6 @@ function closeModal() {
   modalStore.closeModal()
 }
 
-function reload() {
-  fetchDrivers()
-}
-
 function confirmDelete(d: Driver) {
   toDelete.value = d
 }
@@ -155,18 +153,13 @@ async function deleteDriver() {
   try {
     await dataService.deleteDriver(toDelete.value.id)
     toDelete.value = null
-    reload()
   } catch (err) {
     console.error('Error deleting driver:', err)
   }
 }
 
-// AI Audit placeholder
+// todo add toastr or similar notification
 function runAudit(d: Driver) {
   alert(`AI Audit (simulated) for ${d.firstName} ${d.lastName}`)
 }
-
-onMounted(() => {
-  fetchDrivers()
-})
 </script>

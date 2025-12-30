@@ -49,6 +49,7 @@ defineProps({
     default: () => [],
   },
   rows: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     type: Array as PropType<any[]>,
     default: () => [],
   },

@@ -48,7 +48,7 @@
             <label class="block text-xs font-bold text-slate-700"
               >Date of Birth <span class="text-red-500">*</span></label
             >
-            <input id="birthDateInput" v-model="form.birthDate" type="date" class="input-base" />
+            <input id="dobInput" v-model="form.dob" type="date" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
@@ -407,7 +407,7 @@
           type="button"
           @click="$emit('close')"
           :disabled="isSaving"
-          class=" px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg disabled:opacity-50"
+          class="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg disabled:opacity-50"
         >
           Cancel
         </button>
@@ -431,10 +431,10 @@
       @close="activeDocument = null"
     >
       <div v-if="activeDocument === 'w9'">
-        <FormW9 :data="form as any" @update:data="updateForm" />
+        <FormW9 :data="form" @update:data="updateForm" />
       </div>
       <div v-else-if="activeDocument === 'i9'">
-        <FormI9 :data="form as any" @update:data="updateForm" />
+        <FormI9 :data="form" @update:data="updateForm" />
       </div>
       <div v-else-if="activeDocument === 'roadtest'">
         <!-- Using the original certificate component structure but passing flat form data -->
@@ -448,7 +448,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { dataService } from '@/services/dataService'
-import type { Driver } from '@/types'
+import type { Driver, DriverForm } from '@/types'
 import BaseAlert from '@/Components/ui/BaseAlert.vue'
 import BaseModal from '@/Components/ui/BaseModal.vue'
 import FormW9 from '@/Components/ui/FormW9.vue'
@@ -482,52 +482,12 @@ const isSaving = ref(false)
 const errorMsg = ref('')
 const activeDocument = ref<string | null>(null)
 
-interface DriverForm {
-  firstName: string
-  middleName: string
-  lastName: string
-  birthDate: string
-  email: string
-  phone: string
-  ssn: string
-  address: string
-  city: string
-  state: string
-  zip: string
-  hireStatus: 'Active' | 'Inactive' | 'Terminated' | 'Rehired' | 'On Leave'
-  hireDate: string
-  termDate: string
-  rehireDate: string
-  emergencyName: string
-  emergencyPhone: string
-  emergencyRelationship: string
-  cdlNumber: string
-  cdlState: string
-  cdlExp: string
-  medRegistry: string
-  medExp: string
-  mvrDate: string
-  lastDrugTest: string
-  roadTestDate: string
-  roadTestExaminer: string
-  bankName: string
-  routingNumber: string
-  accountNumber: string
-  w9Signed: boolean
-  businessName: string
-  taxClassification: string
-  i9EmployerSignature: string
-  ssnDocName: string
-  ssnDocFile: File | null
-  ssnDocPreviewUrl: string
-}
-
 // form states - internal flattened structure
 const form = ref<DriverForm>({
   firstName: '',
   middleName: '',
   lastName: '',
-  birthDate: '',
+  dob: '',
   email: '',
   phone: '',
   ssn: '',
@@ -569,7 +529,7 @@ onMounted(() => {
     form.value = {
       ...form.value,
       ...props.driver,
-      birthDate: props.driver.dob || '',
+      dob: props.driver.dob || '',
       cdlNumber: props.driver.cdl?.documentNumber || '',
       cdlState: props.driver.cdl?.state || '',
       cdlExp: props.driver.cdl?.expiryDate || '',
@@ -609,6 +569,7 @@ const formattedForCertificate = computed(() => {
       documentNumber: form.value.cdlNumber,
       state: form.value.cdlState,
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any
 })
 
@@ -635,15 +596,23 @@ async function save() {
     } else if (!form.value.lastName?.trim()) {
       errorMsg.value = 'Last Name is required.'
       errorFieldId = 'lastNameInput'
-    } else if (!form.value.birthDate) {
+    } else if (!form.value.dob) {
       errorMsg.value = 'Date of Birth is required.'
-      errorFieldId = 'birthDateInput'
+      errorFieldId = 'dobInput'
     } else if (!form.value.phone?.trim()) {
       errorMsg.value = 'Phone Number is required.'
       errorFieldId = 'phoneInput'
     } else if (!form.value.hireDate) {
       errorMsg.value = 'Hire Date is required.'
       errorFieldId = 'hireDateInput'
+    } else if (!form.value.cdlExp) {
+      errorMsg.value = 'CDL Expiration Date is required.'
+    } else if (!form.value.medExp) {
+      errorMsg.value = 'Medical Expiration Date is required.'
+    } else if (!form.value.mvrDate) {
+      errorMsg.value = 'MVR Date is required.'
+    } else if (!form.value.lastDrugTest) {
+      errorMsg.value = 'Drug Test Date is required.'
     }
 
     if (errorMsg.value) {
@@ -659,10 +628,14 @@ async function save() {
 
     isSaving.value = true
 
-    // nested structure required by the API/Type
     const dataToSave: Driver = {
-      ...(form.value as any),
-      dob: form.value.birthDate,
+      ...form.value,
+      id: props.driver?.id || '',
+      firstName: form.value.firstName || '',
+      lastName: form.value.lastName || '',
+      dob: form.value.dob || '',
+      phone: form.value.phone || '',
+      email: form.value.email || '',
       cdl: {
         documentNumber: form.value.cdlNumber,
         state: form.value.cdlState,
@@ -694,14 +667,14 @@ async function save() {
     }
 
     // Remove internal UI-only fields before saving
-    const finalData = { ...dataToSave } as any
+    const finalData = { ...dataToSave }
     delete finalData.ssnDocFile
     delete finalData.ssnDocPreviewUrl
 
-    if (props.driver?.id) {
-      await dataService.updateDriver({ ...finalData, id: props.driver.id })
+    if (props.driver?.driverId) {
+      await dataService.updateDriver({ ...finalData, driverId: props.driver.driverId })
     } else {
-      await dataService.addDriver({ ...finalData } as any)
+      await dataService.addDriver({ ...finalData })
     }
     emit('saved')
     emit('close')

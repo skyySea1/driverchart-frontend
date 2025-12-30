@@ -19,7 +19,7 @@
             :class="[
               'px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center',
               activeTab === tab.id
-                ? 'bg-white text-slate-800 shadow-sm'
+                ? 'bg-white text-indigo-600 shadow-sm font-bold'
                 : 'text-slate-500 hover:text-slate-700',
             ]"
             @click="activeTab = tab.id"
@@ -121,13 +121,25 @@ onMounted(() => {
 })
 
 const filtered = computed<DocumentLog[]>(() => {
-  if (!filter.value) return entries.value
-  const f = filter.value.toLowerCase()
-  return entries.value.filter(
-    (e) =>
-      (e.entityName || '').toLowerCase().includes(f) ||
-      (e.fileName || '').toLowerCase().includes(f),
-  )
+  let result = entries.value
+
+  // Filter by Tab
+  if (activeTab.value === 'drivers') {
+    result = result.filter((e) => e.type === 'Driver' || e.type === 'Compliance')
+  } else if (activeTab.value === 'fleet') {
+    result = result.filter((e) => e.type === 'Vehicle' || e.type === 'Maintenance')
+  }
+
+  // Filter by Search
+  if (filter.value) {
+    const f = filter.value.toLowerCase()
+    result = result.filter(
+      (e) =>
+        (e.entityName || '').toLowerCase().includes(f) ||
+        (e.fileName || '').toLowerCase().includes(f),
+    )
+  }
+  return result
 })
 
 function formatDate(value: unknown): string {
@@ -136,7 +148,7 @@ function formatDate(value: unknown): string {
     return value.slice(0, 10)
   }
   try {
-    const d = new Date(value as any)
+    const d = new Date(value as string | number)
     return isNaN(d.getTime()) ? '-' : d.toISOString().slice(0, 10)
   } catch {
     return '-'

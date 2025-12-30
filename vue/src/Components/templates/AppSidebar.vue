@@ -1,7 +1,7 @@
 <template>
   <aside
     :class="[
-      'sidebar h-screen fixed left-0 top-0 w-64 transition-transform bg-slate-900 text-white print:hidden z-40 flex flex-col',
+      'h-screen fixed left-0 top-0 w-64 transition-transform bg-slate-900 text-white print:hidden z-40 flex flex-col',
       props.collapsed ? '-translate-x-full md:-translate-x-56' : 'translate-x-0',
     ]"
   >
@@ -9,16 +9,16 @@
     <!-- Logo Section -->
     <div
       v-cursor
-      class="sidebar__header p-6 flex items-center gap-3 border-b border-slate-800 cursor-pointer"
+      class="p-6 flex items-center gap-3 border-b border-slate-800 cursor-pointer"
       @click="$emit('navigate', 'dashboard')"
     >
-      <div class="sidebar__logo w-10 h-10 rounded flex items-center justify-center shadow-lg">
-        <Truck class="sidebar__logo-icon w-8 h-8 text-blue-400 pointer-events-none" />
+      <div class="w-10 h-10 rounded flex items-center justify-center shadow-lg">
+        <Bus class="w-8 h-8 text-blue-400 pointer-events-none" />
       </div>
 
       <div v-show="!props.collapsed || collapsedMobile" class="sidebar__brand transition-opacity">
-        <div class="sidebar__brand-name font-bold leading-tight">CharterSafe</div>
-        <div class="sidebar__brand-tagline text-xs text-slate-400">DOT Compliance System</div>
+        <div class="font-bold leading-tight">CharterSafe</div>
+        <div class="text-xs text-slate-400">DOT Compliance System</div>
       </div>
     </div>
 
@@ -33,13 +33,13 @@
           '-item flex items-center gap-3 w-full text-left p-3 rounded-lg transition-colors duration-200',
           props.currentRoute === item.id
             ? 'bg-indigo-600 text-white shadow-md'
-            : 'text-slate-300 hover:bg-slate-800 hover:text-white',
+            : 'text-slate-400 hover:bg-slate-800 hover:text-white',
         ]"
       >
         <component :is="item.icon" class="-icon w-5 h-5 shrink-0 pointer-events-none" />
         <span
           :class="[
-            'transition-opacity duration-300 whitespace-nowrap',
+            'font-medium transition-opacity duration-300 whitespace-nowrap',
             {
               'md:opacity-0': props.collapsed,
               'md:opacity-100': !props.collapsed,
@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import UserBadge from '@/Components/ui/UserBadge.vue'
-import { LayoutDashboard, Code, Users, Truck, FileText, PieChart, Settings } from 'lucide-vue-next'
+import { LayoutDashboard, Code, Users, Truck, FileText, PieChart, Settings, Bus } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 const props = defineProps<{
   collapsed: boolean
@@ -94,6 +94,7 @@ const navItems = [
   { id: 'specs', label: 'System Specs', icon: Code },
   { id: 'reports', label: 'Main Reports', icon: FileText },
   { id: 'settings', label: 'Settings', icon: Settings },
+  
 ]
 // hidden items that are filtered out
 const visibleNavItems = computed(() => navItems.filter((item) => !item.hidden))

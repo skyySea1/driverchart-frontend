@@ -29,7 +29,7 @@
           {{ data.w9CityStateZip || '' }}
         </div>
         <div class="text-xs border-b border-slate-400">
-          <span class="font-bold">birthDate:</span> {{ data.birthDate }}
+          <span class="font-bold">birthDate:</span> {{ data.dob }}
         </div>
       </div>
       <div class="grid grid-cols-3 gap-2">
@@ -157,8 +157,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const props = defineProps<{ data: any }>()
 const emit = defineEmits<{ 'update:data': [any] }>()
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 const fullName = computed(() => {
   const parts = [props.data.firstName, props.data.middleName, props.data.lastName]

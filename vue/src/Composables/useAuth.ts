@@ -19,10 +19,12 @@ export function useAuth() {
       const credential = await signInWithEmailAndPassword(auth, email, password)
       currentUser.value = credential.user
       return credential.user
-    } catch (err: any) {
-      error.value = err.message
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        error.value = err.message
+      }
       throw err
-    } finally {
+    } finally  {
       isLoading.value = false
     }
   }
@@ -33,9 +35,13 @@ export function useAuth() {
       currentUser.value = null
       // Clean localStorage
       localStorage.removeItem('isAuthenticated')
-    } catch (err: any) {
-      error.value = err.message
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        error.value = err.message
+      }
       throw err
+    } finally {
+      isLoading.value = false
     }
   }
   const loading = computed(() => isLoading.value || isInitializing.value)
@@ -60,3 +66,4 @@ export function useAuth() {
     initAuth,
   }
 }
+
