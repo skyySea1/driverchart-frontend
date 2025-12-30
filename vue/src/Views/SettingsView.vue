@@ -35,14 +35,10 @@
           <template v-if="activeSection === 'profile'">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="space-y-1">
-                <label class="text-[10px] font-bold text-slate-400 uppercase"
-                  >Administrator Name</label
-                >
-                <PrimaryInput type="text" value="Henri Admin" />
+                <InputGroup label="Administrator Name" type="text" :modelValue="'Henri Admin'" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] font-bold text-slate-400 uppercase">Email Address</label>
-                <PrimaryInput type="email" value="admin@vuebus.com" />
+                <InputGroup label="Email Address" type="email" :modelValue="'admin@vuebus.com'" />
               </div>
             </div>
           </template>
@@ -95,8 +91,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { User, Bell, LucideShieldX, Globe, ShieldAlert } from 'lucide-vue-next'
-import PrimaryInput from '@/Components/ui/PrimaryInput.vue'
+import PrimaryInput from '@/Components/ui/InputGroup.vue'
 import BaseButton from '@/Components/ui/BaseButton.vue'
+import InputGroup from '@/Components/ui/InputGroup.vue'
 
 const activeSection = ref('profile')
 

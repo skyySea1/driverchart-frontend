@@ -124,7 +124,7 @@ const alerts = computed<Alert[]>(() => {
         list.push({
           id: `${d.id}-${label}`,
           type: 'critical',
-          message: `${d.lastName}: ${label} expired`,
+          message: `${d.firstName} ${d.lastName}: ${label} expired`,
           dueDate: dateStr,
         })
       } else if (diff <= 30) {
