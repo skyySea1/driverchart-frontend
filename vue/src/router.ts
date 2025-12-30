@@ -1,5 +1,6 @@
 // src/router.ts
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { useAuthStore } from '@/stores/AuthStore'
 
 // Lazy load views
 const Login = () => import('@/Views/LoginView.vue')
@@ -10,7 +11,7 @@ const Vehicles = () => import('@/Views/VehiclesView.vue')
 const DocumentRegistry = () => import('@/Views/DocumentRegistryView.vue')
 const MainReports = () => import('@/Views/MainReports.vue')
 const AuditReports = () => import('@/Views/AuditReportsView.vue')
-const SystemSpecs = () => import('@/Views/SystemSpecsView.vue')
+// const SystemSpecs = () => import('@/Views/SystemSpecsView.vue')
 const Settings = () => import('@/Views/SettingsView.vue')
 
 // todo add navigation guards for auth using meta.requiresAuth(meta fields) on routes that need auth
@@ -72,15 +73,15 @@ const routes: RouteRecordRaw[] = [
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
         },
       },
-      {
-        path: 'specs',
-        name: 'specs',
-        component: SystemSpecs,
-        meta: {
-          title: ' System Specs',
-          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-        },
-      },
+      // {
+      //   path: 'specs',
+      //   name: 'specs',
+      //   component: SystemSpecs,
+      //   meta: {
+      //     title: ' System Specs',
+      //     subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
+      //   },
+      // },
       {
         path: 'reports',
         name: 'reports',
@@ -113,8 +114,15 @@ const router = createRouter({
 })
 
 // Navigation guard for authentication
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore()
+
+  // Wait for auth to initialize if it hasn't already
+  if (authStore.isInitializing) {
+    await authStore.init()
+  }
+
+  const isAuthenticated = authStore.isAuthenticated
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')

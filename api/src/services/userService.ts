@@ -1,4 +1,4 @@
-import { db } from "../utils/firebase";
+import { db, auth } from "../utils/firebase";
 import { UserSchema, type User } from "../schemas/usersSchema";
 import { env } from "../utils/env";
 
@@ -45,5 +45,23 @@ export const userService = {
       createdAt: new Date().toISOString(),
     });
     return docRef.id;
+  },
+
+  async setUserRole(uid: string, role: string): Promise<void> {
+    if (!uid || !role) throw new Error("Invalid UID or Role");
+
+    // 1. Set Custom Claim in Firebase Auth (Security Source of Truth)
+    await auth.setCustomUserClaims(uid, { role });
+
+    // 2. Update Firestore Document (UI Source of Truth)
+    // We try to find the document by ID (assuming ID matches UID)
+    const docRef = db.collection(COLLECTION_PATH).doc(uid);
+    const doc = await docRef.get();
+    
+    if (doc.exists) {
+       await docRef.update({ role, updatedAt: new Date().toISOString() });
+    } else {
+       console.warn(`Firestore document for user ${uid} not found. Only Auth Claim set.`);
+    }
   },
 };
