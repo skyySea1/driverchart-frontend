@@ -32,6 +32,7 @@ export const driverService = {
     const docRef = await db.collection(COLLECTION_PATH).add({
       ...validatedData,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
     return docRef.id;
   },
@@ -40,7 +41,10 @@ export const driverService = {
     if (!id || !data) throw new Error("Invalid ID, or driver data");
 
     const validatedData = DriverSchema.partial().parse(data);
-    await db.collection(COLLECTION_PATH).doc(id).update(validatedData);
+    await db.collection(COLLECTION_PATH).doc(id).update({
+      ...validatedData,
+      updatedAt: new Date().toISOString(),
+    });
   },
 
   async delete(id: string): Promise<void> {
