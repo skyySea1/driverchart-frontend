@@ -16,7 +16,7 @@ export const dataService = {
     const response = await apiClient.get<Driver[]>('/drivers')
     return response.data.map((d) => ({
       ...d,
-      hireStatus: d.hireStatus || 'Active',
+      hireStatus: d.hireStatus || 'unknown',
       contact: d.phone,
       cdlExp: d.cdl?.expiryDate,
       medicalExp: d.medical?.expiryDate,
@@ -26,17 +26,21 @@ export const dataService = {
   },
 
   addDriver: async (driver: Driver): Promise<string> => {
-    const response = await apiClient.post<{ id: string }>('/drivers', driver)
-    return response.data.id
+    const response = await apiClient.post<{ driverId: string }>('/drivers', driver)
+    return response.data.driverId
   },
 
   updateDriver: async (driver: Driver): Promise<void> => {
-    if (!driver.id) throw new Error('Driver ID is required for update')
-    await apiClient.put(`/drivers/${driver.id}`, driver)
+    if (!driver.driverId) {
+      throw new Error(
+        'Cannot update driver: ID is missing. Please ensure the driver record has been saved first.'
+      )
+    }
+    await apiClient.put(`/drivers/${driver.driverId}`, driver)
   },
 
-  deleteDriver: async (id: string): Promise<void> => {
-    await apiClient.delete(`/drivers/${id}`)
+  deleteDriver: async (driverId: string): Promise<void> => {
+    await apiClient.delete(`/drivers/${driverId}`)
   },
 
   // --- Vehicles ---
@@ -46,23 +50,32 @@ export const dataService = {
   },
 
   addVehicle: async (vehicle: Vehicle): Promise<string> => {
-    const response = await apiClient.post<{ id: string }>('/vehicles', vehicle)
-    return response.data.id
+    const response = await apiClient.post<{ vehicleId: string }>('/vehicles', vehicle)
+    return response.data.vehicleId
   },
 
   updateVehicle: async (vehicle: Vehicle): Promise<void> => {
-    if (!vehicle.id) throw new Error('Vehicle ID is required for update')
-    await apiClient.put(`/vehicles/${vehicle.id}`, vehicle)
+    if (!vehicle.vehicleId) {
+      throw new Error(
+        'Cannot update vehicle: ID is missing. Please ensure the vehicle record has been saved first.'
+      )
+    }
+    await apiClient.put(`/vehicles/${vehicle.vehicleId}`, vehicle)
   },
 
-  deleteVehicle: async (id: string): Promise<void> => {
-    await apiClient.delete(`/vehicles/${id}`)
+  deleteVehicle: async (vehicleId: string): Promise<void> => {
+    await apiClient.delete(`/vehicles/${vehicleId}`)
   },
 
   // --- Alerts & Logs ---
   getAlerts: async (): Promise<Alert[]> => {
-    const response = await apiClient.get<Alert[]>('/expiration/alerts')
-    return response.data
+    try {
+      const response = await apiClient.get<Alert[]>('/expiration/alerts')
+      return response.data
+    } catch (error) {
+      console.warn('Failed to fetch alerts', error)
+      return []
+    }
   },
 
   getDocumentLogs: async (): Promise<DocumentLog[]> => {
@@ -74,7 +87,7 @@ export const dataService = {
       return []
     }
   },
-
+// todo divide services into domain-view-specific files, like dashboardService.ts
   // Helper for dashboard
   getDashboardStats: async () => {
     try {

@@ -30,7 +30,7 @@
       <div class="bg-slate-900 p-12 text-center">
         <div class="flex flex-col items-center gap-6">
           <div class="flex items-center gap-3">
-            <Truck class="w-10 h-10 text-blue-400 shrink-0" />
+            <Bus class="w-10 h-10 text-blue-400 shrink-0" />
             <h1 class="text-3xl font-bold text-white">CharterSafe</h1>
           </div>
           <p class="text-sm text-indigo-200">DOT Compliance Management System</p>
@@ -146,7 +146,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Truck } from 'lucide-vue-next'
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Bus } from 'lucide-vue-next';
 
 const router = useRouter()
 

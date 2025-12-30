@@ -7,31 +7,31 @@
       <StatCard
         type="licenses"
         title="Expiring Licenses"
-        :value="expiringLicenses"
+        :value="stats.expiringLicenses"
         :loading="isLoading"
       />
       <StatCard
         type="clearinghouse"
         title="Expiring Clearinghouses"
-        :value="expiringClearinghouse"
+        :value="stats.expiringClearinghouse"
         :loading="isLoading"
       />
       <StatCard
         type="medical"
         title="Expiring Med Cards"
-        :value="expiringMedCards"
+        :value="stats.expiringMedCards"
         :loading="isLoading"
       />
       <StatCard
         type="applications"
         title="New Applications"
-        :value="newApplications"
+        :value="stats.newApplications"
         :loading="isLoading"
       />
       <StatCard
         type="reviews"
         title="Annual Record Review"
-        :value="annualRecordReview"
+        :value="stats.annualRecordReview"
         :loading="isLoading"
       />
       <StatCard type="audit" title="Audit Score" :value="auditScore" :loading="isLoading" />
@@ -89,48 +89,116 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed } from 'vue'
+import dayjs from 'dayjs'
 import StatCard from '@/Components/templates/StatCard.vue'
-import { dataService } from '@/services/dataService'
 import AiAssistant from '@/Components/templates/AiAssistant.vue'
 import { Bell } from 'lucide-vue-next'
-import type { Alert } from '@/types'
+import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
+import type { Driver, Vehicle } from '@/types'
 
-// State
-const isLoading = ref(true)
-const expiringMedCards = ref<number>(0)
-const expiringLicenses = ref<number>(0)
-const expiringClearinghouse = ref<number>(0)
-const newApplications = ref<number>(0)
-const annualRecordReview = ref<number>(0)
-const alerts = ref<{ id: string; text: string; when: string }[]>([])
-const alertsCount = computed(() => alerts.value.length)
-const auditScore = ref<string>('94%')
+// Real-time data
+const appId = import.meta.env.VITE_APP_ID
+const { items: drivers, loading: loadingDrivers } = useRealtimeCollection<Driver>(
+  `artifacts/${appId}/public/data/drivers`,
+)
+// Vehicles collection not yet used in dashboard stats logic explicitly but good to have if we expand
+const { loading: loadingVehicles } = useRealtimeCollection<Vehicle>(
+  `artifacts/${appId}/public/data/vehicles`,
+)
 
-// Actions
-async function loadCounts() {
-  isLoading.value = true
-  try {
-    const stats = await dataService.getDashboardStats()
-    expiringMedCards.value = stats.expiringMedCards
-    expiringLicenses.value = stats.expiringLicenses
-    expiringClearinghouse.value = stats.expiringClearinghouse
-    newApplications.value = stats.newApplications
-    annualRecordReview.value = stats.annualRecordReview
-    alerts.value = (stats.alerts as Alert[]).map((a: Alert) => ({
-      id: a.id,
-      text: `${a.entity || 'Driver'}: ${a.message}`,
-      when: a.dueDate,
-    }))
-    auditScore.value = stats.auditScore
-  } catch (error) {
-    console.error('Error loading dashboard counts:', error)
-  } finally {
-    isLoading.value = false
+const isLoading = computed(() => loadingDrivers.value || loadingVehicles.value)
+
+// Single-pass calculation for all stats
+const stats = computed(() => {
+  const result = {
+    expiringMedCards: 0,
+    expiringLicenses: 0,
+    expiringClearinghouse: 0,
+    newApplications: 0,
+    annualRecordReview: 0,
   }
-}
 
-onMounted(async () => {
-  await loadCounts()
+  const today = dayjs().startOf('day')
+  const thirtyDaysAgo = dayjs().subtract(30, 'day')
+
+  drivers.value.forEach((d) => {
+    // Check expirations (isExpiringSoon logic inlined for performance/context)
+    const checkExpiring = (dateStr?: string) => {
+      if (!dateStr) return false
+      const diff = dayjs(dateStr).diff(today, 'day')
+      return diff <= 30
+    }
+
+    if (checkExpiring(d.medical?.expiryDate)) result.expiringMedCards++
+    if (checkExpiring(d.cdl?.expiryDate)) result.expiringLicenses++
+    if (checkExpiring(d.drugAlcohol?.expiryDate)) result.expiringClearinghouse++
+
+    // Check new applications
+    if (d.hireDate && dayjs(d.hireDate).isAfter(thirtyDaysAgo)) {
+      result.newApplications++
+    }
+
+    // Check annual record review (expired MVR)
+    if (d.mvr?.expiryDate && dayjs(d.mvr.expiryDate).isBefore(today, 'day')) {
+      result.annualRecordReview++
+    }
+  })
+
+  return result
 })
+
+const auditScore = computed(() => {
+  if (drivers.value.length === 0) return '100%'
+  const issues =
+    stats.value.expiringMedCards +
+    stats.value.expiringLicenses +
+    stats.value.expiringClearinghouse +
+    stats.value.annualRecordReview
+  const score = Math.max(0, 100 - issues * 5)
+  return `${score}%`
+})
+
+// Alerts Logic
+const alerts = computed(() => {
+  const list: { id: string; text: string; when: string }[] = []
+  const today = dayjs().startOf('day')
+
+  drivers.value.forEach((d) => {
+    // Check if active or default to active if missing
+    const status = d.hireStatus || 'unknown'
+    if (status !== 'Active') return
+
+    const check = (dateStr: string | undefined, label: string) => {
+      if (!dateStr) return
+      const due = dayjs(dateStr)
+      if (!due.isValid()) return
+
+      const diff = due.diff(today, 'day')
+
+      if (diff < 0) {
+        list.push({
+          id: `${d.driverId}-${label}`,
+          text: `${d.firstName} ${d.lastName}: ${label} expired`,
+          when: dateStr,
+        })
+      } else if (diff <= 30) {
+        list.push({
+          id: `${d.driverId}-${label}`,
+          text: `${d.firstName} ${d.lastName}: ${label} expiring soon`,
+          when: dateStr,
+        })
+      }
+    }
+
+    check(d.cdl?.expiryDate, 'CDL')
+    check(d.medical?.expiryDate, 'Medical')
+    check(d.drugAlcohol?.expiryDate, 'Drug/Alcohol')
+    check(d.mvr?.expiryDate, 'MVR')
+  })
+
+  return list.sort((a, b) => (dayjs(b.when).unix() - dayjs(a.when).unix()))
+})
+
+const alertsCount = computed(() => alerts.value.length)
 </script>

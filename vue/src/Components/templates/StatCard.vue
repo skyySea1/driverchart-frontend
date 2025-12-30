@@ -23,7 +23,7 @@
 
       <div class="min-w-0 flex-1 py-1">
         <div
-          class="text-[11px] font-bold text-slate-400 uppercase tracking-tight leading-tight mb-1"
+          class="text-[10px] font-bold text-slate-400 uppercase tracking-tight leading-tight mb-1"
         >
           {{ props.title }}
         </div>

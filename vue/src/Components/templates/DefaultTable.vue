@@ -26,8 +26,8 @@
         <tbody class="divide-y divide-slate-100">
           <!-- Skeleton State -->
           <template v-if="props.loading">
-            <tr v-for="i in 5" :key="i">
-              <td v-for="col in props.columns" :key="col.key" class="p-4">
+            <tr v-for="i in 5" :key="i" >
+              <td v-cursor v-for="col in props.columns" :key="col.key" class="p-4">
                 <div
                   :class="[
                     'h-4 skeleton rounded',

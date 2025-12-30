@@ -74,35 +74,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import dayjs from 'dayjs'
-import type { Driver, Vehicle, Alert } from '@/types'
+import type { Alert, Driver, Vehicle } from '@/types'
 import { AlertTriangle } from 'lucide-vue-next'
-import { dataService } from '@/services/dataService'
 import StatCard from '@/Components/templates/StatCard.vue'
 import AiAssistant from '@/Components/templates/AiAssistant.vue'
+import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
 
-// State
-const drivers = ref<Driver[]>([])
-const vehicles = ref<Vehicle[]>([])
-const loading = ref(true)
+// Real-time Collections
+const appId = import.meta.env.VITE_APP_ID
+const { items: drivers, loading: loadingDrivers } = useRealtimeCollection<Driver>(
+  `artifacts/${appId}/public/data/drivers`,
+)
+const { items: vehicles, loading: loadingVehicles } = useRealtimeCollection<Vehicle>(
+  `artifacts/${appId}/public/data/vehicles`,
+)
 
-// Data fetching
-async function fetchData() {
-  loading.value = true
-  try {
-    const [dList, vList] = await Promise.all([
-      dataService.getDrivers() as Promise<Driver[]>,
-      dataService.getVehicles() as Promise<Vehicle[]>,
-    ])
-    drivers.value = dList
-    vehicles.value = vList
-  } catch (error) {
-    console.error('Error fetching reports data:', error)
-  } finally {
-    loading.value = false
-  }
-}
+const loading = computed(() => loadingDrivers.value || loadingVehicles.value)
 
 // Calculate KPIs
 const totalDrivers = computed(() => drivers.value.length)
@@ -117,7 +106,9 @@ const alerts = computed<Alert[]>(() => {
   const today = dayjs().startOf('day')
 
   drivers.value.forEach((d) => {
-    if (d.hireStatus !== 'Active') return
+    // Check if active or default to active if missing
+    const status = d.hireStatus || 'unknown'
+    if (status !== 'Active') return
 
     const check = (dateStr: string | undefined, label: string) => {
       if (!dateStr) return
@@ -128,14 +119,14 @@ const alerts = computed<Alert[]>(() => {
 
       if (diff < 0) {
         list.push({
-          id: `${d.id}-${label}`,
+          id: `${d.driverId}-${label}`,
           type: 'critical',
           message: `${d.lastName}: ${label} expired`,
           dueDate: dateStr,
         })
       } else if (diff <= 30) {
         list.push({
-          id: `${d.id}-${label}`,
+          id: `${d.driverId}-${label}`,
           type: 'warning',
           message: `${d.firstName} ${d.lastName}: ${label} expiring soon`,
           dueDate: dateStr,
@@ -145,9 +136,10 @@ const alerts = computed<Alert[]>(() => {
 
     check(d.cdl?.expiryDate, 'CDL')
     check(d.medical?.expiryDate, 'Medical')
+    check(d.mvr?.expiryDate, 'MVR')
   })
 
-  return list
+  return list.sort((a, b) => (a.dueDate > b.dueDate ? 1 : -1))
 })
 
 function alertClass(type: Alert['type']) {
@@ -160,6 +152,4 @@ function alertClass(type: Alert['type']) {
       return 'bg-slate-50 border-slate-300 text-slate-700'
   }
 }
-
-onMounted(fetchData)
 </script>

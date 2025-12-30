@@ -41,7 +41,7 @@
           <ul v-else class="space-y-2">
             <li
               v-for="d in missingDocs"
-              :key="d.id"
+              :key="d.driverId"
               class="flex justify-between items-center p-2 bg-red-50 rounded"
             >
               <span class="font-medium text-slate-700"> {{ d.firstName }} {{ d.lastName }} </span>
@@ -79,8 +79,8 @@
           </thead>
 
           <tbody class="divide-y">
-            <tr v-for="d in props.drivers" :key="d.id">
-              <td class="p-3 text-left font-medium">{{ d.lastName }}, {{ d.firstName }}</td>
+            <tr v-for="d in drivers" :key="d.driverId">
+              <td class="p-3 text-left font-medium">{{ d.firstName }} {{ d.lastName }}</td>
 
               <td class="p-3">
                 <StatusDot :ok="!!d.cdl.expiryDate" />
@@ -107,20 +107,21 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { Driver, Vehicle } from '@/types'
+import type { Driver } from '@/types'
+import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
 import dayjs from 'dayjs'
 
-const props = defineProps<{
-  drivers: Driver[]
-  vehicles?: Vehicle[]
-}>()
+// Real-time Collections
+const appId = import.meta.env.VITE_APP_ID
+const { items: drivers } = useRealtimeCollection<Driver>(
+  `artifacts/${appId}/public/data/drivers`,
+)
 
 const expiringSoon = computed(() => {
   const items: { driver: string; type: string; date: string }[] = []
-
   const now = dayjs()
 
-  for (const d of props.drivers) {
+  for (const d of drivers.value) {
     const check = (date: string | undefined, type: string) => {
       if (!date) return
       const diff = dayjs(date).diff(now, 'day')
@@ -133,15 +134,17 @@ const expiringSoon = computed(() => {
       }
     }
 
-    check(d.cdl.expiryDate, 'CDL')
-    check(d.medical.expiryDate, 'Medical')
+    check(d.cdl?.expiryDate, 'CDL')
+    check(d.medical?.expiryDate, 'Medical')
   }
 
   return items
 })
 
 const missingDocs = computed(() =>
-  props.drivers.filter((d) => !d.cdl.file || !d.medical.file || !d.mvr.file || !d.roadTest.file),
+  drivers.value.filter(
+    (d) => !d.cdl?.file || !d.medical?.file || !d.mvr?.file || !d.roadTest?.file,
+  ),
 )
 </script>
 
@@ -149,6 +152,7 @@ const missingDocs = computed(() =>
 <script lang="ts">
 import { defineComponent } from 'vue'
 export const StatusDot = defineComponent({
+  name: 'StatusDot',
   props: {
     ok: Boolean,
     neutral: Boolean,
@@ -164,5 +168,5 @@ export const StatusDot = defineComponent({
     ></div>
   `,
 })
-export default {}
+
 </script>
