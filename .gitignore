@@ -23,6 +23,9 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+conductor/
+vercel.json
+.vercel/
 
 *.tsbuildinfo
 
