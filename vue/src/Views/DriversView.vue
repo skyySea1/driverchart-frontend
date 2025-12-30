@@ -86,7 +86,7 @@ import { statusColorFor } from '../Composables/useDotHelpers'
 import { Edit, Trash2, Bot } from 'lucide-vue-next'
 import PrimaryButton from '@/Components/ui/PrimaryButton.vue'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
-import { useModalStore } from '@/stores/useModalStore'
+import { useModalStore } from '@/stores/ModalStore'
 import type { Driver, Column } from '@/types'
 
 const modalStore = useModalStore()

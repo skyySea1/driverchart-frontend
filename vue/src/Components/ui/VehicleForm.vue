@@ -59,8 +59,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { addDoc, collection } from 'firebase/firestore'
-import { db } from '@/services/firebase'
+import { dataService } from '@/services/dataService'
 import type { Vehicle } from '@/types'
 import { STATUS_ACTIVE } from '@/utils/constants'
 
@@ -102,15 +101,22 @@ async function saveVehicle() {
   const v = formData.value
   if (!v.busNumber || !v.vin) return // Basic validation
 
-  // Add the new vehicle to Firestore
-  await addDoc(collection(db, 'artifacts/app/public/data/vehicles'), {
-    busNumber: v.busNumber,
-    vin: v.vin,
-    vehicleStatus: STATUS_ACTIVE, // Default to Active
-    lastAnnualInspection: v.lastAnnualInspection || '',
-    mileage: v.mileage ?? 0,
-  })
+  try {
+    const vehicleData = {
+      ...v,
+      vehicleStatus: v.vehicleStatus || STATUS_ACTIVE,
+      lastAnnualInspection: v.lastAnnualInspection || '',
+      mileage: v.mileage ?? 0,
+    } as Vehicle
 
-  emit('saved')
+    if (v.id) {
+       await dataService.updateVehicle(vehicleData)
+    } else {
+       await dataService.addVehicle(vehicleData)
+    }
+    emit('saved')
+  } catch (error) {
+    console.error('Failed to save vehicle:', error)
+  }
 }
 </script>

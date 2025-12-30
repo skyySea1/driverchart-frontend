@@ -23,7 +23,7 @@ import { X } from 'lucide-vue-next'
 import { onMounted, onUnmounted } from 'vue'
 
 const emit = defineEmits(['close']);
-const { isOpen } =
+const props =
 defineProps<{
   title: string,
   size?: string,
@@ -31,7 +31,7 @@ defineProps<{
 }>()
 
 function escListener(e: KeyboardEvent) {
-  if (e.key === 'Escape' &&isOpen) {
+  if (e.key === 'Escape' && props.isOpen) {
     emit('close')
   }
 }

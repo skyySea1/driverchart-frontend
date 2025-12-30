@@ -85,7 +85,7 @@ function handleLogout() {
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'drivers', label: 'Drivers (DQ Files)', icon: Users },
-  { id: 'vehicles', label: 'Fleet Maintenance', icon: Bus, hidden: true },
+  { id: 'vehicles', label: 'Fleet Maintenance', icon: Bus, hidden: true},
   { id: 'audit', label: ' Audit Reports', icon: PieChart },
   { id: 'docs', label: 'Document Registry', icon: FileText },
   { id: 'specs', label: 'System Specs', icon: Code },

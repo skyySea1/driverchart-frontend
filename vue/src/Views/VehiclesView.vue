@@ -89,7 +89,7 @@ import BaseModal from '@/Components/ui/BaseModal.vue'
 import PrimaryButton from '@/Components/ui/PrimaryButton.vue'
 import VehicleForm from '@/Components/ui/VehicleForm.vue'
 import DeleteConfirmation from '@/Components/ui/DeleteConfirmation.vue'
-import { useModalStore } from '@/stores/useModalStore'
+import { useModalStore } from '@/stores/ModalStore'
 import { STATUS_ACTIVE, STATUS_INACTIVE, STATUS_MAINTENANCE } from '@/utils/constants'
 
 const modalStore = useModalStore()

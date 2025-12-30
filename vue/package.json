@@ -1,6 +1,7 @@
 {
   "name": "vue",
   "version": "0.0.0",
+  "type": "module",
   "private": true,
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

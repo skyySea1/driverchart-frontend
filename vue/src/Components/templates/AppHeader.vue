@@ -38,7 +38,7 @@
       <div class="relative" v-if="showNotifications">
         <button
           class="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 shadow-sm transition-all hover:scale-105 active:scale-95 duration-200 hover:bg-indigo-50/30 group relative"
-          @click="toggleMenu('notifications')"
+          @click.stop="toggleMenu('notifications')"
           aria-label="Notifications"
           v-cursor
         >
@@ -98,7 +98,7 @@
       <div class="relative" v-if="showMenu">
         <button
           class="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 shadow-sm transition-all hover:scale-105 active:scale-95 duration-200 hover:bg-indigo-50/30 group"
-          @click="toggleMenu('add')"
+          @click.stop="toggleMenu('add')"
           aria-label="Quick Add"
           v-cursor
         >
@@ -190,7 +190,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import { useModalStore } from '@/stores/useModalStore'
+import { useModalStore } from '@/stores/ModalStore'
 import { Bell, Plus, Menu, Bus, UserPlus, Settings, LogOut, ChevronDown } from 'lucide-vue-next'
 
 const {
