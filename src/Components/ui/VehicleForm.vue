@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { addDoc, collection } from 'firebase/firestore'
-import { db } from '@/services/firebase'
+import { db } from '@/services/firebaseService'
 import type { Vehicle } from '@/types'
 import { STATUS_ACTIVE } from '@/utils/constants'
 

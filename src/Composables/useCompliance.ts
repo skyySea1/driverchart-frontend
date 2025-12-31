@@ -1,7 +1,10 @@
+// src/Composables/useCompliance.ts
 import dayjs from 'dayjs'
+import { ca } from 'zod/locales'
+
+// use destructuuring for import functions from this composable
 
 export function useCompliance(today = dayjs().startOf('day')) {
-
   /**
    * Checks if a date is within the "warning" window (30 days) or expired.
    * @param dateStr ISO date string
@@ -9,7 +12,7 @@ export function useCompliance(today = dayjs().startOf('day')) {
    * @param warningDays Days threshold for warning
    * @returns true if expired or expiring soon
    */
-  function isExpiringSoon(dateStr?: string, warningDays = 60): boolean {
+  function isExpiringSoon(dateStr?: string, warningDays = 30): boolean {
     if (!dateStr) return false
     const diff = dayjs(dateStr).diff(today, 'day')
     // diff < 0 is expired
@@ -29,6 +32,7 @@ export function useCompliance(today = dayjs().startOf('day')) {
 
   /**
    * Returns a Tailwind class for the status badge color based on expiration.
+   * Requires dynamic classes for works with Tailwind CSS.
    * @param dateStr ISO date string
    */
   function getStatusColor(dateStr?: string): string {
@@ -38,9 +42,27 @@ export function useCompliance(today = dayjs().startOf('day')) {
     return 'bg-green-100 text-green-800'
   }
 
+  function daysToExpire(dateStr?: string): number | string {
+    if (!dateStr) return '-'
+    const today = dayjs().startOf('day')
+    const exp = dayjs(dateStr)
+    const diff = exp.diff(today, 'day')
+
+    if (diff >= 30) return ''
+    if (diff >= 0) return `due in ${diff} days`
+    return 'Expired'
+  }
+
+function capitalize(str: string ): string {
+ return str.replace(/\b\w/g, c => c.toUpperCase())
+
+}
+
   return {
     isExpiringSoon,
     isExpired,
     getStatusColor,
+    daysToExpire,
+  
   }
 }
