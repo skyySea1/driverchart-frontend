@@ -6,6 +6,8 @@ import { useAuthStore } from '@/stores/AuthStore'
 const Login = () => import('@/Views/LoginView.vue')
 const AppLayout = () => import('@/Components/templates/AppLayout.vue')
 const Dashboard = () => import('@/Views/DashboardView.vue')
+const Applications = () => import('@/Views/ApplicationsView.vue')
+const PublicApplicationForm = () => import('@/Views/PublicApplicationForm.vue')
 const Drivers = () => import('@/Views/DriversView.vue')
 const Vehicles = () => import('@/Views/VehiclesView.vue')
 const DocumentRegistry = () => import('@/Views/DocumentRegistryView.vue')
@@ -21,6 +23,12 @@ const routes: RouteRecordRaw[] = [
     name: 'login',
     component: Login,
     meta: { requiresAuth: false },
+  },
+{
+    path: '/apply',
+    name: 'apply',
+    component: PublicApplicationForm,
+    meta: { requiresAuth: false, title: 'Apply Now' },
   },
   {
     path: '/',
@@ -73,15 +81,18 @@ const routes: RouteRecordRaw[] = [
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
         },
       },
-      // {
-      //   path: 'specs',
-      //   name: 'specs',
-      //   component: SystemSpecs,
-      //   meta: {
-      //     title: ' System Specs',
-      //     subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-      //   },
-      // },
+
+
+      {
+        path: 'applications',
+        name: 'applications',
+        component: Applications,
+        meta: {
+          title: 'Driver Applications',
+          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
+        },
+      },
+
       {
         path: 'reports',
         name: 'reports',
@@ -100,6 +111,15 @@ const routes: RouteRecordRaw[] = [
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
         },
       },
+      // {
+      //   path: 'specs',
+      //   name: 'specs',
+      //   component: SystemSpecs,
+      //   meta: {
+      //     title: ' System Specs',
+      //     subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
+      //   },
+      // },
     ],
   },
   {
