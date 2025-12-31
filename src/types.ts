@@ -9,7 +9,7 @@ export interface Alert {
 export interface ComplianceItem {
   documentNumber: string
   expiryDate?: string // ISO string YYYY-MM-DD
-  file?: string // Filename mock
+  file?: string // Filename
   [key: string]: unknown
 }
 
@@ -30,7 +30,7 @@ export interface FirestoreDoc {
 }
 
 export interface Driver extends FirestoreDoc {
-  driverId?: string
+  id: string
   firstName: string
   middleName: string
   lastName: string
@@ -71,8 +71,20 @@ export interface Driver extends FirestoreDoc {
   }
 }
 
-export type DriverForm = {
+export interface Application extends FirestoreDoc {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  status: 'Pending' | 'Approved' | 'Rejected'
+  appliedDate: string
+  experienceYears?: number
+  cdlNumber?: string
+  notes?: string
+}
 
+export type DriverForm = {
   firstName: string
   middleName: string
   lastName: string
@@ -137,7 +149,7 @@ export interface Column {
 }
 
 export interface Vehicle extends FirestoreDoc {
-  vehicleId: string
+  id: string
   busNumber: string
   vin: string
   vehicleStatus: 'Active' | 'Maintenance' | 'Inactive'
@@ -155,4 +167,3 @@ export type ViewState =
   | 'applications'
   | 'login'
   | 'settings'
-
