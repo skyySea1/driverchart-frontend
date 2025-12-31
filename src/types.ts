@@ -3,6 +3,7 @@ export interface Alert {
   type: 'critical' | 'warning' | 'info'
   message: string
   entity?: string
+  entityName?: string
   dueDate: string
 }
 
@@ -22,15 +23,12 @@ export interface DocumentLog {
   user: string
 }
 
-// Define a generic Firestore document type, add new fields as needed, todo: improve
-
 export interface FirestoreDoc {
   id: string
   [key: string]: unknown
 }
 
 export interface Driver extends FirestoreDoc {
-  id: string
   firstName: string
   middleName: string
   lastName: string
@@ -72,7 +70,6 @@ export interface Driver extends FirestoreDoc {
 }
 
 export interface Application extends FirestoreDoc {
-  id: string
   firstName: string
   lastName: string
   email: string
@@ -149,13 +146,25 @@ export interface Column {
 }
 
 export interface Vehicle extends FirestoreDoc {
-  id: string
   busNumber: string
   vin: string
   vehicleStatus: 'Active' | 'Maintenance' | 'Inactive'
   lastAnnualInspection: string // YYYY-MM-DD
   mileage: number
   inspectionFile?: string
+}
+
+export interface DashboardStats {
+  totalDrivers: number
+  totalVehicles: number
+  alertsCount: number
+  alerts: Alert[]
+  expiringMedCards: number
+  expiringLicenses: number
+  expiringClearinghouse: number
+  auditScore: string
+  newApplications: number
+  annualRecordReview: number
 }
 
 export type ViewState =
