@@ -1,12 +1,34 @@
 <!-- src/Views/DriversView.vue -->
 <template>
   <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-      <BaseButton @click="openNew" label="Add Driver" />
-      
-      <div class="flex items-center gap-4 w-full sm:w-auto justify-end">
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
+        <BaseButton @click="openNew" label="Add Driver" />
+
+        <!-- Search Input -->
+        <div class="relative w-full sm:w-64">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search by name..."
+            class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:border-blue-500 block p-2.5 pl-9 input-base"
+          />
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+            <Search class="w-4 h-4" />
+          </div>
+          <button
+            v-if="searchQuery"
+            @click="searchQuery = ''"
+            class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
+          >
+            <X class="w-3 h-3" />
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto justify-end">
         <div class="text-xs text-slate-500 font-medium bg-slate-100 px-3 py-1.5 rounded-full whitespace-nowrap">
-          <template v-if="statusFilter !== 'all'">
+          <template v-if="statusFilter !== 'all' || searchQuery">
             {{ filteredCount }} of {{ driversItems.length }} drivers
           </template>
           <template v-else>
@@ -15,8 +37,8 @@
         </div>
 
         <!-- Status Filter Combobox -->
-        <div class="relative min-w-48">
-          <select 
+        <div class="relative min-w-48 w-full sm:w-auto">
+          <select
             v-model="statusFilter"
             class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none cursor-pointer hover:border-slate-300 transition-colors shadow-sm"
           >
@@ -104,7 +126,7 @@
             </div>
           </template>
 
-          <template #empty>No drivers match the selected filter.</template>
+          <template #empty>No drivers match the current filters.</template>
         </DefaultTable>
       </div>
     </div>
@@ -120,19 +142,21 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
+  import { useRoute } from 'vue-router'
   import DriverFormModal from '@/Components/templates/forms/DriverFormModal.vue'
   import DeleteConfirmation from '@/Components/ui/DeleteConfirmation.vue'
   import { dataService } from '@/services/dataService'
   import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
   import { useCompliance } from '@/Composables/useCompliance'
-  import { Edit, Trash2, Bot, Filter } from 'lucide-vue-next'
+  import { Edit, Trash2, Bot, Filter, Search, X } from 'lucide-vue-next'
   import BaseButton from '@/Components/ui/BaseButton.vue'
   import DefaultTable from '@/Components/templates/DefaultTable.vue'
   import { useModalStore } from '@/stores/ModalStore'
   import type { Driver, Column, DriverRow } from '@/types'
 import TableButton from '@/Components/ui/TableButton.vue'
 
+  const route = useRoute()
   const modalStore = useModalStore()
   const { getStatusColor, daysToExpire, isExpiringSoon, isExpired } = useCompliance()
   const { items: driversItems, loading } = useRealtimeCollection<Driver>(
@@ -140,6 +164,7 @@ import TableButton from '@/Components/ui/TableButton.vue'
   )
 
   const statusFilter = ref<'all' | 'expiring' | 'expired'>('all')
+  const searchQuery = ref('')
 
   const tableColumns: Column[] = [
     { key: 'firstName', label: 'Name' },
@@ -155,19 +180,29 @@ import TableButton from '@/Components/ui/TableButton.vue'
   const drivers = computed<DriverRow[]>(() => {
     let list = driversItems.value
 
+    // Apply Status Filter
     if (statusFilter.value === 'expiring') {
-      list = list.filter(d => 
-        isExpiringSoon(d.cdl?.expiryDate) || 
-        isExpiringSoon(d.medical?.expiryDate) || 
-        isExpiringSoon(d.drugAlcohol?.expiryDate) || 
+      list = list.filter(d =>
+        isExpiringSoon(d.cdl?.expiryDate) ||
+        isExpiringSoon(d.medical?.expiryDate) ||
+        isExpiringSoon(d.drugAlcohol?.expiryDate) ||
         isExpiringSoon(d.mvr?.expiryDate)
       )
     } else if (statusFilter.value === 'expired') {
-      list = list.filter(d => 
-        isExpired(d.cdl?.expiryDate) || 
-        isExpired(d.medical?.expiryDate) || 
-        isExpired(d.drugAlcohol?.expiryDate) || 
+      list = list.filter(d =>
+        isExpired(d.cdl?.expiryDate) ||
+        isExpired(d.medical?.expiryDate) ||
+        isExpired(d.drugAlcohol?.expiryDate) ||
         isExpired(d.mvr?.expiryDate)
+      )
+    }
+
+    // Apply Name Search Filter
+    if (searchQuery.value.trim()) {
+      const query = searchQuery.value.toLowerCase().trim()
+      list = list.filter(d =>
+        d.firstName.toLowerCase().includes(query) ||
+        d.lastName.toLowerCase().includes(query)
       )
     }
 
@@ -212,6 +247,13 @@ import TableButton from '@/Components/ui/TableButton.vue'
       console.error('Error deleting driver:', err)
     }
   }
+
+  onMounted(() => {
+    // If a search query is passed in the URL (e.g. from dashboard alert)
+    if (route.query.search) {
+      searchQuery.value = String(route.query.search)
+    }
+  })
 
   // todo add toastr or similar notification
   function runAudit(d: Driver) {
