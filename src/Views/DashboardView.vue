@@ -17,7 +17,7 @@
         :value="stats?.expiringLicenses ?? 0"
         :loading="isLoading"
         is-clickable
-        @click="router.push('/drivers')"
+        @click="router.push('/drivers?status=expiring')"
       />
       <StatCard
         type="clearinghouse"
@@ -25,7 +25,7 @@
         :value="stats?.expiringClearinghouse ?? 0"
         :loading="isLoading"
         is-clickable
-        @click="router.push('/drivers')"
+        @click="router.push('/drivers?status=expiring')"
       />
       <StatCard
         type="medical"
@@ -33,7 +33,7 @@
         :value="stats?.expiringMedCards ?? 0"
         :loading="isLoading"
         is-clickable
-        @click="router.push('/drivers')"
+        @click="router.push('/drivers?status=expiring')"
       />
       <StatCard
         type="applications"
@@ -85,11 +85,14 @@
               <li
                 v-for="a in priorityAlerts"
                 :key="a.id"
-                class="p-2 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors group"
+                @click="navigateToDriver(a)"
+                class="p-2 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors group cursor-pointer"
               >
                 <div class="flex justify-between items-center">
                   <div class="text-slate-700">
-                    {{ a.entityName || a.entity || 'Driver' }}: {{ a.message }}
+                    <span class="font-bold text-blue-600 group-hover:underline">
+                      {{ a.entityName || a.entity || 'Driver' }}
+                    </span>: {{ a.message }}
                   </div>
                   <div
                     class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded group-hover:bg-orange-100 group-hover:text-orange-700 transition-colors"
@@ -125,6 +128,7 @@ import AiAssistant from '@/Components/templates/AiAssistant.vue'
 import { Bell } from 'lucide-vue-next'
 import { useDashboard } from '@/Composables/useDashboard'
 import dayjs from 'dayjs'
+import type { Alert } from '@/types'
 
 const router = useRouter()
 const { stats, isLoading } = useDashboard()
@@ -136,5 +140,15 @@ const priorityAlerts = computed(() => {
 const formatDate = (date?: string) => {
   if (!date) return '-'
   return dayjs(date).format('MM/DD/YYYY')
+}
+
+const navigateToDriver = (alert: Alert) => {
+  const driverName = alert.entityName || alert.entity
+  if (driverName) {
+    router.push({
+      path: '/drivers',
+      query: { search: driverName }
+    })
+  }
 }
 </script>
