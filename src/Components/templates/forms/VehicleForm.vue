@@ -57,9 +57,10 @@
       <button
         v-cursor
         type="submit"
-        class="px-4 py-2 text-sm font-medium bg-blue-500 text-white hover:bg-blue-700 rounded-lg shadow-sm shadow-blue-200 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        :disabled="isSaving"
+        class="px-4 py-2 text-sm font-medium bg-blue-500 text-white hover:bg-blue-700 rounded-lg shadow-sm shadow-blue-200 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50"
       >
-        Save Bus
+        {{ isSaving ? 'Saving...' : 'Save Bus' }}
       </button>
     </div>
   </form>
@@ -67,8 +68,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { addDoc, collection } from 'firebase/firestore'
-import { db } from '@/services/firebaseService'
+import { dataService } from '@/services/dataService'
 import type { Vehicle } from '@/types'
 import { STATUS_ACTIVE } from '@/utils/constants'
 
@@ -81,6 +81,7 @@ const emit = defineEmits<{
   (e: 'cancel'): void
 }>()
 
+const isSaving = ref(false)
 const formData = ref<Partial<Vehicle>>({
   busNumber: '',
   vin: '',
@@ -94,7 +95,6 @@ watch(
     if (newVal) {
       formData.value = { ...newVal }
     } else {
-      // Reset form for new entry if no initialData is provided
       formData.value = {
         busNumber: '',
         vin: '',
@@ -104,21 +104,28 @@ watch(
     }
   },
   { immediate: true },
-) // Run immediately on component mount
+)
 
 async function saveVehicle() {
   const v = formData.value
-  if (!v.busNumber || !v.vin) return // Basic validation
+  if (!v.busNumber || !v.vin) return
 
-  // Add the new vehicle to Firestore
-  await addDoc(collection(db, 'artifacts/app/public/data/vehicles'), {
-    busNumber: v.busNumber,
-    vin: v.vin,
-    status: STATUS_ACTIVE, // Default to Active
-    lastAnnualInspection: v.lastAnnualInspection || '',
-    mileage: v.mileage ?? 0,
-  })
+  isSaving.value = true
+  try {
+    const dataToSave = {
+      busNumber: v.busNumber,
+      vin: v.vin,
+      vehicleStatus: STATUS_ACTIVE,
+      lastAnnualInspection: v.lastAnnualInspection || '',
+      mileage: v.mileage ?? 0,
+    } as Omit<Vehicle, 'id'>
 
-  emit('saved')
+    await dataService.addVehicle(dataToSave)
+    emit('saved')
+  } catch (error) {
+    console.error('Error saving vehicle:', error)
+  } finally {
+    isSaving.value = false
+  }
 }
 </script>
