@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, type User } from 'firebase/auth'
-import { auth } from '@/services/firebase'
+import { auth } from '@/services/firebaseService'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
@@ -44,7 +44,7 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true
     try {
       await signInWithEmailAndPassword(auth, email, password)
-      // Navigation is handled by the component or router guard, 
+      // Navigation is handled by the component or router guard
       // but store state update is handled by onAuthStateChanged automatically
     } catch (err) {
       if (err instanceof Error) {
@@ -67,25 +67,24 @@ export const useAuthStore = defineStore('auth', () => {
       if (err instanceof Error) {
         error.value = err.message
       }
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
 
   async function updateUserProfile(data: { displayName: string }) {
-    isLoading.value = true;
-    error.value = null;
+    isLoading.value = true
+    error.value = null
     try {
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, {
-          displayName: data.displayName
+          displayName: data.displayName,
         })
         // Force refresh local user state
-        // creating a shallow copy to trigger reactivity if needed, 
+        // creating a shallow copy to trigger reactivity if needed,
         // though auth state listener might catch it too, explicit update is safer for UI feedback
         if (user.value) {
-            user.value = { ...user.value, displayName: data.displayName }
+          user.value = { ...user.value, displayName: data.displayName }
         }
       }
     } catch (err) {
@@ -109,6 +108,6 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     logout,
     init,
-    updateUserProfile
+    updateUserProfile,
   }
 })
