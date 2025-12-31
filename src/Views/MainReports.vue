@@ -41,7 +41,7 @@
           <ul v-else class="space-y-2">
             <li
               v-for="d in missingDocs"
-              :key="d.driverId"
+              :key="d.id"
               class="flex justify-between items-center p-2 bg-red-50 rounded"
             >
               <span class="font-medium text-slate-700"> {{ d.firstName }} {{ d.lastName }} </span>
@@ -79,7 +79,7 @@
           </thead>
 
           <tbody class="divide-y">
-            <tr v-for="d in drivers" :key="d.driverId">
+            <tr v-for="d in drivers" :key="d.id">
               <td class="p-3 text-left font-medium">{{ d.firstName }} {{ d.lastName }}</td>
 
               <td class="p-3">
@@ -113,9 +113,7 @@ import dayjs from 'dayjs'
 
 // Real-time Collections
 const appId = import.meta.env.VITE_APP_ID
-const { items: drivers } = useRealtimeCollection<Driver>(
-  `artifacts/${appId}/public/data/drivers`,
-)
+const { items: drivers } = useRealtimeCollection<Driver>(`artifacts/${appId}/public/data/drivers`)
 
 const expiringSoon = computed(() => {
   const items: { driver: string; type: string; date: string }[] = []
@@ -168,5 +166,4 @@ export const StatusDot = defineComponent({
     ></div>
   `,
 })
-
 </script>

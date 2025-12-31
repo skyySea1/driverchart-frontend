@@ -1,6 +1,8 @@
+// src/services/dataService.ts
 import dayjs from 'dayjs'
-import { apiClient } from './api'
-import type { Driver, Vehicle, Alert, DocumentLog } from '@/types'
+import { apiClient } from './apiService'
+import type { Driver, Vehicle, Alert, DocumentLog, Application, DashboardStats } from '@/types'
+import { getApp } from 'firebase/app'
 
 export const dataService = {
   // --- Drivers ---
@@ -25,22 +27,22 @@ export const dataService = {
     }))
   },
 
-  addDriver: async (driver: Driver): Promise<string> => {
-    const response = await apiClient.post<{ driverId: string }>('/drivers', driver)
-    return response.data.driverId
+  addDriver: async (driver: Omit<Driver, 'id'>): Promise<string> => {
+    const response = await apiClient.post<{ id: string }>('/drivers', driver)
+    return response.data.id
   },
 
   updateDriver: async (driver: Driver): Promise<void> => {
-    if (!driver.driverId) {
+    if (!driver.id) {
       throw new Error(
-        'Cannot update driver: ID is missing. Please ensure the driver record has been saved first.'
+        'Cannot update driver: ID is missing. Please ensure the driver record has been saved first.',
       )
     }
-    await apiClient.put(`/drivers/${driver.driverId}`, driver)
+    await apiClient.put(`/drivers/${driver.id}`, driver)
   },
 
-  deleteDriver: async (driverId: string): Promise<void> => {
-    await apiClient.delete(`/drivers/${driverId}`)
+  deleteDriver: async (id: string): Promise<void> => {
+    await apiClient.delete(`/drivers/${id}`)
   },
 
   // --- Vehicles ---
@@ -49,22 +51,22 @@ export const dataService = {
     return response.data
   },
 
-  addVehicle: async (vehicle: Vehicle): Promise<string> => {
-    const response = await apiClient.post<{ vehicleId: string }>('/vehicles', vehicle)
-    return response.data.vehicleId
+  addVehicle: async (vehicle: Omit<Vehicle, 'id'>): Promise<string> => {
+    const response = await apiClient.post<{ id: string }>('/vehicles', vehicle)
+    return response.data.id
   },
 
   updateVehicle: async (vehicle: Vehicle): Promise<void> => {
-    if (!vehicle.vehicleId) {
+    if (!vehicle.id) {
       throw new Error(
-        'Cannot update vehicle: ID is missing. Please ensure the vehicle record has been saved first.'
+        'Cannot update vehicle: ID is missing. Please ensure the vehicle record has been saved first.',
       )
     }
-    await apiClient.put(`/vehicles/${vehicle.vehicleId}`, vehicle)
+    await apiClient.put(`/vehicles/${vehicle.id}`, vehicle)
   },
 
-  deleteVehicle: async (vehicleId: string): Promise<void> => {
-    await apiClient.delete(`/vehicles/${vehicleId}`)
+  deleteVehicle: async (id: string): Promise<void> => {
+    await apiClient.delete(`/vehicles/${id}`)
   },
 
   // --- Alerts & Logs ---
@@ -87,19 +89,56 @@ export const dataService = {
       return []
     }
   },
-// todo divide services into domain-view-specific files, like dashboardService.ts
-  // Helper for dashboard
-  getDashboardStats: async () => {
+
+  getApplicationInstanceId: async (): Promise<string> => {
+    const app = getApp()
+    return app.options.appId || 'unknown-app-id'
+  },
+
+  // --- Applications ---
+  getApplications: async (): Promise<Application[]> => {
+    const response = await apiClient.get<Application[]>('/applications')
+    return response.data
+  },
+
+  submitApplication: async (
+    application: Omit<Application, 'id' | 'status' | 'appliedDate'>,
+  ): Promise<void> => {
+    await apiClient.post('/applications', {
+      ...application,
+      status: 'Pending',
+      appliedDate: dayjs().format('YYYY-MM-DD'),
+    })
+  },
+
+  updateApplicationStatus: async (id: string, status: 'Approved' | 'Rejected'): Promise<void> => {
+    await apiClient.put(`/applications/${id}`, { status })
+  },
+
+  // --- Dashboard Stats ---
+  getDashboardStats: async (): Promise<DashboardStats> => {
+    console.log('[Dashboard] Fetching stats...')
     try {
-      const [driversRes, vehiclesRes, alertsRes] = await Promise.all([
+      const [driversRes, vehiclesRes, alertsRes, applicationsRes] = await Promise.all([
         apiClient.get<Driver[]>('/drivers'),
         apiClient.get<Vehicle[]>('/vehicles'),
         apiClient.get<Alert[]>('/expiration/alerts'),
+        apiClient.get<Application[]>('/applications'),
       ])
 
       const drivers = driversRes.data
       const vehicles = vehiclesRes.data
       const alerts = alertsRes.data
+      const applications = applicationsRes.data
+      
+      console.log('[Dashboard] Data received:', {
+        drivers: drivers.length,
+        vehicles: vehicles.length,
+        alerts: alerts.length,
+        apps: applications.length
+      })
+
+      const pendingApplicationsCount = applications.filter((a) => a.status === 'Pending').length
 
       const today = dayjs().startOf('day')
 
@@ -114,7 +153,7 @@ export const dataService = {
         return dayjs(dateStr).isBefore(today, 'day')
       }
 
-      return {
+      const stats = {
         totalDrivers: drivers.length,
         totalVehicles: vehicles.length,
         alertsCount: alerts.length,
@@ -124,11 +163,14 @@ export const dataService = {
         expiringClearinghouse: drivers.filter((d) => isExpiringSoon(d.drugAlcohol?.expiryDate))
           .length,
         auditScore: '94%',
-        newApplications: 3,
+        newApplications: pendingApplicationsCount,
         annualRecordReview: drivers.filter((d) => isExpired(d.mvr?.expiryDate)).length,
       }
+      
+      console.log('[Dashboard] Stats calculated:', stats)
+      return stats
     } catch (error) {
-      console.error('Dashboard stats error:', error)
+      console.error('[Dashboard] Stats fetch error:', error)
       return {
         totalDrivers: 0,
         totalVehicles: 0,
