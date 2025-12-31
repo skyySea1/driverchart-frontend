@@ -1,23 +1,19 @@
 // src/Composables/useCompliance.ts
 import dayjs from 'dayjs'
-import { ca } from 'zod/locales'
-
-// use destructuuring for import functions from this composable
 
 export function useCompliance(today = dayjs().startOf('day')) {
   /**
-   * Checks if a date is within the "warning" window (30 days) or expired.
-   * @param dateStr ISO date string
+   * Checks if a date is within the "warning" window (0-30 days).
+   * Does NOT include already expired dates.
    * @param dateStr ISO date string
    * @param warningDays Days threshold for warning
-   * @returns true if expired or expiring soon
+   * @returns true if expiring soon (but not expired)
    */
   function isExpiringSoon(dateStr?: string, warningDays = 30): boolean {
     if (!dateStr) return false
     const diff = dayjs(dateStr).diff(today, 'day')
-    // diff < 0 is expired
-    // diff <= warningDays is expiring soon
-    return diff <= warningDays
+    // Must be between 0 and warningDays inclusive
+    return diff >= 0 && diff <= warningDays
   }
 
   /**
@@ -32,13 +28,12 @@ export function useCompliance(today = dayjs().startOf('day')) {
 
   /**
    * Returns a Tailwind class for the status badge color based on expiration.
-   * Requires dynamic classes for works with Tailwind CSS.
    * @param dateStr ISO date string
    */
   function getStatusColor(dateStr?: string): string {
     if (!dateStr) return 'text-slate-500' // Unknown/Missing
     if (isExpired(dateStr)) return 'bg-red-100 text-red-800'
-    if (isExpiringSoon(dateStr)) return 'bg-amber-100 text-amber-800' // expire in 60 days
+    if (isExpiringSoon(dateStr)) return 'bg-amber-100 text-amber-800'
     return 'bg-green-100 text-green-800'
   }
 
@@ -53,16 +48,15 @@ export function useCompliance(today = dayjs().startOf('day')) {
     return 'Expired'
   }
 
-function capitalize(str: string ): string {
- return str.replace(/\b\w/g, c => c.toUpperCase())
-
-}
+  function capitalize(str: string): string {
+    return str.replace(/\b\w/g, (c) => c.toUpperCase())
+  }
 
   return {
     isExpiringSoon,
     isExpired,
     getStatusColor,
     daysToExpire,
-  
+    capitalize,
   }
 }
