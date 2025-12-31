@@ -107,7 +107,7 @@ const alerts = computed<Alert[]>(() => {
 
   drivers.value.forEach((d) => {
     // Check if active or default to active if missing
-    const status = d.hireStatus || 'unknown'
+    const status = d.hireStatus
     if (status !== 'Active') return
 
     const check = (dateStr: string | undefined, label: string) => {
@@ -119,14 +119,14 @@ const alerts = computed<Alert[]>(() => {
 
       if (diff < 0) {
         list.push({
-          id: `${d.driverId}-${label}`,
+          id: `${d.id}-${label}`,
           type: 'critical',
-          message: `${d.lastName}: ${label} expired`,
+          message: `${d.firstName} ${d.lastName}: ${label} expired`,
           dueDate: dateStr,
         })
       } else if (diff <= 30) {
         list.push({
-          id: `${d.driverId}-${label}`,
+          id: `${d.id}-${label}`,
           type: 'warning',
           message: `${d.firstName} ${d.lastName}: ${label} expiring soon`,
           dueDate: dateStr,
@@ -134,6 +134,7 @@ const alerts = computed<Alert[]>(() => {
       }
     }
 
+    // data that needs compliance checks
     check(d.cdl?.expiryDate, 'CDL')
     check(d.medical?.expiryDate, 'Medical')
     check(d.mvr?.expiryDate, 'MVR')

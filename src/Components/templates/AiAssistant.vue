@@ -77,7 +77,7 @@
 <script setup lang="ts">
 import { ref, onUpdated } from 'vue'
 import { Bot, Send } from 'lucide-vue-next'
-import { askRegulatoryAssistant } from '@/services/gemini'
+import { askRegulatoryAssistant } from '@/services/geminiService'
 
 const chatInput = ref('')
 const chatResponse = ref('')
