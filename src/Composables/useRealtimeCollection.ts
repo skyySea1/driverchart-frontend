@@ -1,12 +1,11 @@
 import { ref, onUnmounted, type Ref } from 'vue'
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore'
-import { db } from '@/services/firebase.ts'
-import type { FirestoreDoc } from "../types.ts";
+import { db } from '@/services/firebaseService.ts'
+import type { FirestoreDoc } from '../types.ts'
 
 export function useRealtimeCollection<T extends FirestoreDoc = FirestoreDoc>(
   path: string,
 ): { items: Ref<T[]>; loading: Ref<boolean> } {
-
   const items = ref<T[]>([]) as Ref<T[]>
   const loading = ref(true)
 
@@ -15,7 +14,8 @@ export function useRealtimeCollection<T extends FirestoreDoc = FirestoreDoc>(
 
   //  listen to a Firestore collection in real-time for dynamic updates
   const unsub = onSnapshot(
-    q, (snap) => {
+    q,
+    (snap) => {
       items.value = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as T)
       loading.value = false
     },
