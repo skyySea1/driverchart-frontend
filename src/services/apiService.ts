@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { auth } from '@/services/firebase'
+import { auth } from '@/services/firebaseService'
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
 
@@ -22,7 +22,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error)
-  }
+  },
 )
 
 // Add interceptors for error handling or auth tokens later
@@ -47,7 +47,7 @@ apiClient.interceptors.response.use(
 
     console.error('API Request Failed:', message)
     return Promise.reject(new Error(message))
-  }
+  },
 )
 
 export { apiClient }
