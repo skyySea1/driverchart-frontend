@@ -3,6 +3,32 @@
   <div class="space-y-6">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <BaseButton @click="openNew" label="Add Driver" />
+      
+      <div class="flex items-center gap-4 w-full sm:w-auto justify-end">
+        <div class="text-xs text-slate-500 font-medium bg-slate-100 px-3 py-1.5 rounded-full whitespace-nowrap">
+          <template v-if="statusFilter !== 'all'">
+            {{ filteredCount }} of {{ driversItems.length }} drivers
+          </template>
+          <template v-else>
+            Total: {{ driversItems.length }} drivers
+          </template>
+        </div>
+
+        <!-- Status Filter Combobox -->
+        <div class="relative min-w-48">
+          <select 
+            v-model="statusFilter"
+            class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none cursor-pointer hover:border-slate-300 transition-colors shadow-sm"
+          >
+            <option value="all">All Drivers</option>
+            <option value="expiring">Expiring Soon (30d)</option>
+            <option value="expired">Expired Documents</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+            <Filter class="w-4 h-4" />
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="bg-white rounded-lg shadow overflow-hidden border border-slate-200">
@@ -22,8 +48,8 @@
           </template>
 
           <template #cell(contact)="{ item }">
-            <div class="font-medium text-slate-800">{{ item.phone }}</div>
-            <div class="font-extralight text-slate-800">{{ item.email }}</div>
+            <div class="font-medium text-xs text-slate-800">{{ item.phone }}</div>
+            <div class="font-extralight text-xs text-slate-800">{{ item.email }}</div>
           </template>
 
           <template #cell(cdlExp)="{ value }">
@@ -78,7 +104,7 @@
             </div>
           </template>
 
-          <template #empty>No drivers found. Click "Add Driver" to start tracking.</template>
+          <template #empty>No drivers match the selected filter.</template>
         </DefaultTable>
       </div>
     </div>
@@ -100,7 +126,7 @@
   import { dataService } from '@/services/dataService'
   import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
   import { useCompliance } from '@/Composables/useCompliance'
-  import { Edit, Trash2, Bot } from 'lucide-vue-next'
+  import { Edit, Trash2, Bot, Filter } from 'lucide-vue-next'
   import BaseButton from '@/Components/ui/BaseButton.vue'
   import DefaultTable from '@/Components/templates/DefaultTable.vue'
   import { useModalStore } from '@/stores/ModalStore'
@@ -108,10 +134,12 @@
 import TableButton from '@/Components/ui/TableButton.vue'
 
   const modalStore = useModalStore()
-  const { getStatusColor, daysToExpire } = useCompliance()
+  const { getStatusColor, daysToExpire, isExpiringSoon, isExpired } = useCompliance()
   const { items: driversItems, loading } = useRealtimeCollection<Driver>(
     `artifacts/${import.meta.env.VITE_APP_ID}/public/data/drivers`,
   )
+
+  const statusFilter = ref<'all' | 'expiring' | 'expired'>('all')
 
   const tableColumns: Column[] = [
     { key: 'firstName', label: 'Name' },
@@ -125,7 +153,25 @@ import TableButton from '@/Components/ui/TableButton.vue'
   ]
 
   const drivers = computed<DriverRow[]>(() => {
-    return driversItems.value.map((d) => ({
+    let list = driversItems.value
+
+    if (statusFilter.value === 'expiring') {
+      list = list.filter(d => 
+        isExpiringSoon(d.cdl?.expiryDate) || 
+        isExpiringSoon(d.medical?.expiryDate) || 
+        isExpiringSoon(d.drugAlcohol?.expiryDate) || 
+        isExpiringSoon(d.mvr?.expiryDate)
+      )
+    } else if (statusFilter.value === 'expired') {
+      list = list.filter(d => 
+        isExpired(d.cdl?.expiryDate) || 
+        isExpired(d.medical?.expiryDate) || 
+        isExpired(d.drugAlcohol?.expiryDate) || 
+        isExpired(d.mvr?.expiryDate)
+      )
+    }
+
+    return list.map((d) => ({
       ...d,
       hireStatus: d.hireStatus || 'Active',
       contact: d.phone,
@@ -135,6 +181,8 @@ import TableButton from '@/Components/ui/TableButton.vue'
       clearinghouseDate: d.drugAlcohol?.expiryDate,
     }))
   })
+
+  const filteredCount = computed(() => drivers.value.length)
 
   const toDelete = ref<Driver | null>(null)
 
