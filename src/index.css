@@ -5,9 +5,11 @@
   .input-base {
     @apply w-full text-sm border bg-white border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all;
   }
+  /* evaluate change for     @apply w-full text-sm border bg-white border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all duration-400 ease-in-out shadow-sm focus:outline-none;
+ */
 
   .input-half {
-    @apply w-1/2 text-sm border bg-white border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all;
+    @apply w-1/2 text-sm border bg-white border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 py-1.5 px-2 outline-none transition-all duration-400 ease-in-out shadow-sm;
   }
 
   .button-primary {
