@@ -1,7 +1,11 @@
 <!-- src/Components/templates/StatCard.vue -->
 <template>
   <div
-    class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 min-h-27.5 flex items-center gap-4 relative"
+    @click="$emit('click')"
+    :class="[
+      'bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 min-h-27.5 flex items-center gap-4 relative',
+      isClickable ? 'cursor-pointer hover:border-blue-300' : ''
+    ]"
   >
     <!-- Skeleton State -->
     <div v-if="props.loading" class="flex items-center gap-4 w-full h-full">
@@ -78,6 +82,11 @@ const props = defineProps<{
   title: string
   value?: string | number
   loading?: boolean
+  isClickable?: boolean
+}>()
+
+defineEmits<{
+  (e: 'click'): void
 }>()
 
 interface StatConfig {
