@@ -81,14 +81,17 @@ import { AlertTriangle } from 'lucide-vue-next'
 import StatCard from '@/Components/templates/StatCard.vue'
 import AiAssistant from '@/Components/templates/AiAssistant.vue'
 import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
+import { parseDriverDoc, parseVehicleDoc } from '@/utils/firestoreParsers'
 
 // Real-time Collections
 const appId = import.meta.env.VITE_APP_ID
 const { items: drivers, loading: loadingDrivers } = useRealtimeCollection<Driver>(
   `artifacts/${appId}/public/data/drivers`,
+  { map: parseDriverDoc },
 )
 const { items: vehicles, loading: loadingVehicles } = useRealtimeCollection<Vehicle>(
   `artifacts/${appId}/public/data/vehicles`,
+  { map: parseVehicleDoc },
 )
 
 const loading = computed(() => loadingDrivers.value || loadingVehicles.value)
