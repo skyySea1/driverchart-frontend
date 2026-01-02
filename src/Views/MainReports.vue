@@ -110,10 +110,14 @@ import { computed } from 'vue'
 import type { Driver } from '@/types'
 import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
 import dayjs from 'dayjs'
+import { parseDriverDoc } from '@/utils/firestoreParsers'
 
 // Real-time Collections
 const appId = import.meta.env.VITE_APP_ID
-const { items: drivers } = useRealtimeCollection<Driver>(`artifacts/${appId}/public/data/drivers`)
+const { items: drivers } = useRealtimeCollection<Driver>(
+  `artifacts/${appId}/public/data/drivers`,
+  { map: parseDriverDoc },
+)
 
 const expiringSoon = computed(() => {
   const items: { driver: string; type: string; date: string }[] = []
