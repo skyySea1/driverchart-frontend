@@ -26,6 +26,7 @@
         :loading="isLoading"
         is-clickable
         @click="router.push('/drivers?status=expiring')"
+        class="truncate"
       />
       <StatCard
         type="medical"
@@ -42,6 +43,7 @@
         :loading="isLoading"
         is-clickable
         @click="router.push('/applications')"
+        class="truncate"
       />
       <StatCard
         type="reviews"
@@ -142,6 +144,7 @@ const formatDate = (date?: string) => {
   return dayjs(date).format('MM/DD/YYYY')
 }
 
+// todo remove query in select filter  (duplication with AlertsView(ai suggestion)
 const navigateToDriver = (alert: Alert) => {
   const driverName = alert.entityName || alert.entity
   if (driverName) {

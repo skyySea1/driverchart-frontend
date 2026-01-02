@@ -1,40 +1,80 @@
-  <template>
-  <div class="not-found">
-    <div class="not-found__container">
-      <div class="not-found__content">
-        <div class="not-found__code">404</div>
+<template>
+  <div
+    class="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden"
+  >
+    <!-- SVG Background main pulsing circle -->
+    <svg
+      class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none animate-pulse-slow"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMid slice"
+    >
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#4f46e5" />
+          <stop offset="100%" stop-color="#3b82f6" />
+        </linearGradient>
+      </defs>
+      <circle cx="50%" cy="50%" r="500" fill="url(#grad)" />
+    </svg>
 
-        <h1 class="not-found__title">Page Not Found</h1>
+    <!-- Central pulsing circle (global styles) -->
+    <div class="circle-container">
+      <div class="circle-glow animate-pulse-glow">
+        <div class="circle-inner"></div>
+      </div>
+    </div>
 
-        <p class="not-found__description">
+    <div
+      class="relative z-10 w-full max-w-4xl rounded-xl bg-slate-900 p-8 shadow-xl grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12"
+    >
+      <div class="flex flex-col gap-6">
+        <div class="text-6xl md:text-7xl font-black tracking-tight text-indigo-300 leading-none">404</div>
+        <h1 class="text-2xl md:text-3xl font-bold text-white">Page Not Found</h1>
+        <p class="text-slate-300 leading-relaxed">
           Sorry, the page you are looking for does not exist or has been removed.
         </p>
 
-        <div class="not-found__details">
-          <p class="not-found__path">
-            <span class="not-found__label">Current Route:</span>
-            <code>{{ currentRoute }}</code>
-          </p>
+        <div class="bg-slate-800 rounded-lg p-4 border-l-4 border-indigo-500">
+          <div class="text-sm text-slate-200">
+            <span class="font-semibold text-white">Current Route:</span>
+          </div>
+          <code class="mt-2 block rounded bg-slate-900 px-3 py-2 text-sm text-indigo-200 font-mono break-all">
+            {{ currentRoute }}
+          </code>
         </div>
 
-        <div class="not-found__actions">
-          <RouterLink to="/" class="not-found__button not-found__button--primary">
-            Back to Home
-          </RouterLink>
-
-          <button
-            @click="goBack"
-            class="not-found__button not-found__button--secondary"
-          >
-            Go Back
-          </button>
+        <div class="flex flex-col sm:flex-row gap-3 font-bold">
+          <BaseButton :to="'/'" label="Back to Home" :icon="Home" />
+          <BaseButton variant="secondary" label="Go Back" :icon="ArrowLeft" @click="goBack" />
         </div>
       </div>
 
-      <div class="not-found__illustration">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="100" cy="100" r="80" fill="none" stroke="#e0e0e0" stroke-width="2"/>
-          <text x="100" y="120" text-anchor="middle" font-size="60" font-weight="bold" fill="#cccccc">?</text>
+      <div class="w-full flex items-center justify-center">
+        <svg
+          class="max-w-62.5 w-full h-auto animate-[float_3s_ease-in-out_infinite]"
+          viewBox="0 0 200 200"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            class="text-indigo-600"
+            cx="100"
+            cy="100"
+            r="80"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          />
+          <text
+            class="text-slate-500"
+            x="100"
+            y="120"
+            text-anchor="middle"
+            font-size="60"
+            font-weight="bold"
+            fill="currentColor"
+          >
+            ?
+          </text>
         </svg>
       </div>
     </div>
@@ -44,6 +84,8 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router'
 import { computed } from 'vue'
+import { ArrowLeft, Home } from 'lucide-vue-next'
+import BaseButton from '@/Components/ui/BaseButton.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -54,168 +96,3 @@ const goBack = () => {
   router.back()
 }
 </script>
-
-<style scoped>
-.not-found {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 2rem;
-}
-
-.not-found__container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  max-width: 900px;
-  width: 100%;
-  align-items: center;
-}
-
-.not-found__content {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.not-found__code {
-  font-size: 5rem;
-  font-weight: 900;
-  color: #333;
-  line-height: 1;
-}
-
-.not-found__title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #333;
-  margin: 0;
-}
-
-.not-found__description {
-  font-size: 1rem;
-  color: #666;
-  margin: 0;
-  line-height: 1.6;
-}
-
-.not-found__details {
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 1rem;
-  border-radius: 8px;
-  border-left: 4px solid #e74c3c;
-}
-
-.not-found__path {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.not-found__label {
-  font-weight: 600;
-  color: #333;
-}
-
-.not-found__path code {
-  display: block;
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background-color: #f8f8f8;
-  border-radius: 4px;
-  color: #e74c3c;
-  font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
-  word-break: break-all;
-}
-
-.not-found__actions {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.not-found__button {
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-}
-
-.not-found__button--primary {
-  background-color: #333;
-  color: white;
-}
-
-.not-found__button--primary:hover {
-  background-color: #555;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.not-found__button--secondary {
-  background-color: white;
-  color: #333;
-  border: 2px solid #333;
-}
-
-.not-found__button--secondary:hover {
-  background-color: #f5f5f5;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.not-found__illustration {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.not-found__illustration svg {
-  width: 100%;
-  max-width: 250px;
-  height: auto;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@media (max-width: 768px) {
-  .not-found__container {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .not-found__code {
-    font-size: 3rem;
-  }
-
-  .not-found__title {
-    font-size: 1.5rem;
-  }
-
-  .not-found__actions {
-    flex-direction: column;
-  }
-
-  .not-found__button {
-    width: 100%;
-  }
-}
-</style>
