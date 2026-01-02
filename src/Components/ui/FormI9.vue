@@ -128,7 +128,7 @@
             <label class="block text-xs font-bold mb-1">Today's Date</label>
             <input
               type="date"
-              class="w-full border-b-2 border-black bg-transparent font-mono"
+              class="w-full border-b-2 border-black font-mono"
               :value="data.i9Date || ''"
               @input="onInput('i9Date', ($event.target as HTMLInputElement).value)"
             />
@@ -156,18 +156,17 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { I9FormData } from '@/types'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-const props = defineProps<{ data: any }>()
-const emit = defineEmits<{ 'update:data': [any] }>()
-/* eslint-enable @typescript-eslint/no-explicit-any */
+const props = defineProps<{ data: I9FormData }>()
+const emit = defineEmits<{ 'update:data': [I9FormData] }>()
 
 const fullName = computed(() => {
   const parts = [props.data.firstName, props.data.middleName, props.data.lastName]
   return parts.filter(Boolean).join(' ')
 })
 
-function onInput(key: string, value: string) {
+function onInput(key: keyof I9FormData, value: string) {
   emit('update:data', { ...props.data, [key]: value })
 }
 </script>
