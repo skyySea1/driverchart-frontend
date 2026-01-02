@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, type User } from 'firebase/auth'
 import { auth } from '@/services/firebaseService'
-
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
   const isLoading = ref(false)
@@ -62,12 +61,12 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true
     try {
       await signOut(auth)
-      // router.push('/login') // Can be handled here or in component
     } catch (err) {
       if (err instanceof Error) {
         error.value = err.message
       }
     } finally {
+      // Always reset loading state after a logout attempt, regardless of success or failure
       isLoading.value = false
     }
   }

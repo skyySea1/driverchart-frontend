@@ -27,6 +27,16 @@ export const dataService = {
     }))
   },
 
+  getDriverById: async (id: string): Promise<Driver | null> => {
+    try {
+      const response = await apiClient.get<Driver>(`/drivers/${id}`)
+      return response.data
+    } catch (error) {
+      console.warn(`Failed to fetch driver with id ${id}`, error)
+      return null
+    }
+  },
+
   addDriver: async (driver: Omit<Driver, 'id'>): Promise<string> => {
     const response = await apiClient.post<{ id: string }>('/drivers', driver)
     return response.data.id
@@ -90,6 +100,16 @@ export const dataService = {
     }
   },
 
+  getDocumentLogsByEntity: async (entityName: string): Promise<DocumentLog[]> => {
+    try {
+      const response = await apiClient.get<DocumentLog[]>(`/documents/logs/${entityName}`)
+      return response.data
+    } catch (error) {
+      console.warn(`Failed to fetch logs for entity ${entityName}`, error)
+      return []
+    }
+  },
+
   getApplicationInstanceId: async (): Promise<string> => {
     const app = getApp()
     return app.options.appId || 'unknown-app-id'
@@ -130,13 +150,6 @@ export const dataService = {
       const vehicles = vehiclesRes.data
       const alerts = alertsRes.data
       const applications = applicationsRes.data
-      
-      console.log('[Dashboard] Data received:', {
-        drivers: drivers.length,
-        vehicles: vehicles.length,
-        alerts: alerts.length,
-        apps: applications.length
-      })
 
       const pendingApplicationsCount = applications.filter((a) => a.status === 'Pending').length
 
@@ -166,8 +179,6 @@ export const dataService = {
         newApplications: pendingApplicationsCount,
         annualRecordReview: drivers.filter((d) => isExpired(d.mvr?.expiryDate)).length,
       }
-      
-      console.log('[Dashboard] Stats calculated:', stats)
       return stats
     } catch (error) {
       console.error('[Dashboard] Stats fetch error:', error)
