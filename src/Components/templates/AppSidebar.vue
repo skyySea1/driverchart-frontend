@@ -16,7 +16,7 @@
         <Bus class="w-8 h-8 text-blue-400 pointer-events-none" />
       </div>
 
-      <div v-show="!props.collapsed || collapsedMobile" class="sidebar__brand transition-opacity">
+      <div v-show="!props.collapsed || collapsedMobile" class="transition-opacity">
         <div class="font-bold leading-tight">CharterSafe</div>
         <div class="text-xs text-slate-400">DOT Compliance System</div>
       </div>
@@ -51,15 +51,14 @@
         </span>
       </button>
     </nav>
-
+    <!-- TODO: Both UserBadge :show-info and the footer v-show repeat !props.collapsed.
+         Consider extracting a single computed (e.g. showFooterInfo) and using it in both places. -->
     <!-- User Section (Footer) -->
     <footer class="sidebar__footer p-4 border-t border-slate-800">
-      <UserBadge :show-info="!props.collapsed || collapsedMobile" />
+      <UserBadge :show-info="!props.collapsed" />
       <div
-        v-show="!props.collapsed || collapsedMobile"
-        class="text-xs text-slate-500 text-center mt-3"
-        @click="handleLogout"
-      >
+        v-show="!props.collapsed"
+        class="text-xs text-slate-500 text-center mt-3">
         &copy; 2025 CharterSafe
       </div>
     </footer>
@@ -68,31 +67,20 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useAuthStore } from '@/stores/AuthStore'
 import UserBadge from '@/Components/ui/UserBadge.vue'
-import {
-  LayoutDashboard,
-  Users,
-  Truck,
-  FileText,
-  PieChart,
-  Settings,
-  Bus,
-} from 'lucide-vue-next'
+import { LayoutDashboard, Users, Truck, FileText, PieChart, Settings, Bus } from 'lucide-vue-next'
 
 const props = defineProps<{
   collapsed: boolean
   currentRoute?: string
 }>()
-const authStore = useAuthStore()
-defineEmits(['navigate', 'logout'])
+defineEmits<{
+  navigate: [id: string]
+}>()
 
 // Helper to detect if we are effectively collapsed on mobile
 const collapsedMobile = computed(() => !props.collapsed)
 
-async function handleLogout() {
-  await authStore.logout()
-}
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -101,7 +89,6 @@ const navItems = [
   { id: 'audit', label: ' Audit Reports', icon: PieChart },
   { id: 'docs', label: 'Document Registry', icon: FileText },
   { id: 'applications', label: 'Applications', icon: FileText },
-  // { id: 'specs', label: 'System Specs', icon: Code },
   { id: 'reports', label: 'Main Reports', icon: FileText },
   { id: 'settings', label: 'Settings', icon: Settings },
 ]
