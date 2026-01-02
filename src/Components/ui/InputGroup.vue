@@ -22,13 +22,7 @@ const { type ="text", required = false, placeholder = '' } =
     placeholder?: string
     type?: string
     required?: boolean
-  }>(),
-  {
-    type: 'text',
-    required: false,
-    placeholder: '',
-  },
-)
+  }>()
 
 defineEmits<{
   (e: 'update:modelValue', value: string | number): void
