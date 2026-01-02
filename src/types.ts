@@ -176,3 +176,18 @@ export type ViewState =
   | 'applications'
   | 'login'
   | 'settings'
+
+export type I9FormData = Partial<Driver> & {
+  w9Address?: string
+  w9CityStateZip?: string
+  dob?: string
+  ssn?: string
+  phone?: string
+  i9DocTitle?: string
+  i9IssuingAuth?: string
+  i9DocNumber?: string
+  i9DocExp?: string
+  i9EmployerSignature?: string
+  i9Date?: string
+  i9EmployerTitle?: string
+}

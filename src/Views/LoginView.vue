@@ -94,6 +94,7 @@
                 :disabled="isLoading"
               />
               <button
+              v-cursor
                 type="button"
                 @click="showPassword = !showPassword"
                 class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
@@ -109,6 +110,7 @@
           <div class="flex items-center justify-between text-sm">
             <label class="flex items-center cursor-pointer">
               <input
+              v-cursor
                 v-model="rememberMe"
                 type="checkbox"
                 class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
@@ -126,7 +128,7 @@
             v-cursor
             type="submit"
             :disabled="isLoading"
-            class="login__submit w-full bg-linear-to-r from-indigo-600 to-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-indigo-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            class="loginsubmit w-full bg-linear-to-r from-indigo-600 to-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-indigo-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <Loader2 v-if="isLoading" class="w-5 h-5 animate-spin" />
             <span>{{ isLoading ? 'Signing in...' : 'Sign In' }}</span>

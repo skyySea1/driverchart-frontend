@@ -15,10 +15,10 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(
+const { type ="text", required = false, placeholder = '' } =
   defineProps<{
     label: string
-    modelValue: string | number
+    modelValue: string | undefined
     placeholder?: string
     type?: string
     required?: boolean
