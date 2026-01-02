@@ -193,96 +193,12 @@
 
 <style scoped>
 
-@keyframes pulse-slow {
-
-  0%,
-  100% {
-    opacity: 0.1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.2;
-    transform: scale(1.05);
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Circle Container */
-
-.circle-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* App card needs to have a higher z-index */
+  /* App card needs to have a higher z-index */
 
 .app-card {
   position: relative;
   z-index: 10;
 }
 
-/* Central circle with glow effect */
 
-.circle-glow {
-  width: 600px;
-  height: 600px;
-  position: relative;
-  border-radius: 50%;
-
-  background: radial-gradient(circle,
-      rgba(99, 102, 241, 0.25),
-      rgba(59, 130, 246, 0.08),
-      transparent);
-
-  box-shadow:
-    0 0 80px rgba(99, 102, 241, 0.3),
-    0 0 160px rgba(59, 130, 246, 0.25),
-    inset 0 0 80px rgba(99, 102, 241, 0.15);
-}
-
-.circle-inner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 450px;
-  height: 450px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(59, 130, 246, 0.2));
-  backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Pulse Glow Animation */
-
-@keyframes pulse-glow {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.5;
-    filter: blur(3px);
-  }
-
-  50% {
-    transform: scale(1.08);
-    opacity: 0.8;
-    filter: blur(0px);
-  }
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
 </style>

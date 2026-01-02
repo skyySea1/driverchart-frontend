@@ -13,8 +13,9 @@ const Vehicles = () => import('@/Views/VehiclesView.vue')
 const DocumentRegistry = () => import('@/Views/DocumentRegistryView.vue')
 const MainReports = () => import('@/Views/MainReports.vue')
 const AuditReports = () => import('@/Views/AuditReportsView.vue')
-// const SystemSpecs = () => import('@/Views/SystemSpecsView.vue')
 const Settings = () => import('@/Views/SettingsView.vue')
+const DriverProfile = () => import('@/Views/DriverProfileView.vue')
+const Notfound = () => import('@/Views/NotFound.vue')
 
 // todo add navigation guards for auth using meta.requiresAuth(meta fields) on routes that need auth
 const routes: RouteRecordRaw[] = [
@@ -52,6 +53,15 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'Driver Qualification Files',
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
+        },
+      },
+      {
+        path: 'drivers/:id',
+        name: 'driver-profile',
+        component: DriverProfile,
+        meta: {
+          title: 'Driver Profile',
+          subtitle: 'Driver Data & Compliance logs',
         },
       },
       {
@@ -124,7 +134,9 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/dashboard',
+    name: 'NotFound',
+    component: Notfound,
+    meta: { requiresAuth: false },
   },
 ]
 
