@@ -222,7 +222,7 @@ const activeDropdown = ref<'add' | 'profile' | 'notifications' | null>(null)
 // Compute user display name/initial
 const userInitial = computed(() => {
   const email = authStore.user?.email
-    if (!email) {
+  if (!email) {
     return 'U'
   }
   return email.charAt(0).toUpperCase()
@@ -280,7 +280,7 @@ function goToSettings() {
 
 async function handleLogout() {
   await authStore.logout()
-  
+  router.push({ name: 'login' })
 }
 
 // Close dropdowns when clicking outside

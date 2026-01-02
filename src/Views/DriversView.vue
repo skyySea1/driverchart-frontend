@@ -58,7 +58,16 @@
         <DefaultTable :columns="tableColumns" :items="drivers" :loading="loading">
 
           <template #cell(firstName)="{ item }">
-            <span class="font-medium text-slate-800">{{ item.firstName }} {{ item.lastName }}</span>
+            <router-link
+              v-if="item.id"
+              :to="{ name: 'driver-profile', params: { id: item.id } }"
+              class="font-medium text-slate-800 hover:text-blue-600 hover:underline"
+            >
+              {{ item.firstName }} {{ item.lastName }}
+            </router-link>
+            <span v-else class="font-medium text-red-500" title="Missing ID">
+              {{ item.firstName }} {{ item.lastName }}
+            </span>
           </template>
 
           <template #cell(hireStatus)="{ value }">
@@ -142,7 +151,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, watch, onMounted } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
   import DriverFormModal from '@/Components/templates/forms/DriverFormModal.vue'
   import DeleteConfirmation from '@/Components/ui/DeleteConfirmation.vue'
@@ -154,13 +163,15 @@
   import DefaultTable from '@/Components/templates/DefaultTable.vue'
   import { useModalStore } from '@/stores/ModalStore'
   import type { Driver, Column, DriverRow } from '@/types'
-import TableButton from '@/Components/ui/TableButton.vue'
+  import TableButton from '@/Components/ui/TableButton.vue'
+  import { parseDriverDoc } from '@/utils/firestoreParsers'
 
   const route = useRoute()
   const modalStore = useModalStore()
   const { getStatusColor, daysToExpire, isExpiringSoon, isExpired } = useCompliance()
   const { items: driversItems, loading } = useRealtimeCollection<Driver>(
     `artifacts/${import.meta.env.VITE_APP_ID}/public/data/drivers`,
+    { map: parseDriverDoc },
   )
 
   const statusFilter = ref<'all' | 'expiring' | 'expired'>('all')
@@ -192,15 +203,11 @@ import TableButton from '@/Components/ui/TableButton.vue'
     }
   }
 
-  // Watch for route changes to update filters (handles clicking dashboard alerts multiple times)
-  watch(() => route.query, () => syncFiltersFromUrl(), { deep: true })
-
   onMounted(() => syncFiltersFromUrl())
 
   const drivers = computed<DriverRow[]>(() => {
     let list = driversItems.value
-
-    // 1. Apply Status Filter
+    // Status Filter
     if (statusFilter.value === 'expiring') {
       list = list.filter(d =>
         isExpiringSoon(d.cdl?.expiryDate) ||
@@ -217,7 +224,7 @@ import TableButton from '@/Components/ui/TableButton.vue'
       )
     }
 
-    // 2. Apply Robust Name Search Filter
+    // Search Filter
     if (searchQuery.value.trim()) {
       const query = searchQuery.value.toLowerCase().trim()
       list = list.filter(d => {

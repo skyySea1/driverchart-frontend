@@ -14,15 +14,13 @@
       <div class="text-sm font-medium text-white truncate">
         {{ authStore.userDisplayName }}
       </div>
-      <div class="text-xs text-slate-400 truncate">
-        Administrator
-      </div>
+      <div class="text-xs text-slate-400 truncate">Administrator</div>
     </div>
 
     <!-- Logout Button -->
     <button
       v-cursor
-      v-show="props.showInfo"
+      v-show="showInfo"
       @click.stop="handleLogout"
       class="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded transition-all duration-200 opacity-0 group-hover:opacity-100 cursor-pointer"
       title="Logout"
@@ -36,23 +34,18 @@
 <script setup lang="ts">
 import { User, LogOut } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/AuthStore'
+import { useRouter } from 'vue-router'
 
- const props = defineProps({
-  showInfo: {
-    type: Boolean,
-    default: true,
-  }
-})
-
-const emit = defineEmits<{
-  logout: []
+const { showInfo = true } = defineProps<{
+  showInfo?: boolean
 }>()
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 // Logout handler
 async function handleLogout() {
   await authStore.logout()
-  emit('logout')
+  router.push({ name: 'login' })
 }
 </script>
