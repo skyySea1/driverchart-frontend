@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A Single Page Application (SPA) for Charter Bus companies to manage documentation and compliance with US DOT (Department of Transportation) and FMCSA regulations. The system provides comprehensive driver qualification file management, fleet maintenance tracking, document registry, and compliance reporting capabilities.
+You must follow strictly, DRY, KISS and Single source of truth.
 
 ## Glossary
 

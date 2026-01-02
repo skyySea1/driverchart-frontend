@@ -23,7 +23,10 @@ coverage
 *.njsproj
 *.sln
 *.sw?
-conductor
+conductor/
+vercel.json
+.vercel/
+
 *.tsbuildinfo
 
 .eslintcache
