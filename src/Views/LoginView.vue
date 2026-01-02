@@ -25,8 +25,9 @@
     </div>
 
     <!-- Login Card -->
-    <div class="logincard bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="logincard rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
       <!-- Header with Logo -->
+       <!-- todo componetize logincard -->
       <div class="bg-slate-900 p-12 text-center">
         <div class="flex flex-col items-center gap-6">
           <div class="flex items-center gap-3">
@@ -38,7 +39,7 @@
       </div>
 
       <!-- Login Form -->
-      <div class="p-8">
+      <div class="p-8 bg-white">
         <h2 class="text-2xl font-semibold text-slate-800 mb-6 text-center">
           Sign In To CharterSafe
         </h2>
