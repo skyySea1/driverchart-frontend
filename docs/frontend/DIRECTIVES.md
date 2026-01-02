@@ -1,5 +1,6 @@
 # migração para vue
 
+- O uso de watcher deve ser evitado pois o front deve ser stateless, dumb, e não depender de websocket
 - Use v-show not v-if for navigation, avoiding recreating and reevaluating  
 - ícones devem ser do tamanho da fonte (usar 1em)
 - usestate = ref
