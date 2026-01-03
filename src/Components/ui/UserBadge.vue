@@ -10,11 +10,12 @@
       <div class="text-sm font-medium text-white truncate">
         {{ authStore.userDisplayName }}
       </div>
-      <div class="text-xs text-slate-400 truncate">Administrator</div>
+      <div class="text-xs text-slate-400 truncate">{{ authStore.userRole }}</div>
     </div>
 
     <!-- Logout Button -->
-    <button
+    <SmallButton
+      :icon="LogOut"
       v-cursor
       v-show="showInfo"
       @click.stop="handleLogout"
