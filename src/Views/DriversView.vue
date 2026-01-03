@@ -129,156 +129,170 @@
 
           <template #cell(actions)="{ item }">
             <div class="flex items-center justify-end gap-2">
-              <TableButton @click="openEdit(item)" :icon="Edit"/>
-              <TableButton @click="runAudit(item)" :icon="Bot" />
-              <TableButton @click="confirmDelete(item)" :icon="Trash2"/>
+              <SmallButton class="p-0.5" @click="openEdit(item)" :icon="Edit" />
+              <SmallButton class="p-0.5" @click="runAudit(item)" :icon="Bot" />
+              <SmallButton class="p-0.5" @click="confirmDelete(item)" :icon="Trash2" />
             </div>
           </template>
-
           <template #empty>No drivers match the current filters.</template>
         </DefaultTable>
       </div>
     </div>
 
     <!-- Global Driver Modal Integrated with Store -->
-    <DriverFormModal v-if="modalStore.activeModal === 'driver'" :driver="modalStore.data as Driver"
-      @close="closeModal" />
+    <DriverFormModal
+      v-if="modalStore.activeModal === 'driver'"
+      :driver="modalStore.data as Driver"
+      @close="closeModal"
+    />
 
     <!-- Delete confirmation component -->
-    <DeleteConfirmation :open="!!toDelete" :name="toDelete ? `${toDelete.firstName} ${toDelete.lastName}` : ''"
-      title="Confirm Deletion" @cancel="toDelete = null" @confirm="deleteDriver" />
+    <DeleteConfirmation
+      :open="!!toDelete"
+      :name="toDelete ? `${toDelete.firstName} ${toDelete.lastName}` : ''"
+      title="Confirm Deletion"
+      @cancel="toDelete = null"
+      @confirm="deleteDriver"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue'
-  import { useRoute } from 'vue-router'
-  import DriverFormModal from '@/Components/templates/forms/DriverFormModal.vue'
-  import DeleteConfirmation from '@/Components/ui/DeleteConfirmation.vue'
-  import { dataService } from '@/services/dataService'
-  import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
-  import { useCompliance } from '@/Composables/useCompliance'
-  import { Edit, Trash2, Bot, Filter, Search, X } from 'lucide-vue-next'
-  import BaseButton from '@/Components/ui/BaseButton.vue'
-  import DefaultTable from '@/Components/templates/DefaultTable.vue'
-  import { useModalStore } from '@/stores/ModalStore'
-  import type { Driver, Column, DriverRow } from '@/types'
-  import TableButton from '@/Components/ui/TableButton.vue'
-  import { parseDriverDoc } from '@/utils/firestoreParsers'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import DriverFormModal from '@/Components/templates/forms/DriverFormModal.vue'
+import DeleteConfirmation from '@/Components/ui/DeleteConfirmation.vue'
+import { dataService } from '@/services/dataService'
+import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
+import { useCompliance } from '@/Composables/useCompliance'
+import { Edit, Trash2, Bot, Filter, Search, X } from 'lucide-vue-next'
+import BaseButton from '@/Components/ui/BaseButton.vue'
+import DefaultTable from '@/Components/templates/DefaultTable.vue'
+import { useModalStore } from '@/stores/ModalStore'
+import type { Driver, Column, DriverRow } from '@/types'
+import SmallButton from '@/Components/ui/SmallButton.vue'
+import { parseDriverDoc } from '@/utils/firestoreParsers'
 
-  const route = useRoute()
-  const modalStore = useModalStore()
-  const { getStatusColor, daysToExpire, isExpiringSoon, isExpired } = useCompliance()
-  const { items: driversItems, loading } = useRealtimeCollection<Driver>(
-    `artifacts/${import.meta.env.VITE_APP_ID}/public/data/drivers`,
-    { map: parseDriverDoc },
-  )
+const route = useRoute()
+const modalStore = useModalStore()
+const { getStatusColor, daysToExpire, isExpiringSoon, isExpired } = useCompliance()
+const { items: driversItems, loading } = useRealtimeCollection<Driver>(
+  `artifacts/${import.meta.env.VITE_APP_ID}/public/data/drivers`,
+  { map: parseDriverDoc },
+)
 
-  const statusFilter = ref<'all' | 'expiring' | 'expired'>('all')
-  const searchQuery = ref('')
+const statusFilter = ref<'all' | 'expiring' | 'expired'>('all')
+const searchQuery = ref('')
 
-  const tableColumns: Column[] = [
-    { key: 'firstName', label: 'Name' },
-    { key: 'hireStatus', label: 'Status' },
-    { key: 'contact', label: 'Contact', align: 'center' },
-    { key: 'cdlExp', label: 'CDL Exp', align: 'center' },
-    { key: 'medicalExp', label: 'Medical Exp', align: 'center' },
-    { key: 'mvrDate', label: 'Annual MVR', align: 'center' },
-    { key: 'clearinghouseDate', label: 'Clearinghouse', align: 'center' },
-    { key: 'actions', label: 'Actions', align: 'right' },
-  ]
+const tableColumns: Column[] = [
+  { key: 'firstName', label: 'Name', align: 'center' },
+  { key: 'hireStatus', label: 'Status', align: 'center' },
+  { key: 'contact', label: 'Contact', align: 'center' },
+  { key: 'cdlExp', label: 'CDL Exp', align: 'center' },
+  { key: 'medicalExp', label: 'Medical Exp', align: 'center' },
+  { key: 'mvrDate', label: 'Annual MVR', align: 'center' },
+  { key: 'clearinghouseDate', label: 'Clearinghouse', align: 'center' },
+  { key: 'actions', label: 'Actions', align: 'center' },
+]
 
-  // Synchronize filters with URL query parameters
-  const syncFiltersFromUrl = () => {
-    if (route.query.search) {
-      searchQuery.value = String(route.query.search)
-    } else {
-      searchQuery.value = ''
-    }
-
-    if (route.query.status && (route.query.status === 'expiring' || route.query.status === 'expired')) {
-      statusFilter.value = route.query.status
-    } else {
-      statusFilter.value = 'all'
-    }
+// Synchronize filters with URL query parameters
+const syncFiltersFromUrl = () => {
+  if (route.query.search) {
+    searchQuery.value = String(route.query.search)
+  } else {
+    searchQuery.value = ''
   }
 
-  onMounted(() => syncFiltersFromUrl())
+  if (
+    route.query.status &&
+    (route.query.status === 'expiring' || route.query.status === 'expired')
+  ) {
+    statusFilter.value = route.query.status
+  } else {
+    statusFilter.value = 'all'
+  }
+}
 
-  const drivers = computed<DriverRow[]>(() => {
-    let list = driversItems.value
-    // Status Filter
-    if (statusFilter.value === 'expiring') {
-      list = list.filter(d =>
+onMounted(() => syncFiltersFromUrl())
+
+const drivers = computed<DriverRow[]>(() => {
+  let list = driversItems.value
+  // Status Filter
+  if (statusFilter.value === 'expiring') {
+    list = list.filter(
+      (d) =>
         isExpiringSoon(d.cdl?.expiryDate) ||
         isExpiringSoon(d.medical?.expiryDate) ||
         isExpiringSoon(d.drugAlcohol?.expiryDate) ||
-        isExpiringSoon(d.mvr?.expiryDate)
-      )
-    } else if (statusFilter.value === 'expired') {
-      list = list.filter(d =>
+        isExpiringSoon(d.mvr?.expiryDate),
+    )
+  } else if (statusFilter.value === 'expired') {
+    list = list.filter(
+      (d) =>
         isExpired(d.cdl?.expiryDate) ||
         isExpired(d.medical?.expiryDate) ||
         isExpired(d.drugAlcohol?.expiryDate) ||
-        isExpired(d.mvr?.expiryDate)
+        isExpired(d.mvr?.expiryDate),
+    )
+  }
+
+  // Search Filter
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.toLowerCase().trim()
+    list = list.filter((d) => {
+      const fullName = `${d.firstName} ${d.lastName}`.toLowerCase()
+      return (
+        fullName.includes(query) ||
+        d.firstName.toLowerCase().includes(query) ||
+        d.lastName.toLowerCase().includes(query)
       )
-    }
-
-    // Search Filter
-    if (searchQuery.value.trim()) {
-      const query = searchQuery.value.toLowerCase().trim()
-      list = list.filter(d => {
-        const fullName = `${d.firstName} ${d.lastName}`.toLowerCase()
-        return fullName.includes(query) ||
-               d.firstName.toLowerCase().includes(query) ||
-               d.lastName.toLowerCase().includes(query)
-      })
-    }
-
-    return list.map((d) => ({
-      ...d,
-      hireStatus: d.hireStatus || 'Active',
-      contact: d.phone,
-      cdlExp: d.cdl?.expiryDate,
-      medicalExp: d.medical?.expiryDate,
-      mvrDate: d.mvr?.expiryDate,
-      clearinghouseDate: d.drugAlcohol?.expiryDate,
-    }))
-  })
-
-  const filteredCount = computed(() => drivers.value.length)
-
-  const toDelete = ref<Driver | null>(null)
-
-  // Store-based modal controls
-  function openNew() {
-    modalStore.openModal('driver')
+    })
   }
 
-  function openEdit(d: Driver) {
-    modalStore.openModal('driver', d)
-  }
+  return list.map((d) => ({
+    ...d,
+    hireStatus: d.hireStatus || 'Active',
+    contact: d.phone,
+    cdlExp: d.cdl?.expiryDate,
+    medicalExp: d.medical?.expiryDate,
+    mvrDate: d.mvr?.expiryDate,
+    clearinghouseDate: d.drugAlcohol?.expiryDate,
+  }))
+})
 
-  function closeModal() {
-    modalStore.closeModal()
-  }
+const filteredCount = computed(() => drivers.value.length)
 
-  function confirmDelete(d: Driver) {
-    toDelete.value = d
-  }
+const toDelete = ref<Driver | null>(null)
 
-  async function deleteDriver() {
-    if (!toDelete.value) return
-    try {
-      await dataService.deleteDriver(toDelete.value.id)
-      toDelete.value = null
-    } catch (err) {
-      console.error('Error deleting driver:', err)
-    }
-  }
+// Store-based modal controls
+function openNew() {
+  modalStore.openModal('driver')
+}
 
-  // todo add toastr or similar notification
-  function runAudit(d: Driver) {
-    alert(`AI Audit (simulated) for ${d.firstName} ${d.lastName}`)
+function openEdit(d: Driver) {
+  modalStore.openModal('driver', d)
+}
+
+function closeModal() {
+  modalStore.closeModal()
+}
+
+function confirmDelete(d: Driver) {
+  toDelete.value = d
+}
+
+async function deleteDriver() {
+  if (!toDelete.value) return
+  try {
+    await dataService.deleteDriver(toDelete.value.id)
+    toDelete.value = null
+  } catch (err) {
+    console.error('Error deleting driver:', err)
   }
+}
+
+// todo add toastr or similar notification
+function runAudit(d: Driver) {
+  alert(`AI Audit (simulated) for ${d.firstName} ${d.lastName}`)
+}
 </script>
