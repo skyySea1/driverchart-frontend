@@ -4,23 +4,23 @@ export const DriverFormSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   middleName: z.string().default(''),
   lastName: z.string().min(1, 'Last name is required'),
-  dob: z.date({ error: 'Date of birth is required' }),
+  dob: z.iso.date({error: 'Date of birth is required'}),
   phone: z.string().min(1, 'Phone number is required'),
   email: z.email('Invalid email address').or(z.literal('')),
-  hireDate: z.date({ error: 'Hire date is required' }),
+
+  hireDate: z.iso.date({error: 'Hire date is required'}),
   hireStatus: z.enum(['Active', 'Inactive', 'Terminated', 'Rehired', 'On Leave']).default('Active'),
 
-  // Flat compliance fields for the form
   cdlNumber: z.string().min(1, 'CDL Number is required'),
   cdlState: z.string().min(2, 'CDL State is required (2 chars)').max(2),
-  cdlExp: z.date({ error: 'CDL Expiration is required' }),
+  cdlExp: z.iso.date({error: 'CDL Expiration is required'}),
 
   medRegistry: z.string().optional().default(''),
-  medExp: z.date({ error: 'Medical Expiration is required' }),
-  mvrDate: z.date({ error: 'MVR Date is required' }),
-  lastDrugTest: z.date({ error: 'Drug test date is required' }),
+  medExp: z.iso.date({error: 'Medical Expiration is required'}),
+  mvrDate: z.iso.date({error: 'MVR Date is required'}),
+  lastDrugTest: z.iso.date({error: 'Drug test date is required'}),
 
-  roadTestDate: z.date({ error: 'Road test date is required' }),
+  roadTestDate: z.iso.date({error: 'Road test date is required'}),
   roadTestExaminer: z.string().min(1, 'Examiner name is required'),
 
   // Optional fields
