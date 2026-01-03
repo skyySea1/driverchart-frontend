@@ -13,7 +13,9 @@
             placeholder="Search by name..."
             class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 pl-9 transition-colors shadow-sm"
           />
-          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+          <div
+            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400"
+          >
             <Search class="w-4 h-4" />
           </div>
           <button
@@ -26,14 +28,16 @@
         </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto justify-end">
-        <div class="text-xs text-slate-500 font-medium bg-slate-100 px-3 py-1.5 rounded-full whitespace-nowrap">
+      <div
+        class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto justify-end"
+      >
+        <div
+          class="text-xs text-slate-500 font-medium bg-slate-100 px-3 py-1.5 rounded-full whitespace-nowrap"
+        >
           <template v-if="statusFilter !== 'all' || searchQuery">
             {{ filteredCount }} of {{ driversItems.length }} drivers
           </template>
-          <template v-else>
-            Total: {{ driversItems.length }} drivers
-          </template>
+          <template v-else> Total: {{ driversItems.length }} drivers </template>
         </div>
 
         <!-- Status Filter Combobox -->
@@ -46,7 +50,9 @@
             <option value="expiring">Expiring Soon (30d)</option>
             <option value="expired">Expired Documents</option>
           </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+          <div
+            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400"
+          >
             <Filter class="w-4 h-4" />
           </div>
         </div>
@@ -56,7 +62,6 @@
     <div class="bg-white rounded-lg shadow overflow-hidden border border-slate-200">
       <div class="overflow-x-auto">
         <DefaultTable :columns="tableColumns" :items="drivers" :loading="loading">
-
           <template #cell(firstName)="{ item }">
             <router-link
               v-if="item.id"
@@ -71,9 +76,14 @@
           </template>
 
           <template #cell(hireStatus)="{ value }">
-            <span :class="['px-2 py-1 rounded-full text-xs font-semibold', value === 'Active' || !value
-                ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-800',
-            ]">
+            <span
+              :class="[
+                'px-2 py-1 rounded-full text-xs font-semibold',
+                value === 'Active' || !value
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-slate-100 text-slate-800',
+              ]"
+            >
               {{ value || 'Active' }}
             </span>
           </template>
@@ -84,7 +94,9 @@
           </template>
 
           <template #cell(cdlExp)="{ value }">
-            <span :class="['px-2 py-1  rounded inline-block text-xs font-bold', getStatusColor(value)]">
+            <span
+              :class="['px-2 py-1  rounded inline-block text-xs font-bold', getStatusColor(value)]"
+            >
               <span class="block text-[11px] text-slate-500 text-xs">
                 {{ value || '-' }}
               </span>
@@ -95,7 +107,9 @@
           </template>
 
           <template #cell(medicalExp)="{ value }">
-            <span :class="['px-2 py-1  rounded inline-block text-xs font-bold', getStatusColor(value)]">
+            <span
+              :class="['px-2 py-1  rounded inline-block text-xs font-bold', getStatusColor(value)]"
+            >
               <span class="block text-[11px] text-slate-500 text-xs">
                 {{ value || '-' }}
               </span>
@@ -106,7 +120,9 @@
           </template>
 
           <template #cell(mvrDate)="{ value }">
-            <span :class="['px-2 py-1  rounded inline-block text-xs font-bold', getStatusColor(value)]">
+            <span
+              :class="['px-2 py-1  rounded inline-block text-xs font-bold', getStatusColor(value)]"
+            >
               <span class="block text-[11px] text-slate-500 text-xs">
                 {{ value || '-' }}
               </span>
@@ -117,7 +133,9 @@
           </template>
 
           <template #cell(clearinghouseDate)="{ value }">
-            <span :class="['px-2 py-1  rounded inline-block text-xs font-bold', getStatusColor(value)]">
+            <span
+              :class="['px-2 py-1 rounded inline-block text-xs font-bold', getStatusColor(value)]"
+            >
               <span class="block text-[11px] text-slate-500 text-xs">
                 {{ value || '-' }}
               </span>

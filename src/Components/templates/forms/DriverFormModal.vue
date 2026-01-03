@@ -164,6 +164,7 @@
             >
             <input id="rehireDateInput" v-model="form.rehireDate" type="date" class="input-base" />
           </div>
+          <!-- todo: block status selection if have termination date, or add validation -->
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Current Status</label>
             <select v-model="form.hireStatus" class="input-base">
