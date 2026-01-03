@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, type User } from 'firebase/auth'
 import { auth } from '@/services/firebaseService'
+
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
   const isLoading = ref(false)
@@ -26,6 +27,11 @@ export const useAuthStore = defineStore('auth', () => {
 
   const userInitial = computed(() => {
     return userDisplayName.value.charAt(0).toUpperCase()
+  })
+
+  const userRole = computed(() => {
+    //todo add roles to user management and fetch here
+        return 'Administrator'
   })
 
   function init() {
@@ -101,6 +107,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     userDisplayName,
     userInitial,
+    userRole,
     isLoading,
     isInitializing,
     error,
