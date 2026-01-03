@@ -82,9 +82,9 @@ const loading = ref(false)
 const tableColumns: Column[] = [
   { key: 'firstName', label: 'Name', align: 'center' },
   { key: 'contact', label: 'Contact', align: 'center' },
-  { key: 'cdlNumber', label: 'CDL #' },
+  { key: 'cdlNumber', label: 'CDL #', align: 'center' },
   { key: 'experienceYears', label: 'Exp (Yrs)', align: 'center' },
-  { key: 'appliedDate', label: 'Applied Date' },
+  { key: 'appliedDate', label: 'Applied Date', align: 'center' },
   { key: 'status', label: 'Status', align: 'center' },
   { key: 'actions', label: 'Actions', align: 'right' },
 ]
