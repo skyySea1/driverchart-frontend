@@ -121,15 +121,6 @@ const routes: RouteRecordRaw[] = [
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
         },
       },
-      // {
-      //   path: 'specs',
-      //   name: 'specs',
-      //   component: SystemSpecs,
-      //   meta: {
-      //     title: ' System Specs',
-      //     subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-      //   },
-      // },
     ],
   },
   {
@@ -149,7 +140,6 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
-  // Wait for auth to initialize if it hasn't already
   if (authStore.isInitializing) {
     await authStore.init()
   }
