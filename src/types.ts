@@ -1,7 +1,7 @@
 export type AlertType = 'error' | 'success' | 'warning' | 'info'
 export interface Alert {
   id: string
-  type: AlertType
+  type: 'critical' | 'warning' | 'info'
   message: string
   entity?: string
   entityName?: string
@@ -70,6 +70,17 @@ export interface Driver extends FirestoreDoc {
   }
 }
 
+export interface DriverRow extends Driver {
+  firstName: string
+  middleName: string
+  lastName: string
+  contact?: string
+  cdlExp?: string
+  medicalExp?: string
+  mvrDate?: string
+  clearinghouseDate?: string
+}
+
 export interface Application extends FirestoreDoc {
   firstName: string
   lastName: string
@@ -120,14 +131,6 @@ export type DriverForm = {
   ssnDocName: string
   ssnDocFile: File | null
   ssnDocPreviewUrl: string
-}
-
-export interface DriverRow extends Driver {
-  contact?: string
-  cdlExp?: string
-  medicalExp?: string
-  mvrDate?: string
-  clearinghouseDate?: string
 }
 
 export type BadgeVariant =
