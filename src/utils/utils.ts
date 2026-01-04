@@ -48,3 +48,28 @@ export const formatDate = (
     date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   )
 }
+
+/**
+ * Sanitizes input string: Trims, Uppercases, and removes potentially dangerous characters.
+ * Allows letters, numbers, spaces, and basic punctuation (.,-).
+ */
+export const sanitizeInput = (str: string): string => {
+  if (!str) return ''
+  return str
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9\s.,-]/g, '') // Basic whitelist
+}
+
+/**
+ * Capitalizes a name for display (Title Case).
+ * e.g., "JOHN DOE" -> "John Doe"
+ */
+export const capitalizeName = (str: string): string => {
+  if (!str) return ''
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}

@@ -29,7 +29,7 @@
           {{ data.w9CityStateZip || '' }}
         </div>
         <div class="text-xs border-b border-slate-400">
-          <span class="font-bold">birthDate:</span> {{ data.dob }}
+          <span class="font-bold">Birth Date:</span> {{ data.dob }}
         </div>
       </div>
       <div class="grid grid-cols-3 gap-2">

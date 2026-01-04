@@ -48,15 +48,10 @@ export function useCompliance(today = dayjs().startOf('day')) {
     return 'Expired'
   }
 
-  function capitalize(str: string): string {
-    return str.replace(/\b\w/g, (c) => c.toUpperCase())
-  }
-
   return {
     isExpiringSoon,
     isExpired,
     getStatusColor,
     daysToExpire,
-    capitalize,
   }
 }

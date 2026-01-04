@@ -15,6 +15,7 @@ const MainReports = () => import('@/Views/MainReports.vue')
 const AuditReports = () => import('@/Views/AuditReportsView.vue')
 const Settings = () => import('@/Views/SettingsView.vue')
 const DriverProfile = () => import('@/Views/DriverProfileView.vue')
+const ApplicantProfile = () => import('@/Views/ApplicantProfileView.vue')
 const Notfound = () => import('@/Views/NotFound.vue')
 
 // todo add navigation guards for auth using meta.requiresAuth(meta fields) on routes that need auth
@@ -102,6 +103,15 @@ const routes: RouteRecordRaw[] = [
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
         },
       },
+      {
+        path: 'applications/:id',
+        name: 'applicant-profile',
+        component: ApplicantProfile,
+        meta: {
+          title: 'Applicant Profile',
+          subtitle: 'Application Details',
+        },
+      },
 
       {
         path: 'reports',
@@ -121,15 +131,6 @@ const routes: RouteRecordRaw[] = [
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
         },
       },
-      // {
-      //   path: 'specs',
-      //   name: 'specs',
-      //   component: SystemSpecs,
-      //   meta: {
-      //     title: ' System Specs',
-      //     subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-      //   },
-      // },
     ],
   },
   {
@@ -149,7 +150,6 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
-  // Wait for auth to initialize if it hasn't already
   if (authStore.isInitializing) {
     await authStore.init()
   }

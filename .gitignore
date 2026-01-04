@@ -37,3 +37,5 @@ vercel.json
 
 # Vitest
 __screenshots__/
+
+.firebase/hosting.ZGlzdA.cache
