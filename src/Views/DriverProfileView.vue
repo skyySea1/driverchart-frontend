@@ -162,6 +162,13 @@
                  </tbody>
                </table>
              </div>
+
+                 <!-- Global Driver Modal Integrated with Store -->
+                <DriverFormModal
+                v-if="modalStore.activeModal === 'driver'"
+                :driver="modalStore.data as Driver"
+                @close="closeModal"
+                @saved="onDriverUpdated"/>
           </div>
         </div>
       </div>
@@ -174,6 +181,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { dataService } from '@/services/dataService'
 import { useModalStore } from '@/stores/ModalStore'
+import DriverFormModal from '@/Components/templates/forms/DriverFormModal.vue'
 import type { Driver, DocumentLog } from '@/types'
 import {
   User,
