@@ -2,11 +2,12 @@
 <template>
   <div class="space-y-6">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
       <!-- Sidebar Settings Nav -->
       <div class="space-y-2">
         <button
           v-cursor
-          v-for="item in menuItems"
+          v-for="item in menuOptions"
           :key="item.id"
           @click="activeSection = item.id"
           :class="[
@@ -25,8 +26,9 @@
       <div
         class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
       >
+      <!-- Options container -->
         <div class="p-6 border-b border-slate-100">
-          <h3 class="text-lg font-black text-slate-800">{{ activeMenuLabel }}</h3>
+          <h3 class="text-lg font-black text-slate-800">{{ selectedOption }}</h3>
           <p class="text-slate-500 text-sm italic">
             Manage your system preferences and configurations.
           </p>
@@ -62,7 +64,6 @@
                   type="email"
                   :modelValue="authStore.user?.email || ''"
                   disabled
-                  class="opacity-70 cursor-not-allowed"
                 />
               </div>
             </form>
@@ -132,14 +133,14 @@ const formProfile = ref({
   displayName: '',
 })
 
-const menuItems = [
+const menuOptions = [
   { id: 'profile', label: 'User Profile', icon: User },
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'security', label: 'Security', icon: LucideShieldX },
   { id: 'company', label: 'Organization', icon: Globe },
 ]
 
-const activeMenuLabel = computed(() => menuItems.find((i) => i.id === activeSection.value)?.label)
+const selectedOption = computed(() => menuOptions.find((i) => i.id === activeSection.value)?.label)
 
 const notifyOpts = [
   { label: 'Email Alerts', desc: 'Receive expiration notices via email.' },
