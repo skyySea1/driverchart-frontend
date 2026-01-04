@@ -68,10 +68,10 @@
               :to="{ name: 'driver-profile', params: { id: item.id } }"
               class="font-medium text-slate-800 hover:text-blue-600 hover:underline"
             >
-              {{ item.firstName }} {{ item.lastName }}
+              {{ capitalizeName(item.firstName) }} {{ capitalizeName(item.lastName) }}
             </router-link>
             <span v-else class="font-medium text-red-500" title="Missing ID">
-              {{ item.firstName }} {{ item.lastName }}
+              {{ capitalizeName(item.firstName) }} {{ capitalizeName(item.lastName) }}
             </span>
           </template>
 
@@ -190,6 +190,7 @@ import { useModalStore } from '@/stores/ModalStore'
 import type { Driver, Column, DriverRow } from '@/types'
 import SmallButton from '@/Components/ui/SmallButton.vue'
 import { parseDriverDoc } from '@/utils/firestoreParsers'
+import { capitalizeName } from '@/utils/utils'
 
 const route = useRoute()
 const modalStore = useModalStore()

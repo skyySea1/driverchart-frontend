@@ -17,7 +17,7 @@
             {{ driver.firstName[0] }}{{ driver.lastName[0] }}
           </div>
           <div>
-            <h1 class="text-2xl font-bold text-slate-900">{{ driver.firstName }} {{ driver.lastName }}</h1>
+            <h1 class="text-2xl font-bold text-slate-900">{{ capitalizeName(driver.firstName) }} {{ capitalizeName(driver.lastName) }}</h1>
             <div class="flex items-center gap-2 mt-1">
               <span
                 class="px-2.5 py-0.5 rounded-full text-xs font-medium border"
@@ -58,7 +58,7 @@
             <div class="space-y-3 text-sm">
               <div class="flex flex-col gap-1">
                 <span class="text-slate-500">Full Name</span>
-                <span class="font-medium text-slate-900">{{ driver.firstName }} {{ driver.middleName }} {{ driver.lastName }}</span>
+                <span class="font-medium text-slate-900">{{ capitalizeName(driver.firstName) }} {{ capitalizeName(driver.middleName) }} {{ capitalizeName(driver.lastName) }}</span>
               </div>
               <div class="flex flex-col gap-1">
                 <span class="text-slate-500">Contact</span>
@@ -76,7 +76,7 @@
               </div>
               <div class="pt-3 border-t border-slate-100 flex flex-col gap-1">
                 <span class="text-slate-500">Emergency Contact</span>
-                <span class="font-medium text-slate-900">{{ driver.emergencyContact?.name || 'N/A' }}</span>
+                <span class="font-medium text-slate-900">{{ capitalizeName(driver.emergencyContact?.name || 'N/A') }}</span>
                 <span class="text-slate-600">{{ driver.emergencyContact?.phone }} ({{ driver.emergencyContact?.relationship }})</span>
               </div>
             </div>
@@ -87,9 +87,9 @@
             <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
               <History class="w-5 h-5 text-slate-400" /> Activity Timeline
             </h2>
-            <div class="relative pl-6 space-y-6 before:absolute before:inset-y-0 before:left-[11px] before:w-0.5 before:bg-slate-100">
+            <div class="relative pl-6 space-y-6 before:absolute before:inset-y-0 before:left-2.75 before:w-0.5 before:bg-slate-100">
               <div v-for="(event, idx) in timelineEvents" :key="idx" class="relative">
-                <div class="absolute -left-[23px] mt-1 h-3 w-3 rounded-full border-2 border-white bg-primary-500"></div>
+                <div class="absolute -left-5.75 mt-1 h-3 w-3 rounded-full border-2 border-white bg-primary-500"></div>
                 <div>
                   <div class="text-xs text-slate-400 font-medium">{{ formatDate(event.date) }}</div>
                   <div class="text-sm font-medium text-slate-800">{{ event.title }}</div>
@@ -190,6 +190,7 @@ import {
   History
 } from 'lucide-vue-next'
 import dayjs from 'dayjs'
+import { capitalizeName } from '@/utils/utils'
 
 const route = useRoute()
 const modalStore = useModalStore()
