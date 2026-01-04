@@ -2,7 +2,7 @@
 <template>
   <div class="space-y-6">
     <!-- Top Stats Bar -->
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
       <StatCard
         type="alerts"
         title="Alerts"
@@ -26,7 +26,6 @@
         :loading="isLoading"
         is-clickable
         @click="router.push('/drivers?status=expiring')"
-        class="truncate"
       />
       <StatCard
         type="medical"
@@ -43,7 +42,6 @@
         :loading="isLoading"
         is-clickable
         @click="router.push('/applications')"
-        class="truncate"
       />
       <StatCard
         type="reviews"

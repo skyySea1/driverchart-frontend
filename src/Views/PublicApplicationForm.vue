@@ -1,33 +1,9 @@
 <!-- src/Views/PublicApplicationForm.vue -->
 
 <template>
-  <div
-    class="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden">
-
-    <!-- SVG pulsing Background -->
-    <svg class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none animate-pulse-slow"
-      xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#4f46e5" />
-
-          <stop offset="100%" stop-color="#3b82f6" />
-        </linearGradient>
-      </defs>
-
-      <circle cx="50%" cy="50%" r="500" fill="url(#grad)" />
-    </svg>
-
-    <!-- Central pulsing circle with glassmorphism effect -->
-
-    <div class="circle-container">
-      <div class="circle-glow animate-pulse-glow">
-        <div class="circle-inner"></div>
-      </div>
-    </div>
-
+  <BaseBody>
+    
     <!-- Application Card -->
-
     <div class="app-card bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden z-10">
       <div class="bg-slate-900 p-8 text-center">
         <div class="flex flex-col items-center gap-4">
@@ -137,13 +113,14 @@
         &copy; 2026 PhoenixBus Orlando
       </p>
     </div>
-  </div>
+  </BaseBody>
 </template>
 
 <script setup lang="ts">
   import { ref } from 'vue'
   import { dataService } from '@/services/dataService'
   import { Check, Bus, Loader2 } from 'lucide-vue-next'
+  import BaseBody from '@/Components/ui/BaseBody.vue';
 
   const loading = ref(false)
   const submitted = ref(false)
@@ -176,7 +153,7 @@
       loading.value = false
     }
   }
-// implement reset using loop
+  // implement reset using loop
   function reset() {
     form.value = {
       firstName: '',
@@ -192,13 +169,10 @@
 </script>
 
 <style scoped>
-
-  /* App card needs to have a higher z-index */
+/* App card needs to have a higher z-index */
 
 .app-card {
   position: relative;
   z-index: 10;
 }
-
-
 </style>

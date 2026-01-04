@@ -3,6 +3,7 @@
 ## Introduction
 
 You must follow strictly, DRY, KISS and Single source of truth.
+you must add comment ahead if introduce block changes
 
 ## Glossary
 

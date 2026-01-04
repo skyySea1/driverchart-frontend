@@ -1,25 +1,69 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { dataService } from '@/services/dataService'
+import dayjs from 'dayjs'
+
+// Mock apiClient
+const mockGet = vi.fn()
+vi.mock('@/services/apiService', () => ({
+  apiClient: {
+    get: (url: string) => mockGet(url),
+  },
+}))
 
 describe('dataService Logic', () => {
-  it('correctly identifies expiring soon and expired items in getDashboardStats', async () => {
-    // We can't easily mock the internal state of dataService without more refactoring,
-    // but we can test the current mock data logic.
+  it('correctly calculates dashboard stats from API responses', async () => {
+    // Setup Mock Data
+    const today = dayjs()
+    const expiringDate = today.add(15, 'day').toISOString() // Expiring soon
+    const expiredDate = today.subtract(10, 'day').toISOString() // Expired
+    const validDate = today.add(60, 'day').toISOString() // Valid
+
+    // Mock API Responses
+    mockGet.mockImplementation((url: string) => {
+      if (url === '/drivers') {
+        return Promise.resolve({
+          data: [
+            {
+              id: '1',
+              firstName: 'John',
+              lastName: 'Expiring',
+              cdl: { expiryDate: expiringDate }, // +1 Expiring License
+              medical: { expiryDate: validDate },
+              drugAlcohol: { expiryDate: validDate },
+              mvr: { expiryDate: validDate },
+            },
+            {
+              id: '2',
+              firstName: 'Jane',
+              lastName: 'Expired',
+              cdl: { expiryDate: validDate },
+              medical: { expiryDate: expiredDate }, // Is Expired, NOT Expiring Soon (since isExpiringSoon checks diff >= 0)
+              drugAlcohol: { expiryDate: validDate },
+              mvr: { expiryDate: expiredDate }, // +1 Annual Record Review (Expired MVR)
+            },
+          ],
+        })
+      }
+      if (url === '/vehicles') return Promise.resolve({ data: [{}, {}] }) // 2 Vehicles
+      if (url === '/expiration/alerts') return Promise.resolve({ data: [{ id: 'a1' }] }) // 1 Alert
+      if (url === '/applications') return Promise.resolve({ data: [{ status: 'Pending' }, { status: 'Approved' }] }) // 1 Pending
+      return Promise.reject(new Error('Unknown URL'))
+    })
 
     const stats = await dataService.getDashboardStats()
 
-    // Check if stats object has all required properties
-    expect(stats).toHaveProperty('totalDrivers')
-    expect(stats).toHaveProperty('expiringMedCards')
-    expect(stats).toHaveProperty('expiringLicenses')
-    expect(stats).toHaveProperty('annualRecordReview')
+    // Verify Calls
+    expect(mockGet).toHaveBeenCalledWith('/drivers')
+    expect(mockGet).toHaveBeenCalledWith('/vehicles')
 
-    // Since we are using mock data, let's verify if the numbers make sense with today's date
-    // If a driver has a date in the past, it should be in annualRecordReview (isExpired)
-    // If a driver has a date within the next 30 days, it should be in expiring counts
+    // Verify Calculations
+    expect(stats.totalDrivers).toBe(2)
+    expect(stats.totalVehicles).toBe(2)
+    expect(stats.alertsCount).toBe(1)
+    expect(stats.newApplications).toBe(1) // 1 Pending
 
-    expect(typeof stats.totalDrivers).toBe('number')
-    expect(typeof stats.expiringMedCards).toBe('number')
-    expect(typeof stats.expiringLicenses).toBe('number')
+    // Logic Checks
+    expect(stats.expiringLicenses).toBe(1) // John's CDL
+    expect(stats.annualRecordReview).toBe(1) // Jane's MVR
   })
 })
