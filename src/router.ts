@@ -15,6 +15,7 @@ const MainReports = () => import('@/Views/MainReports.vue')
 const AuditReports = () => import('@/Views/AuditReportsView.vue')
 const Settings = () => import('@/Views/SettingsView.vue')
 const DriverProfile = () => import('@/Views/DriverProfileView.vue')
+const ApplicantProfile = () => import('@/Views/ApplicantProfileView.vue')
 const Notfound = () => import('@/Views/NotFound.vue')
 
 // todo add navigation guards for auth using meta.requiresAuth(meta fields) on routes that need auth
@@ -100,6 +101,15 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'Driver Applications',
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
+        },
+      },
+      {
+        path: 'applications/:id',
+        name: 'applicant-profile',
+        component: ApplicantProfile,
+        meta: {
+          title: 'Applicant Profile',
+          subtitle: 'Application Details',
         },
       },
 
