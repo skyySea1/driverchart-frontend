@@ -1,6 +1,7 @@
+export type AlertType = 'error' | 'success' | 'warning' | 'info'
 export interface Alert {
   id: string
-  type: 'critical' | 'warning' | 'info'
+  type: AlertType
   message: string
   entity?: string
   entityName?: string
