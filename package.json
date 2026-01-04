@@ -14,6 +14,7 @@
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/",
+    "test": "vitest run",
     "prepare": "husky",
     "audit:fix": "pnpm audit --fix",
     "update:check": "pnpm outdated"
@@ -44,6 +45,7 @@
     "eslint-plugin-vue": "~10.5.1",
     "husky": "^9.1.7",
     "jiti": "^2.6.1",
+    "jsdom": "^27.4.0",
     "npm-run-all2": "^8.0.4",
     "postcss": "^8.5.6",
     "prettier": "3.6.2",
