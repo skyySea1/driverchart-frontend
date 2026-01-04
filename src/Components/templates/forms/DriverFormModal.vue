@@ -547,6 +547,13 @@ onMounted(() => {
   }
 })
 
+// Watcher to reset status if termDate is cleared
+watch(() => form.value.termDate, (newVal) => {
+  if (!newVal && form.value.hireStatus === 'Terminated') {
+    form.value.hireStatus = 'Active'
+  }
+})
+
 const activeDocumentTitle = computed(() => {
   if (activeDocument.value === 'w9') return 'Form W-9 (Request for Taxpayer ID)'
   if (activeDocument.value === 'i9') return 'Form I-9 (Employment Eligibility)'
@@ -570,8 +577,7 @@ const formattedForCertificate = computed(() => {
       documentNumber: form.value.cdlNumber,
       state: form.value.cdlState,
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } as any
+  }
 })
 
 function handleFileChange(fieldName: 'ssnDoc', event: Event) {
