@@ -36,12 +36,13 @@
             <Download class="w-4 h-4" />
             Compliance Report
           </button>
-          <button
-            @click="editProfile"
+          <BaseButton
+          label="Edit Driver"
+            @click="editProfile(driver)"
             class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium shadow-sm"
           >
             Edit Profile
-          </button>
+          </BaseButton>
         </div>
       </div>
 
@@ -50,12 +51,12 @@
         <div class="space-y-6">
           <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4 h-fit">
             <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
-              <User class="w-5 h-5 text-slate-400" /> Identity Details
+              <User class="w-5 h-5 text-slate-400" /> Driver Information
             </h2>
             <div class="space-y-3 text-sm">
               <div class="flex flex-col gap-1">
                 <span class="text-slate-500">Full Name</span>
-                <span class="font-medium text-slate-900">{{ capitalizeName(driver.firstName) }} {{ capitalizeName(driver.middleName) }} {{ capitalizeName(driver.lastName) }}</span>
+                <span class="font-medium text-slate-900">{{ driverName }}</span>
               </div>
               <div class="flex flex-col gap-1">
                 <span class="text-slate-500">Contact</span>
@@ -68,7 +69,7 @@
                 <span class="text-slate-500">Address</span>
                 <div class="flex items-start gap-2 text-slate-900">
                   <MapPin class="w-3 h-3 text-slate-400 mt-1" />
-                  <span>{{ driver.address }}<br>{{ driver.city }}, {{ driver.state }} {{ driver.zip }}</span>
+                  <span>{{ capitalizeName(driver.address) }}, {{ capitalizeName(driver.city) }}, {{ driver.state }} {{ driver.zip }}</span>
                 </div>
               </div>
               <div class="pt-3 border-t border-slate-100 flex flex-col gap-1">
@@ -199,6 +200,11 @@ const driverId = computed(() => {
   return Array.isArray(id) ? id[0] : id
 })
 
+const driverName = computed(() => {
+  if (!driver.value) return ''
+  return `${capitalizeName(driver.value.firstName)} ${capitalizeName(driver.value.middleName)} ${capitalizeName(driver.value.lastName)}`
+})
+
 const driver = ref<Driver | null>(null)
 const documents = ref<DocumentLog[]>([])
 const isLoading = ref(true)
@@ -296,10 +302,19 @@ const timelineEvents = computed(() => {
   return events.sort((a, b) => dayjs(b.date).diff(dayjs(a.date)))
 })
 
-const editProfile = () => {
+const editProfile = (d: Driver) => {
   if (driver.value) {
-    modalStore.openModal('driver', driver.value)
+  modalStore.openModal('driver', d)
   }
+}
+
+function closeModal() {
+  modalStore.closeModal()
+}
+
+async function onDriverUpdated() {
+  closeModal()
+  await fetchDriverData() // Recarrega os dados atualizados
 }
 
 const generateComplianceReport = () => {
@@ -307,7 +322,7 @@ const generateComplianceReport = () => {
 
   // Simulated report generation
   const reportContent = `
-    COMPLIANCE REPORT: ${driver.value.firstName} ${driver.value.lastName}
+    COMPLIANCE REPORT: ${driverName.value}
     Date: ${dayjs().format('MM/DD/YYYY HH:mm')}
     --------------------------------------------------
     CDL Status: ${getStatus(driver.value.cdl?.expiryDate).toUpperCase()} (Exp: ${formatDate(driver.value.cdl?.expiryDate)})
