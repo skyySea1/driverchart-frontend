@@ -447,9 +447,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { dataService } from '@/services/dataService'
 import type { Driver, DriverForm } from '@/types'
+import { sanitizeInput } from '@/utils/utils'
 import BaseAlert from '@/Components/ui/BaseAlert.vue'
 import BaseModal from '@/Components/ui/BaseModal.vue'
 import FormW9 from '@/Components/templates/forms/FormW9.vue'
