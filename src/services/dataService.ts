@@ -121,6 +121,16 @@ export const dataService = {
     return response.data
   },
 
+  getApplicationById: async (id: string): Promise<Application | null> => {
+    try {
+      const response = await apiClient.get<Application>(`/applications/${id}`)
+      return response.data
+    } catch (error) {
+      console.warn(`Failed to fetch application with id ${id}`, error)
+      return null
+    }
+  },
+
   submitApplication: async (
     application: Omit<Application, 'id' | 'status' | 'appliedDate'>,
   ): Promise<void> => {
