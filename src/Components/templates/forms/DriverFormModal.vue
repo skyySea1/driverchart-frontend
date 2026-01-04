@@ -30,18 +30,18 @@
             <label class="block text-xs font-bold text-slate-700"
               >First Name <span class="text-red-500">*</span></label
             >
-            <input id="firstNameInput" v-model="form.firstName" required class="input-base" />
+            <input id="firstNameInput" v-model.trim="form.firstName" required class="input-base" />
           </div>
           <!-- todo migrate from primaryinput component -->
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Middle Name</label>
-            <input id="middleNameInput" v-model="form.middleName" class="input-base" />
+            <input id="middleNameInput" v-model.trim="form.middleName" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
               >Last Name <span class="text-red-500">*</span></label
             >
-            <input id="lastNameInput" v-model="form.lastName" required class="input-base" />
+            <input id="lastNameInput" v-model.trim="form.lastName" required class="input-base" />
           </div>
 
           <div class="space-y-1">
@@ -54,31 +54,31 @@
             <label class="block text-xs font-bold text-slate-700"
               >Phone Number <span class="text-red-500">*</span></label
             >
-            <input id="phoneInput" v-model="form.phone" type="tel" class="input-base" />
+            <input id="phoneInput" v-model.trim="form.phone" type="tel" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
               >Email Address <span class="text-red-500">*</span>
             </label>
-            <input id="emailInput" v-model="form.email" type="email" class="input-base" />
+            <input id="emailInput" v-model.trim="form.email" type="email" class="input-base" />
           </div>
 
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Street Address</label>
-            <input v-model="form.address" placeholder="123 Main St" class="input-base" />
+            <input v-model.trim="form.address" placeholder="123 Main St" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">City</label>
-            <input v-model="form.city" placeholder="Orlando" class="input-base" />
+            <input v-model.trim="form.city" placeholder="Orlando" class="input-base" />
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div class="space-y-1">
               <label class="block text-xs font-bold text-slate-700">State</label>
-              <input v-model="form.state" placeholder="FL" class="input-base" />
+              <input v-model.trim="form.state" placeholder="FL" class="input-base" />
             </div>
             <div class="space-y-1">
               <label class="block text-xs font-bold text-slate-700">Zip</label>
-              <input v-model="form.zip" placeholder="32801" class="input-base" />
+              <input v-model.trim="form.zip" placeholder="32801" class="input-base" />
             </div>
           </div>
         </div>
@@ -95,15 +95,15 @@
         >
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Bank Name</label>
-            <input v-model="form.bankName" placeholder="e.g. Chase" class="input-base" />
+            <input v-model.trim="form.bankName" placeholder="e.g. Chase" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Routing Number</label>
-            <input v-model="form.routingNumber" placeholder="9 Digits" class="input-base" />
+            <input v-model.trim="form.routingNumber" placeholder="9 Digits" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Account Number</label>
-            <input v-model="form.accountNumber" placeholder="Account #" class="input-base" />
+            <input v-model.trim="form.accountNumber" placeholder="Account #" class="input-base" />
           </div>
         </div>
       </div>
@@ -120,15 +120,15 @@
         >
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Contact Name</label>
-            <input v-model="form.emergencyName" placeholder="Joana Smith" class="input-base" />
+            <input v-model.trim="form.emergencyName" placeholder="Joana Smith" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Relationship</label>
-            <input v-model="form.emergencyRelationship" placeholder="Wife" class="input-base" />
+            <input v-model.trim="form.emergencyRelationship" placeholder="Wife" class="input-base" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Phone Number</label>
-            <input v-model="form.emergencyPhone" type="tel" class="input-base" />
+            <input v-model.trim="form.emergencyPhone" type="tel" class="input-base" />
           </div>
         </div>
       </div>
@@ -168,10 +168,10 @@
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Current Status</label>
             <select v-model="form.hireStatus" class="input-base">
-              <option value="Active">Active</option>
-              <option value="Terminated">Terminated</option>
+              <option v-if="!form.termDate" value="Active">Active</option>
+              <option v-if="form.termDate" value="Terminated">Terminated</option>
               <option value="Rehired">Rehired</option>
-              <option value="On Leave">On Leave</option>
+              <option v-if="!form.termDate" value="On Leave">On Leave</option>
             </select>
           </div>
         </div>
@@ -191,7 +191,7 @@
             <InputGroup
               label="Social Security (SSN)"
               placeholder="XXX-XX-XXXX"
-              v-model="form.ssn"
+              v-model.trim="form.ssn"
             />
             <FileInput
               label="Upload SSN Card"
@@ -259,13 +259,13 @@
                   <label class="block text-[10px] font-bold text-slate-500"
                     >Number <span class="text-red-500">*</span></label
                   >
-                  <input v-model="form.cdlNumber" class="input-base" />
+                  <input v-model.trim="form.cdlNumber" class="input-base" />
                 </div>
                 <div class="w-20 space-y-1">
                   <label class="block text-[10px] font-bold text-slate-500"
                     >State <span class="text-red-500">*</span></label
                   >
-                  <input v-model="form.cdlState" placeholder="FL" class="input-base" />
+                  <input v-model.trim="form.cdlState" placeholder="FL" class="input-base" />
                 </div>
               </div>
               <div class="space-y-1">
@@ -290,7 +290,7 @@
             <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="col-span-2 space-y-1">
                 <label class="block text-[10px] font-bold text-slate-500">Registry Number</label>
-                <input v-model="form.medRegistry" class="input-base" />
+                <input v-model.trim="form.medRegistry" class="input-base" />
               </div>
               <div class="space-y-1">
                 <label class="block text-[10px] font-bold text-slate-500"
@@ -368,7 +368,7 @@
                 <label class="block text-[10px] font-bold text-slate-500"
                   >Examiner Name <span class="text-red-500">*</span></label
                 >
-                <input v-model="form.roadTestExaminer" class="input-base" />
+                <input v-model.trim="form.roadTestExaminer" class="input-base" />
               </div>
               <div class="space-y-1 relative">
                 <label class="block text-[10px] font-bold text-slate-500"
@@ -401,7 +401,7 @@
           </div>
         </div>
       </div>
-
+<!-- TODO componentize buttons -->
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 mt-6">
         <button
           v-cursor
@@ -629,17 +629,41 @@ async function save() {
 
     isSaving.value = true
 
+    // for (const item in form.value) {
+    //     sanitizeInput(form.value.item)
+
+    // }
+    // Sanitize string inputs
+    const firstName = sanitizeInput(form.value.firstName)
+    const middleName = sanitizeInput(form.value.middleName)
+    const lastName = sanitizeInput(form.value.lastName)
+    const address = sanitizeInput(form.value.address)
+    const city = sanitizeInput(form.value.city)
+    const state = sanitizeInput(form.value.state)
+    const zip = sanitizeInput(form.value.zip)
+    const emergencyName = sanitizeInput(form.value.emergencyName)
+    const emergencyRelationship = sanitizeInput(form.value.emergencyRelationship)
+    const bankName = sanitizeInput(form.value.bankName)
+    const businessName = sanitizeInput(form.value.businessName)
+
     const dataToSave: Driver = {
       ...form.value,
+      firstName,
+      middleName,
+      lastName,
+      address,
+      city,
+      state,
+      zip,
+      bankName,
+      businessName,
       id: props.driver?.id || '',
-      firstName: form.value.firstName || '',
-      lastName: form.value.lastName || '',
       dob: form.value.dob || '',
       phone: form.value.phone || '',
       email: form.value.email || '',
       cdl: {
-        documentNumber: form.value.cdlNumber,
-        state: form.value.cdlState,
+        documentNumber: form.value.cdlNumber, // Leave identifiers as is (case sensitive sometimes)
+        state: form.value.cdlState.toUpperCase(),
         expiryDate: form.value.cdlExp,
       },
       medical: {
@@ -661,9 +685,9 @@ async function save() {
         date: form.value.roadTestDate,
       },
       emergencyContact: {
-        name: form.value.emergencyName,
+        name: emergencyName,
         phone: form.value.emergencyPhone,
-        relationship: form.value.emergencyRelationship,
+        relationship: emergencyRelationship,
       },
     }
 
