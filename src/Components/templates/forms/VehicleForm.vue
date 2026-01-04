@@ -75,11 +75,11 @@ import { ref, watch } from 'vue'
 import { dataService } from '@/services/dataService'
 import type { Vehicle } from '@/types'
 import { STATUS_ACTIVE } from '@/utils/constants'
-import { VehicleSchema } from '@/schemas/vehicleSchema'
+import { VehicleSchema, type VehicleFormData } from '@/schemas/vehicleSchema'
+import { sanitizeInput } from '@/utils/utils'
 
-const schema = VehicleSchema
 const props = defineProps<{
-  initialData?: Partial<Vehicle>
+  initialData?: Vehicle
 }>()
 
 const emit = defineEmits<{
@@ -89,24 +89,32 @@ const emit = defineEmits<{
 
 const isSaving = ref(false)
 const errorMsg = ref('')
-const formData = ref<Partial<Vehicle>>({
+const formData = ref<VehicleFormData>({
   busNumber: '',
   vin: '',
   lastAnnualInspection: '',
   mileage: 0,
+  vehicleStatus: 'Active',
 })
 
 watch(
   () => props.initialData,
   (newVal) => {
     if (newVal) {
-      formData.value = { ...newVal }
+      formData.value = {
+        busNumber: newVal.busNumber ?? '',
+        vin: newVal.vin ?? '',
+        lastAnnualInspection: newVal.lastAnnualInspection ?? '',
+        mileage: newVal.mileage ?? 0,
+        vehicleStatus: newVal.vehicleStatus ?? 'Active'
+      }
     } else {
       formData.value = {
         busNumber: '',
         vin: '',
         lastAnnualInspection: '',
         mileage: 0,
+        vehicleStatus: 'Active',
       }
     }
   },
@@ -115,13 +123,18 @@ watch(
 
 async function saveVehicle() {
   errorMsg.value = ''
-  
+
+  // Sanitize input before validation
+  const cleanBusNumber = sanitizeInput(formData.value.busNumber || '')
+  const cleanVin = sanitizeInput(formData.value.vin || '')
+
   // Validate using Zod
-  const result = schema.safeParse({
+  const result = VehicleSchema.safeParse({
     ...formData.value,
+    busNumber: cleanBusNumber,
+    vin: cleanVin,
+
     // Ensure defaults if fields are missing/empty
-    busNumber: formData.value.busNumber || '',
-    vin: formData.value.vin || '',
     lastAnnualInspection: formData.value.lastAnnualInspection || '',
     mileage: formData.value.mileage || 0,
     vehicleStatus: formData.value.vehicleStatus || STATUS_ACTIVE,
@@ -135,6 +148,7 @@ async function saveVehicle() {
 
   isSaving.value = true
   try {
+    // Cast Zod result to Vehicle-compatible type for dataService
     const dataToSave = result.data
 
     if (props.initialData?.id) {
