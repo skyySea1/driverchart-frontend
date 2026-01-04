@@ -54,7 +54,7 @@ import type { Column } from '@/types'
 const props = defineProps<{
   readonly columns: Column[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly items: any[]
+  readonly items: string[] | any[]
   readonly loading?: boolean
 }>()
 </script>
