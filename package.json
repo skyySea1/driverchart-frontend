@@ -43,6 +43,7 @@
     "autoprefixer": "^10.4.23",
     "eslint": "^9.39.2",
     "eslint-plugin-vue": "~10.5.1",
+    "happy-dom": "^20.0.11",
     "husky": "^9.1.7",
     "jiti": "^2.6.1",
     "jsdom": "^27.4.0",
