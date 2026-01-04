@@ -16,7 +16,14 @@
       <div class="overflow-x-auto">
         <DefaultTable :columns="tableColumns" :items="applications" :loading="loading">
           <template #cell(firstName)="{ item }">
-            <span class="font-medium text-slate-800">{{ item.firstName }} {{ item.lastName }}</span>
+            <router-link
+              v-if="item.id"
+              :to="{ name: 'applicant-profile', params: { id: item.id } }"
+              class="font-medium text-slate-800 hover:text-blue-600 hover:underline"
+            >
+              {{ capitalizeName(item.firstName) }} {{ capitalizeName(item.lastName) }}
+            </router-link>
+            <span v-else class="font-medium text-slate-800">{{ capitalizeName(item.firstName) }} {{ capitalizeName(item.lastName) }}</span>
           </template>
 
           <template #cell(contact)="{ item }">
@@ -75,6 +82,7 @@ import { dataService } from '@/services/dataService'
 import type { Application, Column } from '@/types'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
 import { Check, X, ExternalLink } from 'lucide-vue-next'
+import { capitalizeName } from '@/utils/utils'
 
 const applications = ref<Application[]>([])
 const loading = ref(false)
