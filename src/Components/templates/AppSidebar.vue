@@ -16,7 +16,7 @@
         <Bus class="w-8 h-8 text-blue-400 pointer-events-none" />
       </div>
 
-      <div v-show="!props.collapsed || collapsedMobile" class="transition-opacity">
+      <div v-show="!props.collapsed" class="transition-opacity">
         <div class="font-bold leading-tight">CharterSafe</div>
         <div class="text-xs text-slate-400">DOT Compliance System</div>
       </div>
@@ -51,8 +51,7 @@
         </span>
       </button>
     </nav>
-    <!-- TODO: Both UserBadge :show-info and the footer v-show repeat !props.collapsed.
-         Consider extracting a single computed (e.g. showFooterInfo) and using it in both places. -->
+
     <!-- User Section (Footer) -->
     <footer class="sidebar__footer p-4 border-t border-slate-800">
       <UserBadge :show-info="!props.collapsed" />
@@ -74,13 +73,7 @@ const props = defineProps<{
   collapsed: boolean
   currentRoute?: string
 }>()
-defineEmits<{
-  navigate: [id: string]
-}>()
-
-// Helper to detect if we are effectively collapsed on mobile
-const collapsedMobile = computed(() => !props.collapsed)
-
+defineEmits<{ navigate: [id: string] }>()
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },

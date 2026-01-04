@@ -9,7 +9,7 @@
 
     <AppSidebar
       :collapsed="sidebarCollapsed"
-      :currentRoute="$route.name?.toString()"
+      :currentRoute="currentRouteName"
       @navigate="handleNavigate"
     />
 
@@ -23,8 +23,8 @@
       <!-- access route title and subtitle by route meta -->
       <div class="p-4 md:p-8">
         <AppHeader
-          :title="($route.meta.title as string) || 'Safety Dashboard'"
-          :subtitle="$route.meta.subtitle as string"
+          :title="title"
+          :subtitle="subtitle"
           @open-mobile="sidebarCollapsed = !sidebarCollapsed"
         />
 
@@ -37,7 +37,7 @@
     </div>
 
     <!-- Desktop Collapse Toggle Button -->
-    <button v-cursor @contextmenu.prevent="toggleSidebar" @keydown.tab="toggleSidebar" @click="toggleSidebar" :class="[
+    <button v-cursor @contextmenu.prevent="toggleSidebar" @click="toggleSidebar" :class="[
       'hidden btn-up-hover-effect md:flex fixed top-1/2 z-40 bg-slate-800 shadow-md border border-indigo-600 rounded-full p-1.5 items-center justify-center text-white hover:text-indigo-600 hover:border-indigo-600 transition-all duration-300 ease-in-out',
       sidebarCollapsed ? 'left-10' : 'left-60',
     ]" title="Toggle Sidebar">
@@ -47,25 +47,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { ChevronLeft } from 'lucide-vue-next'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
 import { MOBILE_BREAKPOINT } from '@/utils/constants'
 
 const router = useRouter()
+const route = useRoute()
+const currentRouteName = computed(() => String(route.name ?? 'dashboard'))
+const title = computed(() => String(route.meta.title ?? 'Dashboard'))
+const subtitle = computed(() => String(route.meta.subtitle ?? ''))
 
 // Sidebar state: closed on mobile (< 768px)
 const sidebarCollapsed = ref(window.innerWidth < MOBILE_BREAKPOINT)
 
-  function handleNavigate(routeName: string) {
+function isMobile() {
+  return window.innerWidth < MOBILE_BREAKPOINT
+}
+
+function handleNavigate(routeName: string) {
+  if (route.name === routeName) return
     router.push({ name: routeName })
     // Auto-close sidebar on mobile after navigation
     if (isMobile()) {
       sidebarCollapsed.value = true
     }
-  }
+}
 
   // sidebar event handler
   function toggleSidebar() {

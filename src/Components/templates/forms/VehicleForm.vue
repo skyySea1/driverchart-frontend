@@ -1,9 +1,13 @@
 <template>
   <form @submit.prevent="saveVehicle" class="space-y-4">
+    <div v-if="errorMsg" class="p-3 bg-red-50 text-red-700 text-sm rounded border border-red-200">
+      {{ errorMsg }}
+    </div>
+
     <div class="space-y-1">
       <label class="block text-xs font-bold text-slate-700"
         >Bus Number <span class="text-red-500">*</span></label
-      >
+    >
       <input
         v-model.trim="formData.busNumber"
         type="text"
@@ -71,9 +75,11 @@ import { ref, watch } from 'vue'
 import { dataService } from '@/services/dataService'
 import type { Vehicle } from '@/types'
 import { STATUS_ACTIVE } from '@/utils/constants'
+import { VehicleSchema, type VehicleFormData } from '@/schemas/vehicleSchema'
+import { sanitizeInput } from '@/utils/utils'
 
 const props = defineProps<{
-  initialData?: Partial<Vehicle>
+  initialData?: Vehicle
 }>()
 
 const emit = defineEmits<{
@@ -82,24 +88,33 @@ const emit = defineEmits<{
 }>()
 
 const isSaving = ref(false)
-const formData = ref<Partial<Vehicle>>({
+const errorMsg = ref('')
+const formData = ref<VehicleFormData>({
   busNumber: '',
   vin: '',
   lastAnnualInspection: '',
   mileage: 0,
+  vehicleStatus: 'Active',
 })
 
 watch(
   () => props.initialData,
   (newVal) => {
     if (newVal) {
-      formData.value = { ...newVal }
+      formData.value = {
+        busNumber: newVal.busNumber ?? '',
+        vin: newVal.vin ?? '',
+        lastAnnualInspection: newVal.lastAnnualInspection ?? '',
+        mileage: newVal.mileage ?? 0,
+        vehicleStatus: newVal.vehicleStatus ?? 'Active'
+      }
     } else {
       formData.value = {
         busNumber: '',
         vin: '',
         lastAnnualInspection: '',
         mileage: 0,
+        vehicleStatus: 'Active',
       }
     }
   },
@@ -107,23 +122,44 @@ watch(
 )
 
 async function saveVehicle() {
-  const v = formData.value
-  if (!v.busNumber || !v.vin) return
+  errorMsg.value = ''
+
+  // Sanitize input before validation
+  const cleanBusNumber = sanitizeInput(formData.value.busNumber || '')
+  const cleanVin = sanitizeInput(formData.value.vin || '')
+
+  // Validate using Zod
+  const result = VehicleSchema.safeParse({
+    ...formData.value,
+    busNumber: cleanBusNumber,
+    vin: cleanVin,
+
+    // Ensure defaults if fields are missing/empty
+    lastAnnualInspection: formData.value.lastAnnualInspection || '',
+    mileage: formData.value.mileage || 0,
+    vehicleStatus: formData.value.vehicleStatus || STATUS_ACTIVE,
+  })
+
+  if (!result.success) {
+    const issues = result.error.issues
+    errorMsg.value = issues.map(i => i.message).join('. ')
+    return
+  }
 
   isSaving.value = true
   try {
-    const dataToSave = {
-      busNumber: v.busNumber,
-      vin: v.vin,
-      vehicleStatus: STATUS_ACTIVE,
-      lastAnnualInspection: v.lastAnnualInspection || '',
-      mileage: v.mileage ?? 0,
-    } as Omit<Vehicle, 'id'>
+    // Cast Zod result to Vehicle-compatible type for dataService
+    const dataToSave = result.data
 
-    await dataService.addVehicle(dataToSave)
+    if (props.initialData?.id) {
+        await dataService.updateVehicle({ ...dataToSave, id: props.initialData.id })
+    } else {
+        await dataService.addVehicle(dataToSave)
+    }
     emit('saved')
   } catch (error) {
     console.error('Error saving vehicle:', error)
+    errorMsg.value = 'Failed to save vehicle. Please try again.'
   } finally {
     isSaving.value = false
   }
