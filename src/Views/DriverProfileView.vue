@@ -1,10 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Loading & Error States -->
-    <div v-if="isLoading" class="flex items-center justify-center h-64">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-    </div>
-
+    <BaseLoading v-if="isLoading" />
     <div v-else-if="error" class="bg-red-50 p-4 rounded-lg border border-red-200 text-red-700">
       {{ error }}
     </div>
@@ -191,6 +188,8 @@ import {
 } from 'lucide-vue-next'
 import dayjs from 'dayjs'
 import { capitalizeName } from '@/utils/utils'
+import BaseButton from '@/Components/ui/BaseButton.vue';
+import BaseLoading from '@/Components/ui/BaseLoading.vue'
 
 const route = useRoute()
 const modalStore = useModalStore()
