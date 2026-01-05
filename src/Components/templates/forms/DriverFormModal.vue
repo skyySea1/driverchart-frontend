@@ -1,20 +1,8 @@
 <template>
   <!-- todo update modal title based on driver presence and add validation for existing drivers -->
-  <BaseModal
-    v-cursor
-    :isOpen="true"
-    :title="props.driver ? 'Edit Driver' : 'New Driver'"
-    size="w-full md:w-3/4 lg:w-2/3 xl:w-1/2"
-    @close="$emit('close')"
-  >
-    <BaseAlert
-      v-if="errorMsg"
-      type="error"
-      title="Error"
-      :message="errorMsg"
-      @close="errorMsg = ''"
-      class="mb-4"
-    />
+  <BaseModal v-cursor :isOpen="true" :title="props.driver ? 'Edit Driver' : 'New Driver'"
+    size="w-full md:w-3/4 lg:w-2/3 xl:w-1/2" @close="$emit('close')">
+    <BaseAlert v-if="errorMsg" type="error" title="Error" :message="errorMsg" @close="errorMsg = ''" class="mb-4"/>
 
     <!-- 1. PERSONAL INFO -->
     <form novalidate @submit.prevent="save" class="space-y-3">
@@ -154,25 +142,61 @@
               class="input-base"
             />
           </div>
+
           <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700">Termination Date</label>
-            <input v-model="form.termDate" type="date" class="input-base" />
+            <div class="flex items-center gap-1">
+              <label class="block text-xs font-bold text-slate-700">Termination Date</label>
+              <!-- Tooltip -->
+              <div class="group relative flex items-center">
+                <HelpCircle class="w-3 h-3 text-slate-400 cursor-help" />
+                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-48 p-2 bg-slate-800 text-white text-[10px] rounded shadow-lg z-10 text-center pointer-events-none">
+                  Add termination date to change status
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                </div>
+              </div>
+            </div>
+            <input
+              v-model="form.termDate"
+              type="date"
+              class="input-base"
+              :class="{ 'border-orange-400': form.termDate }"
+            />
+            <p v-if="form.termDate" class="text-[10px] text-orange-600 mt-1">
+              ⚠️ Status locked to Terminated/Rehired
+            </p>
           </div>
+
           <div class="space-y-1" v-if="form.hireStatus === 'Rehired'">
             <label class="block text-xs font-bold text-slate-700"
               >Rehire Date <span class="text-red-500">*</span></label
             >
-            <input id="rehireDateInput" v-model="form.rehireDate" type="date" class="input-base" />
+            <input
+              id="rehireDateInput"
+              v-model="form.rehireDate"
+              type="date"
+              class="input-base"
+              :required="form.hireStatus === 'Rehired'"
+            />
           </div>
-          <!-- todo: block status selection if have termination date, or add validation -->
+
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Current Status</label>
-            <select v-model="form.hireStatus" class="input-base">
-              <option v-if="!form.termDate" value="Active">Active</option>
-              <option v-if="form.termDate" value="Terminated">Terminated</option>
-              <option value="Rehired">Rehired</option>
-              <option v-if="!form.termDate" value="On Leave">On Leave</option>
+            <select
+              v-model="form.hireStatus"
+              class="input-base"
+              :class="{ 'bg-orange-50': form.termDate }"
+            >
+              <option
+                v-for="option in availableStatusOptions"
+                :key="option.value"
+                :value="option.value"
+              >
+                {{ option.label }}
+              </option>
             </select>
+            <p v-if="!form.termDate" class="text-[10px] flex font-semibold text-slate-500 mt-1">
+              💡 Add termination date to change status
+            </p>
           </div>
         </div>
       </div>
@@ -401,7 +425,7 @@
           </div>
         </div>
       </div>
-<!-- TODO componentize buttons -->
+      <!-- TODO componentize buttons -->
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 mt-6">
         <button
           v-cursor
@@ -449,6 +473,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { dataService } from '@/services/dataService'
+import { useDashboard } from '@/Composables/useDashboard'
 import type { Driver, DriverForm } from '@/types'
 import { sanitizeInput } from '@/utils/utils'
 import BaseAlert from '@/Components/ui/BaseAlert.vue'
@@ -475,6 +500,7 @@ import {
   Download,
   Phone,
   Save,
+  HelpCircle,
 } from 'lucide-vue-next'
 
 const props = defineProps<{ driver?: Driver }>()
@@ -548,12 +574,68 @@ onMounted(() => {
   }
 })
 
-// Watcher to reset status if termDate is cleared
-watch(() => form.value.termDate, (newVal) => {
-  if (!newVal && form.value.hireStatus === 'Terminated') {
-    form.value.hireStatus = 'Active'
+// Computed para opções disponíveis baseadas na termDate
+const availableStatusOptions = computed(() => {
+  if (form.value.termDate) {
+    // Se tem termDate, só pode ser Terminated ou Rehired
+    return [
+      { value: 'Terminated', label: 'Terminated' },
+      { value: 'Rehired', label: 'Rehired' },
+    ]
   }
+
+  // Sem termDate, pode ser Active ou On Leave
+  return [
+    { value: 'Active', label: 'Active' },
+    { value: 'On Leave', label: 'On Leave' },
+  ]
 })
+
+// Watch para termDate - ao selecionar data, muda para Terminated
+watch(
+  () => form.value.termDate,
+  (newVal, oldVal) => {
+    if (newVal && !oldVal) {
+      // Acabou de adicionar termDate
+      form.value.hireStatus = 'Terminated'
+    } else if (!newVal && oldVal) {
+      // Removeu termDate
+      form.value.hireStatus = 'Active'
+    }
+  },
+)
+
+// Watch para hireStatus - ao mudar de Terminated, limpa termDate
+watch(
+  () => form.value.hireStatus,
+  (newVal, oldVal) => {
+    // Se mudou de Terminated/Rehired para Active/On Leave, limpar termDate
+    if (oldVal === 'Terminated' && (newVal === 'Active' || newVal === 'On Leave')) {
+      form.value.termDate = ''
+    }
+
+    // Se mudou para Rehired e não tem rehireDate, pode pedir
+    if (newVal === 'Rehired' && !form.value.rehireDate) {
+      // Opcional: auto-preencher com hoje
+      // form.value.rehireDate = new Date().toISOString().split('T')[0]
+    }
+
+    // Limpar rehireDate se não é Rehired
+    if (newVal !== 'Rehired') {
+      form.value.rehireDate = ''
+    }
+  },
+)
+
+// Watcher to reset status if termDate is cleared
+watch(
+  () => form.value.termDate,
+  (newVal) => {
+    if (!newVal && form.value.hireStatus === 'Terminated') {
+      form.value.hireStatus = 'Active'
+    }
+  },
+)
 
 const activeDocumentTitle = computed(() => {
   if (activeDocument.value === 'w9') return 'Form W-9 (Request for Taxpayer ID)'
@@ -708,6 +790,10 @@ async function save() {
     } else {
       await dataService.addDriver({ ...finalData })
     }
+
+    // Refresh dashboard stats silently to update alerts immediately
+    useDashboard().fetchDashboardStats(true)
+
     emit('saved')
     emit('close')
   } catch (err) {
