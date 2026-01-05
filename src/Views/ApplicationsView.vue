@@ -88,12 +88,12 @@ const applications = ref<Application[]>([])
 const loading = ref(false)
 
 const tableColumns: Column[] = [
-  { key: 'firstName', label: 'Name', align: 'center' },
+  { key: 'firstName', label: 'Name', align: 'center', sortable: true },
   { key: 'contact', label: 'Contact', align: 'center' },
   { key: 'cdlNumber', label: 'CDL #', align: 'center' },
-  { key: 'experienceYears', label: 'Exp (Yrs)', align: 'center' },
-  { key: 'appliedDate', label: 'Applied Date', align: 'center' },
-  { key: 'status', label: 'Status', align: 'center' },
+  { key: 'experienceYears', label: 'Exp (Yrs)', align: 'center', sortable: true },
+  { key: 'appliedDate', label: 'Applied Date', align: 'center', sortable: true },
+  { key: 'status', label: 'Status', align: 'center', sortable: true },
   { key: 'actions', label: 'Actions', align: 'right' },
 ]
 
