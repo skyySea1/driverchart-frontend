@@ -2,12 +2,14 @@ import { ref, onUnmounted } from 'vue'
 import { dataService } from '@/services/dataService'
 import type { DashboardStats } from '@/types'
 
-export function useDashboard() {
-  const stats = ref<DashboardStats | null>(null)
-  const isLoading = ref(false)
-  const error = ref<unknown | null>(null)
-  let pollingInterval: number | null = null
+// Singleton State
+const stats = ref<DashboardStats | null>(null)
+const isLoading = ref(false)
+const error = ref<unknown | null>(null)
+let pollingInterval: number | null = null
+let listeners = 0
 
+export function useDashboard() {
   const fetchDashboardStats = async (silent = false) => {
     if (!silent) isLoading.value = true
     error.value = null
@@ -24,7 +26,8 @@ export function useDashboard() {
 
   // Polling logic: Refresh every 30 seconds
   const startPolling = () => {
-    stopPolling() // Clean up existing
+    if (pollingInterval) return // Already polling
+
     pollingInterval = window.setInterval(() => {
       // Only fetch if the tab is visible to save resources
       if (document.visibilityState === 'visible') {
@@ -34,18 +37,22 @@ export function useDashboard() {
   }
 
   const stopPolling = () => {
-    if (pollingInterval) {
+    if (listeners <= 0 && pollingInterval) {
       clearInterval(pollingInterval)
       pollingInterval = null
     }
   }
 
-  // Initial fetch and start polling
-  fetchDashboardStats()
+  // Init logic
+  listeners++
+  if (!stats.value && !isLoading.value) {
+    fetchDashboardStats()
+  }
   startPolling()
 
   // Clean up when the component using the composable is unmounted
   onUnmounted(() => {
+    listeners--
     stopPolling()
   })
 
@@ -56,3 +63,4 @@ export function useDashboard() {
     fetchDashboardStats,
   }
 }
+
