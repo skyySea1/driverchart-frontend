@@ -77,14 +77,9 @@
 
           <template #cell(hireStatus)="{ value }">
             <span
-              :class="[
-                'px-2 py-1 rounded-full text-xs font-semibold',
-                value === 'Active' || !value
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-slate-100 text-slate-800',
-              ]"
+              :class="['px-2 py-1 rounded-full text-xs font-semibold', getHireStatusColor(value)]"
             >
-              {{ value || 'Active' }}
+              {{ value || 'unknown' }}
             </span>
           </template>
 
@@ -190,7 +185,7 @@ import { useModalStore } from '@/stores/ModalStore'
 import type { Driver, Column, DriverRow } from '@/types'
 import SmallButton from '@/Components/ui/SmallButton.vue'
 import { parseDriverDoc } from '@/utils/firestoreParsers'
-import { capitalizeName } from '@/utils/utils'
+import { capitalizeName, getHireStatusColor } from '@/utils/utils'
 
 const route = useRoute()
 const modalStore = useModalStore()
@@ -204,13 +199,13 @@ const statusFilter = ref<'all' | 'expiring' | 'expired'>('all')
 const searchQuery = ref('')
 
 const tableColumns: Column[] = [
-  { key: 'firstName', label: 'Name', align: 'center' },
-  { key: 'hireStatus', label: 'Status', align: 'center' },
-  { key: 'contact', label: 'Contact', align: 'center' },
-  { key: 'cdlExp', label: 'CDL Exp', align: 'center' },
-  { key: 'medicalExp', label: 'Medical Exp', align: 'center' },
-  { key: 'mvrDate', label: 'Annual MVR', align: 'center' },
-  { key: 'clearinghouseDate', label: 'Clearinghouse', align: 'center' },
+  { key: 'firstName', label: 'Name', align: 'center', sortable: true },
+  { key: 'hireStatus', label: 'Status', align: 'center', sortable: true },
+  { key: 'contact', label: 'Contact', align: 'center',  },
+  { key: 'cdlExp', label: 'CDL Exp', align: 'center', sortable: true },
+  { key: 'medicalExp', label: 'Medical Exp', align: 'center', sortable: true },
+  { key: 'mvrDate', label: 'Annual MVR', align: 'center', sortable: true },
+  { key: 'clearinghouseDate', label: 'Clearinghouse', align: 'center', sortable: true },
   { key: 'actions', label: 'Actions', align: 'center' },
 ]
 
@@ -280,6 +275,7 @@ const drivers = computed<DriverRow[]>(() => {
 })
 
 const filteredCount = computed(() => drivers.value.length)
+
 
 const toDelete = ref<Driver | null>(null)
 
