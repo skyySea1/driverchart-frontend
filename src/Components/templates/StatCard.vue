@@ -47,9 +47,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type Component } from 'vue'
+import { computed} from 'vue'
 import BaseBadge from '@/Components/ui/BaseBadge.vue'
-import type { BadgeVariant } from '@/types'
+import type { StatConfig, CardType } from '@/types'
 import {
   Users,
   ShieldAlert,
@@ -63,20 +63,6 @@ import {
   AlertOctagon,
 } from 'lucide-vue-next'
 
-// CardType expansion to support multiple views
-export type CardType =
-  | 'inspections'
-  | 'licenses'
-  | 'clearinghouse'
-  | 'drivers'
-  | 'medical'
-  | 'alerts'
-  | 'audit'
-  | 'applications'
-  | 'reviews'
-  | 'fleet'
-  | 'active_fleet'
-
 const props = defineProps<{
   type: CardType
   title: string
@@ -88,14 +74,6 @@ const props = defineProps<{
 defineEmits<{
   (e: 'click'): void
 }>()
-
-interface StatConfig {
-  icon: Component
-  bgClass: string
-  iconClass: string
-  badgeText: string | null
-  badgeVariant: BadgeVariant
-}
 
 // Internal mapping configuration
 const config = computed(() => {
