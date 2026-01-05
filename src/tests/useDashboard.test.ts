@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useDashboard, resetDashboardState } from '@/Composables/useDashboard'
+import { useDashboard} from '@/Composables/useDashboard'
 import { dataService } from '@/services/dataService'
 
 // Mock dataService
@@ -13,7 +13,6 @@ describe('useDashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.useFakeTimers()
-    resetDashboardState()
   })
 
   it('should initialize with default values', () => {
