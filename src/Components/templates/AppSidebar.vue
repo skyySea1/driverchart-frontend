@@ -67,7 +67,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import UserBadge from '@/Components/ui/UserBadge.vue'
-import { LayoutDashboard, Users, Truck, FileText, PieChart, Settings, Bus } from 'lucide-vue-next'
+import { LayoutDashboard, Users, Truck, FileText, PieChart, Settings, Bus, UserPlus } from 'lucide-vue-next'
 
 const props = defineProps<{
   collapsed: boolean
@@ -81,7 +81,7 @@ const navItems = [
   { id: 'vehicles', label: 'Fleet Maintenance', icon: Truck, hidden: true },
   { id: 'audit', label: ' Audit Reports', icon: PieChart },
   { id: 'docs', label: 'Document Registry', icon: FileText },
-  { id: 'applications', label: 'Applications', icon: FileText },
+  { id: 'applications', label: 'Applications', icon: UserPlus },
   { id: 'reports', label: 'Main Reports', icon: FileText },
   { id: 'settings', label: 'Settings', icon: Settings },
 ]
