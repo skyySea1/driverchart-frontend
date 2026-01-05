@@ -1,3 +1,5 @@
+import type { Component } from "vue/dist/vue.js"
+
 export type AlertType = 'error' | 'success' | 'warning' | 'info'
 export interface Alert {
   id: string
@@ -7,6 +9,12 @@ export interface Alert {
   entityName?: string
   dueDate: string
 }
+
+export type HireStatusType =
+  | 'Active'
+  | 'Terminated'
+  | 'Rehired'
+  | 'On Leave'
 
 export interface ComplianceItem {
   documentNumber: string
@@ -147,6 +155,7 @@ export interface Column {
   key: string
   label: string
   align?: 'left' | 'center' | 'right'
+  sortable?: boolean
 }
 
 export interface Vehicle extends FirestoreDoc {
@@ -169,6 +178,28 @@ export interface DashboardStats {
   auditScore: string
   newApplications: number
   annualRecordReview: number
+}
+
+// CardType expansion to support multiple views
+export type CardType =
+  | 'inspections'
+  | 'licenses'
+  | 'clearinghouse'
+  | 'drivers'
+  | 'medical'
+  | 'alerts'
+  | 'audit'
+  | 'applications'
+  | 'reviews'
+  | 'fleet'
+  | 'active_fleet'
+
+export interface StatConfig {
+  icon: Component
+  bgClass: string
+  iconClass: string
+  badgeText: string | null
+  badgeVariant: BadgeVariant
 }
 
 export type ViewState =
