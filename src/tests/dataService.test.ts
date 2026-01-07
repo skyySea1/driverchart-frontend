@@ -46,7 +46,8 @@ describe('dataService Logic', () => {
       }
       if (url === '/vehicles') return Promise.resolve({ data: [{}, {}] }) // 2 Vehicles
       if (url === '/expiration/alerts') return Promise.resolve({ data: [{ id: 'a1' }] }) // 1 Alert
-      if (url === '/applications') return Promise.resolve({ data: [{ status: 'Pending' }, { status: 'Approved' }] }) // 1 Pending
+      if (url === '/applications')
+        return Promise.resolve({ data: [{ status: 'Pending' }, { status: 'Approved' }] }) // 1 Pending
       return Promise.reject(new Error('Unknown URL'))
     })
 
@@ -63,7 +64,7 @@ describe('dataService Logic', () => {
     expect(stats.newApplications).toBe(1) // 1 Pending
 
     // Logic Checks
-    expect(stats.expiringLicenses).toBe(1) // John's CDL
+    expect(stats.expiringLicenses).toBe(1) // John's Cdl
     expect(stats.annualRecordReview).toBe(1) // Jane's MVR
   })
 })
