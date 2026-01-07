@@ -5,7 +5,7 @@
         {{ label }}
         <span v-if="required" class="text-red-500">*</span>
       </label>
-      
+
       <!-- Tooltip -->
       <div v-if="tooltip" class="group relative flex items-center">
         <HelpCircle class="w-3 h-3 text-slate-400 cursor-help" />

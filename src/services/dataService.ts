@@ -20,8 +20,10 @@ export const dataService = {
       ...d,
       hireStatus: d.hireStatus || 'unknown',
       contact: d.phone,
+      cdlNumber: d.cdl?.documentNumber,
       cdlExp: d.cdl?.expiryDate,
       medicalExp: d.medical?.expiryDate,
+
       mvrDate: d.mvr?.expiryDate,
       clearinghouseDate: d.drugAlcohol?.expiryDate,
     }))
@@ -54,6 +56,18 @@ export const dataService = {
   deleteDriver: async (id: string): Promise<void> => {
     await apiClient.delete(`/drivers/${id}`)
   },
+
+
+uploadDocument: async(type: string, file: File, id: string, uploadDate: string) => {
+     const data = new FormData()
+     data.append('file', file)
+     data.append('documentType', type)
+     await fetch('/api/drivers/documents', {
+       method: 'POST',
+       body: data
+     })
+   },
+
 
   // --- Vehicles ---
   getVehicles: async (): Promise<Vehicle[]> => {
@@ -110,6 +124,7 @@ export const dataService = {
     }
   },
 
+  // reviewed: get the Firebase Application Instance ID
   getApplicationInstanceId: async (): Promise<string> => {
     const app = getApp()
     return app.options.appId || 'unknown-app-id'

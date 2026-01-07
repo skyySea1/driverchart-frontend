@@ -1,4 +1,6 @@
-import type { Component } from "vue/dist/vue.js"
+import type { Component } from 'vue/dist/vue.js'
+import { z } from 'zod'
+import { DriverSchema, ComplianceItemSchema } from '@/shared/schemas/DriverSchema'
 
 export type AlertType = 'error' | 'success' | 'warning' | 'info'
 export interface Alert {
@@ -10,25 +12,15 @@ export interface Alert {
   dueDate: string
 }
 
-export type HireStatusType =
-  | 'Active'
-  | 'Terminated'
-  | 'Rehired'
-  | 'On Leave'
-
-export interface ComplianceItem {
-  documentNumber: string
-  expiryDate?: string // ISO string YYYY-MM-DD
-  file?: string // Filename
-  [key: string]: unknown
-}
+export type HireStatusType = 'Active' | 'Terminated'
+export type ComplianceItem = z.infer<typeof ComplianceItemSchema>
 
 export interface DocumentLog {
   id: string
   date: string
   fileName: string
   type: string
-  entityName: string // Driver Name or Bus Number
+  entityName: string
   user: string
 }
 
@@ -37,58 +29,27 @@ export interface FirestoreDoc {
   [key: string]: unknown
 }
 
-export interface Driver extends FirestoreDoc {
-  firstName: string
-  middleName: string
-  lastName: string
-  dob: string
-  ssn: string
-  phone: string
-  email: string
-  address: string
-  city: string
-  state: string
-  zip: string
-  hireDate: string
-  terminationDate?: string
-  hireStatus: 'Active' | 'Inactive' | 'Terminated' | 'Rehired' | 'On Leave'
-  bankName?: string
-  routingNumber?: string
-  accountNumber?: string
-  w9Signed?: boolean
-  businessName?: string
-  taxClassification?: string
-  i9EmployerSignature?: string
-  ssnDoc?: string
-  ssnDocName?: string
+// Inferred Driver Type + Firestore ID + UI-only fields
+type DriverBase = z.infer<typeof DriverSchema>
+export interface Driver extends Omit<DriverBase, 'id'>, FirestoreDoc {
   ssnDocFile?: File | null
   ssnDocPreviewUrl?: string
-
-  // Compliance
-  cdl: ComplianceItem & { state: string; value?: string }
-  medical: ComplianceItem & { registry?: string }
-  mvr: ComplianceItem
-  drugAlcohol: ComplianceItem
-  roadTest: ComplianceItem & { examiner: string; date?: string }
-
-  emergencyContact: {
-    name: string
-    phone: string
-    relationship: string
-  }
 }
 
 export interface DriverRow extends Driver {
   firstName: string
   middleName: string
   lastName: string
-  contact?: string
-  cdlExp?: string
-  medicalExp?: string
-  mvrDate?: string
-  clearinghouseDate?: string
+  contact: string
+  // Flat fields for Table Display (Added by DataService)
+  cdlNumber?: string
+  cdlExp: string
+  medicalExp: string
+  mvrDate: string
+  clearinghouseDate: string
+  actions?: string
 }
-
+// implementn more fields #task10
 export interface Application extends FirestoreDoc {
   firstName: string
   lastName: string
@@ -101,45 +62,9 @@ export interface Application extends FirestoreDoc {
   notes?: string
 }
 
-export type DriverForm = {
-  firstName: string
-  middleName: string
-  lastName: string
-  dob: string
-  email: string
-  phone: string
-  ssn: string
-  address: string
-  city: string
-  state: string
-  zip: string
-  hireStatus: 'Active' | 'Inactive' | 'Terminated' | 'Rehired' | 'On Leave'
-  hireDate: string
-  termDate: string
-  rehireDate: string
-  emergencyName: string
-  emergencyPhone: string
-  emergencyRelationship: string
-  cdlNumber: string
-  cdlState: string
-  cdlExp: string
-  medRegistry: string
-  medExp: string
-  mvrDate: string
-  lastDrugTest: string
-  roadTestDate: string
-  roadTestExaminer: string
-  bankName: string
-  routingNumber: string
-  accountNumber: string
-  w9Signed: boolean
-  businessName: string
-  taxClassification: string
-  i9EmployerSignature: string
-  ssnDocName: string
-  ssnDocFile: File | null
-  ssnDocPreviewUrl: string
-}
+// DriverForm is now just the Driver structure (plus UI fields if needed)
+// We are normalizing to use the nested structure in forms too.
+export type DriverForm = Driver
 
 export type BadgeVariant =
   | 'default'
@@ -151,8 +76,8 @@ export type BadgeVariant =
   | 'purple'
   | 'green'
 
-export interface Column {
-  key: string
+export interface Column<T = any> {
+  key: keyof T | string
   label: string
   align?: 'left' | 'center' | 'right'
   sortable?: boolean
