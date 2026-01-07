@@ -21,24 +21,20 @@ function asOptionalBoolean(value: unknown): boolean | undefined {
   return typeof value === 'boolean' ? value : undefined
 }
 
+function asBoolean(value: unknown, fallback = false): boolean {
+  return typeof value === 'boolean' ? value : fallback
+}
+
 function asHireStatus(value: unknown): Driver['hireStatus'] {
-  switch (value) {
-    case 'Active':
-    case 'Inactive':
-    case 'Terminated':
-    case 'Rehired':
-    case 'On Leave':
-      return value
-    default:
-      return 'Active'
-  }
+  if (value === 'Terminated') return 'Terminated'
+  if (value === 'Rehired') return 'Rehired'
+  return 'Active'
 }
 
 function asVehicleStatus(value: unknown): Vehicle['vehicleStatus'] {
   switch (value) {
     case 'Active':
     case 'Maintenance':
-    case 'Inactive':
       return value
     default:
       return 'Active'
@@ -75,7 +71,7 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
     bankName: asOptionalString(getProp(doc, 'bankName')),
     routingNumber: asOptionalString(getProp(doc, 'routingNumber')),
     accountNumber: asOptionalString(getProp(doc, 'accountNumber')),
-    w9Signed: asOptionalBoolean(getProp(doc, 'w9Signed')),
+    w9Signed: asBoolean(getProp(doc, 'w9Signed')),
     businessName: asOptionalString(getProp(doc, 'businessName')),
     taxClassification: asOptionalString(getProp(doc, 'taxClassification')),
     i9EmployerSignature: asOptionalString(getProp(doc, 'i9EmployerSignature')),
@@ -96,7 +92,7 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
       documentNumber: asString(getProp(medical, 'documentNumber')),
       expiryDate: asOptionalString(getProp(medical, 'expiryDate')),
       file: asOptionalString(getProp(medical, 'file')),
-      registry: asOptionalString(getProp(medical, 'registry')),
+      registry: asString(getProp(medical, 'registry')),
     },
 
     mvr: {
