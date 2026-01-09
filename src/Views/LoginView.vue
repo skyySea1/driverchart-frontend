@@ -1,5 +1,5 @@
 <template>
-  <BaseBody>
+  <AnimatedBody>
     <!-- Login Card -->
     <div class="logincard rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
       <!-- Header with Logo -->
@@ -88,7 +88,7 @@
     <div class="absolute bottom-4 text-center w-full">
       <p class="text-white text-sm opacity-80">&copy; 2025 CharterSafe. All rights reserved.</p>
     </div>
-  </BaseBody>
+  </AnimatedBody>
 </template>
 
 <script setup lang="ts">
@@ -96,7 +96,7 @@
   import { useRouter } from 'vue-router'
   import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Bus } from 'lucide-vue-next'
   import { useAuthStore } from '@/stores/AuthStore'
-  import BaseBody from '@/Components/ui/BaseBody.vue'
+import AnimatedBody from '@/Components/ui/AnimatedBody.vue'
 
   const router = useRouter()
   const authStore = useAuthStore()

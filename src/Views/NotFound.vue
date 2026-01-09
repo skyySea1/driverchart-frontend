@@ -1,15 +1,12 @@
 <template>
-<BaseBody>
-
+<AnimatedBody>
     <div
       class="relative z-10 w-full max-w-4xl rounded-xl bg-slate-900 p-8 shadow-xl grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12"
     >
       <div class="flex flex-col gap-6">
         <div class="text-6xl md:text-7xl font-black tracking-tight text-indigo-300 leading-none">404</div>
-        <h1 class="text-2xl md:text-3xl font-bold text-white">Page Not Found</h1>
-        <p class="text-slate-300 leading-relaxed">
-          Sorry, the page you are looking for does not exist or has been removed.
-        </p>
+        <h1 class="text-2xl md:text-3xl font-bold text-white">{{ erroritems[404].title }}</h1>
+        <p class="text-slate-300 leading-relaxed">{{ erroritems[404].message }}        </p>
 
         <div class="bg-slate-800 rounded-lg p-4 border-l-4 border-indigo-500">
           <div class="text-sm text-slate-200">
@@ -55,7 +52,7 @@
         </svg>
       </div>
     </div>
-  </BaseBody>
+  </AnimatedBody>
 </template>
 
 <script setup lang="ts">
@@ -63,12 +60,46 @@ import { useRouter, useRoute } from 'vue-router'
 import { computed } from 'vue'
 import { ArrowLeft, Home } from 'lucide-vue-next'
 import BaseButton from '@/Components/ui/BaseButton.vue'
-import BaseBody from '@/Components/ui/BaseBody.vue';
+import AnimatedBody from '@/Components/ui/AnimatedBody.vue';
 
 const router = useRouter()
 const route = useRoute()
-
+// todo conclude error handling for other error codes
 const currentRoute = computed(() => route.fullPath)
+
+// create personalized image or animation for each error code
+const erroritems = {
+  400: {
+    title: 'Sorry, something went wrong.',
+    message: 'Bad Request',
+  },
+  401: {
+    title: 'Unauthorized Access: you do not have permission to view this page.',
+    message: 'Unauthorized',
+  },
+  403: {
+    title: 'Access Denied: you do not have permission to view this page.',
+    message: 'Forbidden',
+  },
+  404: {
+    title: 'Page Not Found',
+    message: 'Sorry, the page you are looking for does not exist or has been removed.',
+  },
+  500: {
+    message: 'Internal Server Error',
+  },
+  502: {
+    message: 'Bad Gateway',
+  },
+  503: {
+    message: 'Service Unavailable',
+  },
+  504: {
+    message: 'Gateway Timeout',
+  },
+
+}
+
 
 const goBack = () => {
   router.back()

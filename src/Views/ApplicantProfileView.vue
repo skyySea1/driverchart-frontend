@@ -10,14 +10,24 @@
     </div>
 
     <div v-else-if="applicant" class="space-y-6">
+      <!-- Back Button -->
+      <BaseButton label="Back to Drivers" :icon="ArrowLeft" :variant="'blue'" @click="$router.back()"
+        class=" text-sm font-medium shadow-sm"
+          />
       <!-- Header -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+      <div
+        class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+      >
         <div class="flex items-center gap-4">
-          <div class="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-600 border border-slate-200 uppercase">
+          <div
+            class="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-600 border border-slate-200 uppercase"
+          >
             {{ applicant.firstName[0] }}{{ applicant.lastName[0] }}
           </div>
           <div>
-            <h1 class="text-2xl font-bold text-slate-900">{{ capitalizeName(applicant.firstName) }} {{ capitalizeName(applicant.lastName) }}</h1>
+            <h1 class="text-2xl font-bold text-slate-900">
+              {{ capitalizeName(applicant.firstName) }} {{ capitalizeName(applicant.lastName) }}
+            </h1>
             <div class="flex items-center gap-2 mt-1">
               <span
                 class="px-2.5 py-0.5 rounded-full text-xs font-medium border"
@@ -34,6 +44,7 @@
         <div class="flex gap-3">
           <!-- Actions for Applicant -->
           <button
+          v-cursor
             v-if="applicant.status === 'Pending'"
             @click="updateStatus('Approved')"
             class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm flex items-center gap-2"
@@ -41,6 +52,7 @@
             <Check class="w-4 h-4" /> Approve
           </button>
           <button
+          v-cursor
             v-if="applicant.status === 'Pending'"
             @click="updateStatus('Rejected')"
             class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm flex items-center gap-2"
@@ -59,7 +71,10 @@
           <div class="space-y-3 text-sm">
             <div class="flex flex-col gap-1">
               <span class="text-slate-500">Full Name</span>
-              <span class="font-medium text-slate-900">{{ capitalizeName(applicant.firstName) }} {{ capitalizeName(applicant.lastName) }}</span>
+              <span class="font-medium text-slate-900"
+                >{{ capitalizeName(applicant.firstName) }}
+                {{ capitalizeName(applicant.lastName) }}</span
+              >
             </div>
             <div class="flex flex-col gap-1">
               <span class="text-slate-500">Contact</span>
@@ -80,8 +95,10 @@
           </h2>
           <div class="space-y-3 text-sm">
             <div class="flex flex-col gap-1">
-              <span class="text-slate-500">CDL Number</span>
-              <span class="font-medium text-slate-900 font-mono">{{ applicant.cdlNumber || 'Not Provided' }}</span>
+              <span class="text-slate-500">Cdl Number</span>
+              <span class="font-medium text-slate-900 font-mono">{{
+                applicant.cdlNumber || 'Not Provided'
+              }}</span>
             </div>
             <div class="flex flex-col gap-1">
               <span class="text-slate-500">Experience</span>
@@ -104,15 +121,8 @@ import { useRoute } from 'vue-router'
 import { dataService } from '@/services/dataService'
 import type { Application } from '@/types'
 import { capitalizeName, formatDate } from '@/utils/utils'
-import {
-  User,
-  Phone,
-  Mail,
-  Calendar,
-  Check,
-  X,
-  Briefcase
-} from 'lucide-vue-next'
+import { User, Phone, Mail, Calendar, Check, X, Briefcase, ArrowLeft } from 'lucide-vue-next'
+import BaseButton from '@/Components/ui/BaseButton.vue'
 
 const route = useRoute()
 const applicationId = computed(() => {
@@ -126,9 +136,12 @@ const error = ref<string | null>(null)
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'Approved': return 'bg-green-100 text-green-800 border-green-200'
-    case 'Rejected': return 'bg-red-100 text-red-800 border-red-200'
-    default: return 'bg-amber-100 text-amber-800 border-amber-200'
+    case 'Approved':
+      return 'bg-green-100 text-green-800 border-green-200'
+    case 'Rejected':
+      return 'bg-red-100 text-red-800 border-red-200'
+    default:
+      return 'bg-amber-100 text-amber-800 border-amber-200'
   }
 }
 

@@ -1,8 +1,7 @@
 <!-- src/Views/PublicApplicationForm.vue -->
 
 <template>
-  <BaseBody>
-    
+  <AnimatedBody>
     <!-- Application Card -->
     <div class="app-card bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden z-10">
       <div class="bg-slate-900 p-8 text-center">
@@ -25,7 +24,9 @@
 
       <div class="p-8">
         <div v-if="submitted" class="text-center py-8">
-          <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
+          <div
+            class="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6"
+          >
             <Check class="w-8 h-8 text-green-600" />
           </div>
 
@@ -36,8 +37,10 @@
             your information and contact you shortly.
           </p>
 
-          <button @click="reset"
-            class="mt-8 px-6 py-2 text-indigo-600 font-bold hover:bg-indigo-50 rounded-lg transition-colors border border-indigo-100">
+          <button
+            @click="reset"
+            class="mt-8 px-6 py-2 text-indigo-600 font-bold hover:bg-indigo-50 rounded-lg transition-colors border border-indigo-100"
+          >
             Submit Another Application
           </button>
         </div>
@@ -45,59 +48,102 @@
         <form v-else @submit.prevent="submit" class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-1">
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter">First Name <span
-                  class="text-red-500">*</span></label>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
+                >First Name <span class="text-red-500">*</span></label
+              >
 
-              <input v-model="form.firstName" required class="input-base w-full" placeholder="John" />
+              <input
+                v-model="form.firstName"
+                required
+                class="input-base w-full"
+                placeholder="John"
+              />
             </div>
 
             <div class="space-y-1">
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter">Last Name <span
-                  class="text-red-500">*</span></label>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
+                >Last Name <span class="text-red-500">*</span></label
+              >
 
               <input v-model="form.lastName" required class="input-base w-full" placeholder="Doe" />
             </div>
           </div>
 
           <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter">Email Address <span
-                class="text-red-500">*</span></label>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
+              >Email Address <span class="text-red-500">*</span></label
+            >
 
-            <input v-model="form.email" type="email" required class="input-base w-full"
-              placeholder="john.doe@example.com" />
+            <input
+              v-model="form.email"
+              type="email"
+              required
+              class="input-base w-full"
+              placeholder="john.doe@example.com"
+            />
           </div>
 
           <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter">Phone Number <span
-                class="text-red-500">*</span></label>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
+              >Phone Number <span class="text-red-500">*</span></label
+            >
 
-            <input v-model="form.phone" type="tel" required class="input-base w-full" placeholder="(555) 000-0000" />
+            <input
+              v-model="form.phone"
+              type="tel"
+              required
+              class="input-base w-full"
+              placeholder="(555) 000-0000"
+            />
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-1">
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter">Exp. (Years)</label>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
+                >Exp. (Years)</label
+              >
 
-              <input v-model.number="form.experienceYears" type="number" min="0" class="input-base w-full" />
+              <input
+                v-model.number="form.experienceYears"
+                type="number"
+                min="0"
+                class="input-base w-full"
+              />
             </div>
 
             <div class="space-y-1">
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter">CDL Number</label>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
+                >Cdl Number</label
+              >
 
-              <input v-model="form.cdlNumber" class="input-base w-full" placeholder="A123-456-..." />
+              <input
+                v-model="form.cdlNumber"
+                class="input-base w-full"
+                placeholder="A123-456-..."
+              />
             </div>
           </div>
 
           <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter">Additional Notes</label>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
+              >Additional Notes</label
+            >
 
-            <textarea v-model="form.notes" rows="2" class="input-base w-full"
-              placeholder="Previous experience, certifications, etc."></textarea>
+            <textarea
+              v-model="form.notes"
+              rows="2"
+              class="input-base w-full"
+              placeholder="Previous experience, certifications, etc."
+            ></textarea>
           </div>
 
           <div class="pt-4">
-            <button v-cursor type="submit" :disabled="loading"
-              class="btn-up-hover-effect w-full bg-linear-to-r from-indigo-600 to-blue-600 text-white py-3 px-4 rounded-xl font-bold hover:from-indigo-700 hover:to-blue-700 shadow-lg shadow-indigo-200 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2">
+            <button
+              v-cursor
+              type="submit"
+              :disabled="loading"
+              class="btn-up-hover-effect w-full bg-linear-to-r from-indigo-600 to-blue-600 text-white py-3 px-4 rounded-xl font-bold hover:from-indigo-700 hover:to-blue-700 shadow-lg shadow-indigo-200 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
+            >
               <Loader2 v-if="loading" class="w-5 h-5 animate-spin" />
 
               <span>{{ loading ? 'Submitting Application...' : 'Submit Application' }}</span>
@@ -113,19 +159,49 @@
         &copy; 2026 PhoenixBus Orlando
       </p>
     </div>
-  </BaseBody>
+  </AnimatedBody>
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import { dataService } from '@/services/dataService'
-  import { Check, Bus, Loader2 } from 'lucide-vue-next'
-  import BaseBody from '@/Components/ui/BaseBody.vue';
+import { ref } from 'vue'
+import { dataService } from '@/services/dataService'
+import { Check, Bus, Loader2 } from 'lucide-vue-next'
+import AnimatedBody from '@/Components/ui/AnimatedBody.vue'
 
-  const loading = ref(false)
-  const submitted = ref(false)
+const loading = ref(false)
+const submitted = ref(false)
 
-  const form = ref({
+const form = ref({
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  experienceYears: 0,
+  cdlNumber: '',
+  notes: '',
+})
+
+async function submit() {
+  loading.value = true
+
+  try {
+    await dataService.submitApplication({
+      ...form.value,
+      experienceYears: form.value.experienceYears || 0,
+    })
+
+    submitted.value = true
+  } catch (err) {
+    console.error('Error submitting application:', err)
+
+    alert('Failed to submit application. Please try again.')
+  } finally {
+    loading.value = false
+  }
+}
+// implement reset using loop
+function reset() {
+  form.value = {
     firstName: '',
     lastName: '',
     email: '',
@@ -133,39 +209,9 @@
     experienceYears: 0,
     cdlNumber: '',
     notes: '',
-  })
-
-  async function submit() {
-    loading.value = true
-
-    try {
-      await dataService.submitApplication({
-        ...form.value,
-        experienceYears: form.value.experienceYears || 0,
-      })
-
-      submitted.value = true
-    } catch (err) {
-      console.error('Error submitting application:', err)
-
-      alert('Failed to submit application. Please try again.')
-    } finally {
-      loading.value = false
-    }
   }
-  // implement reset using loop
-  function reset() {
-    form.value = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      experienceYears: 0,
-      cdlNumber: '',
-      notes: '',
-    }
-    submitted.value = false
-  }
+  submitted.value = false
+}
 </script>
 
 <style scoped>
