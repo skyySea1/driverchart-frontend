@@ -1,0 +1,7 @@
+import dayjs from 'dayjs'
+// hire date must be in the past or today
+function hireDateHandle(value: unknown): string {
+  const date = typeof value === 'string' ? value : ''
+  if (dayjs(date).isAfter(dayjs())) return 'date must be in the past' // fallback se inválido
+  return date
+}
