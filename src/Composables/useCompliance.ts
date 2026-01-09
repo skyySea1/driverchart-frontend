@@ -45,7 +45,7 @@ export function useCompliance(today = dayjs().startOf('day')) {
     const diff = exp.diff(today, 'day')
 
     if (diff >= 30) return ''
-    if(dayjs(dateStr).isSame(today,'day')) return ' Expires today'
+    if (dayjs(dateStr).isSame(today, 'day')) return ' Expires today'
 
     if (diff > 0) return `due in ${diff} days`
     return 'Expired'

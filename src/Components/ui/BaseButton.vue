@@ -33,16 +33,31 @@ function getVariantClasses(variant: string) {
       return 'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500'
     case 'secondary':
       return 'bg-slate-600 hover:bg-slate-700 focus:ring-slate-500'
+    case 'blue':
+      return 'bg-blue-500 hover:bg-blue-700 focus:ring-sky-400'
+    case 'success':
+      return 'bg-green-600 hover:bg-green-700 focus:ring-green-500'
+    case 'warning':
+      return 'bg-amber-500 hover:bg-amber-600 focus:ring-amber-400'
+    case 'danger':
+      return 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
+    case 'outline':
+      return 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 focus:ring-slate-400'
     default:
       return 'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500'
   }
 }
 
-const { label, to, icon = Plus, variant = 'primary' } = defineProps<{
+const {
+  label,
+  to,
+  icon = Plus,
+  variant = 'primary',
+} = defineProps<{
   label: string
   to?: string
   icon?: Icon
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary' | 'blue' | 'success' | 'warning' | 'danger' | 'outline'
 }>()
 
 // additional classes based on variant

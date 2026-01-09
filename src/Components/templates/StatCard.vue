@@ -4,7 +4,7 @@
     @click="$emit('click')"
     :class="[
       'bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 min-h-27.5 flex items-center gap-4 relative',
-      isClickable ? 'cursor-pointer hover:border-blue-300' : ''
+      isClickable ? 'cursor-pointer hover:border-blue-300' : '',
     ]"
   >
     <!-- Skeleton State -->
@@ -29,7 +29,7 @@
         <div
           class="text-[10px] font-bold text-slate-400 uppercase tracking-tight leading-tight mb-1"
         >
-          {{ props.title }}
+          {{ capitalizeName(props.title) }}
         </div>
         <div class="text-xl font-black text-slate-800 leading-none">
           {{ props.value }}
@@ -47,9 +47,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed} from 'vue'
+import { computed } from 'vue'
 import BaseBadge from '@/Components/ui/BaseBadge.vue'
 import type { StatConfig, CardType } from '@/types'
+import { capitalizeName } from '../../utils/utils'
 import {
   Users,
   ShieldAlert,
