@@ -8,29 +8,73 @@
             <th
               v-for="col in props.columns"
               :key="col.key"
-              :class="[ 'p-4 whitespace-nowrap', col.align === 'center' ? 'text-center' : col.align === 'right'? 'text-right': col.align === 'left'? 'text-left' : '', ]">
-              {{ col.label }}
+              :class="[
+                'p-4 whitespace-nowrap select-none transition-colors',
+                col.align === 'center'
+                  ? 'text-center'
+                  : col.align === 'right'
+                    ? 'text-right'
+                    : col.align === 'left'
+                      ? 'text-left'
+                      : '',
+                col.sortable ? 'cursor-pointer hover:bg-slate-100 hover:text-slate-900' : ''
+              ]"
+              @click="col.sortable ? handleSort(String(col.key)) : null"
+            >
+              <div class="flex items-center gap-1" :class="{
+                'justify-center': col.align === 'center',
+                'justify-end': col.align === 'right',
+                'justify-start': col.align === 'left' || !col.align
+              }">
+                {{ col.label }}
+                <span v-if="col.sortable" class="text-slate-400">
+                  <ChevronUp v-if="props.currentSortKey === col.key && props.currentSortOrder === 'asc'" class="w-4 h-4 text-blue-600" />
+                  <ChevronDown v-else-if="props.currentSortKey === col.key && props.currentSortOrder === 'desc'" class="w-4 h-4 text-blue-600" />
+                  <ChevronsUpDown v-else class="w-4 h-4 opacity-50 hover:opacity-100" />
+                </span>
+              </div>
             </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
-
           <!-- Skeleton State -->
           <template v-if="props.loading">
-            <tr v-for="i in 5" :key="i" >
-              <td v-cursor v-for="col in props.columns" :key="col.key" class="p-4">
+            <tr v-for="i in 5" :key="i">
+              <td v-for="col in props.columns" :key="col.key" class="p-4">
                 <div
-                  :class="['h-4 skeleton rounded', col.align === 'center' ? 'mx-auto w-12' : col.align === 'right' ? 'ml-auto w-16' : 'w-24', ]">
-                </div>
+                  :class="[
+                    'h-4 skeleton rounded',
+                    col.align === 'center'
+                      ? 'mx-auto w-12'
+                      : col.align === 'right'
+                        ? 'ml-auto w-16'
+                        : 'w-24',
+                  ]"
+                ></div>
               </td>
             </tr>
           </template>
 
           <template v-else>
-            <tr v-for="(item, index) in props.items" :key="item.id || index" class="hover:bg-slate-50 transition-colors">
-              <td v-for="col in props.columns" :key="col.key" :class="[ 'p-4 whitespace-nowrap',
-                   col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : '', ]">
-                <slot :name="`cell(${col.key})`" :item="item" :value="item[col.key]">
+            <tr
+              v-for="(item, index) in props.items"
+              :key="item.id || index"
+              class="hover:bg-slate-50 transition-colors cursor-pointer select-none"
+              @dblclick="emit('row-dblclick', item)"
+            >
+              <td
+                v-for="col in props.columns"
+                :key="col.key"
+                :class="[
+                  'p-4 whitespace-nowrap',
+                  col.align === 'center'
+                    ? 'text-center'
+                    : col.align === 'right'
+                      ? 'text-right'
+                      : '',
+                ]"
+              >
+                <slot :name="`cell(${String(col.key)})`" :item="item" :value="item[col.key]">
                   <span class="text-slate-600">{{ item[col.key] || '-' }}</span>
                 </slot>
               </td>
@@ -48,13 +92,31 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import type { Column } from '@/types'
+<script setup lang="ts" generic="T extends Record<string, any>">
+import type { Column, SortOrder } from '@/types'
+import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-vue-next'
 
 const props = defineProps<{
-  readonly columns: Column[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly items: string[] | any[]
+  readonly columns: Column<T>[]
+  readonly items: T[]
   readonly loading?: boolean
+  readonly currentSortKey?: string
+  readonly currentSortOrder?: SortOrder
 }>()
+
+const emit = defineEmits<{
+  (e: 'row-dblclick', item: T): void
+  (e: 'sort', payload: { key: string; order: SortOrder }): void
+}>()
+
+function handleSort(key: string) {
+  let newOrder: SortOrder = 'asc'
+
+  if (props.currentSortKey === key) {
+    if (props.currentSortOrder === 'asc') newOrder = 'desc'
+    else if (props.currentSortOrder === 'desc') newOrder = null
+  }
+
+  emit('sort', { key, order: newOrder })
+}
 </script>

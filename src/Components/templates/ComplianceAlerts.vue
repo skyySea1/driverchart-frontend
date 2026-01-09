@@ -35,7 +35,7 @@
             <p class="font-bold text-sm">
               <span class="text-indigo-600 hover:underline">
                 {{ capitalizeName( alert.entity || 'Driver') }}
-              </span>: {{ alert.message }}
+              </span>: {{ capitalizeName(alert.message) }}
             </p>
             <p class="text-xs opacity-80">Due: {{ formatDate(alert.dueDate) }}</p>
           </div>

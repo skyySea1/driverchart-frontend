@@ -1,6 +1,5 @@
-import type { HireStatusType } from '../types';
 
-
+import type { comparedValues } from '@/types'
 export const getDaysDiff = (dateStr: string | null | undefined): number => {
   if (!dateStr) return 0
   const today = new Date()
@@ -59,8 +58,8 @@ export const formatDate = (
 export const sanitizeInput = (str: string): string => {
   if (!str) return ''
   return str
-    .trim()
     .toUpperCase()
+    .trim()
     .replace(/[^A-Z0-9\s.,-]/g, '') // Basic whitelist
 }
 
@@ -75,6 +74,7 @@ export const capitalizeName = (str: string): string => {
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
+
 }
 
 
@@ -93,3 +93,23 @@ export function getHireStatusColor(status: unknown) {
   }
 }
 
+/**
+ * Generic comparison for sorting.
+ * Handles strings (localeCompare) and numbers.
+ * Treats null/undefined as empty strings/lowest value.
+ */
+export function compareValues(a: comparedValues, b: comparedValues, order: 'asc' | 'desc'): number {
+  const aVal = a ?? ''
+  const bVal = b ?? ''
+
+  if (typeof aVal === 'string' && typeof bVal === 'string') {
+    return order === 'asc'
+      ? aVal.localeCompare(bVal)
+      : bVal.localeCompare(aVal)
+  }
+
+  // Cast for generic comparison since we handled strings/nulls
+  if ((aVal) < (bVal)) return order === 'asc' ? -1 : 1
+  if ((aVal) > (bVal)) return order === 'asc' ? 1 : -1
+  return 0
+}
