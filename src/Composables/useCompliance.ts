@@ -38,14 +38,16 @@ export function useCompliance(today = dayjs().startOf('day')) {
     return 'bg-green-100 text-green-800'
   }
 
-  function daysToExpire(dateStr: unknown): number | string {
+  function daysToExpire(dateStr: string): number | string {
     if (typeof dateStr !== 'string' || !dateStr) return '-'
     const today = dayjs().startOf('day')
     const exp = dayjs(dateStr)
     const diff = exp.diff(today, 'day')
 
     if (diff >= 30) return ''
-    if (diff >= 0) return `due in ${diff} days`
+    if(dayjs(dateStr).isSame(today,'day')) return ' Expires today'
+
+    if (diff > 0) return `due in ${diff} days`
     return 'Expired'
   }
 
