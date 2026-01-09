@@ -15,6 +15,7 @@
     "lint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "prepare": "husky",
     "audit:fix": "pnpm audit --fix",
     "update:check": "pnpm outdated"
@@ -33,6 +34,7 @@
     "zod": "^4.3.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@tsconfig/node22": "^22.0.5",
     "@types/node": "^22.19.3",
     "@vitejs/plugin-vue": "^6.0.3",
