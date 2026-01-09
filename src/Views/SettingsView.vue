@@ -65,6 +65,16 @@
                   :modelValue="authStore.user?.email || ''"
                   disabled
                 />
+                <!-- TODO add nested user role to user object-->
+            
+              </div>
+               <div class="space-y-1">
+                <InputGroup
+                  label="Role"
+                  type="text"
+                  :modelValue="authStore.userRole || ''"
+                  disabled
+                />
               </div>
             </form>
           </template>
@@ -102,6 +112,27 @@
             </div>
           </template>
 
+          <template v-if="activeSection === 'company'">
+            <div class="space-y-4">
+              <div class="space-y-1">
+                <InputGroup
+                  label="Organization Name"
+                  type="text"
+                  :modelValue="ORGANIZATION.name || ''"
+                  disabled
+                />
+              </div>
+              <div class="space-y-1">
+                <InputGroup
+                  label="Organization Domain"
+                  type="text"
+                  :modelValue="ORGANIZATION.domain || ''"
+                  disabled
+                />
+              </div>
+            </div>
+          </template>
+
           <div class="pt-6 border-t border-slate-100 flex justify-end">
             <BaseButton
               @click="saveProfile"
@@ -121,6 +152,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { User, Bell, LucideShieldX, Globe, ShieldAlert } from 'lucide-vue-next'
 import InputGroup from '@/Components/ui/InputGroup.vue'
 import BaseButton from '@/Components/ui/BaseButton.vue'
+import { ORGANIZATION } from '@/utils/constants'
 import { useAuthStore } from '@/stores/AuthStore'
 
 const authStore = useAuthStore()

@@ -91,8 +91,8 @@
                 <div class="flex justify-between items-center">
                   <div class="text-slate-700">
                     <span class="font-bold text-blue-600 group-hover:underline">
-                      {{ a.entityName || a.entity || 'Driver' }}
-                    </span>: {{ a.message }}
+                      {{capitalizeName( a.entityName || a.entity || 'Driver') }}
+                    </span>: {{ capitalizeName(a.message) }}
                   </div>
                   <div
                     class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded group-hover:bg-orange-100 group-hover:text-orange-700 transition-colors"
@@ -129,6 +129,7 @@ import { Bell } from 'lucide-vue-next'
 import { useDashboard } from '@/Composables/useDashboard'
 import dayjs from 'dayjs'
 import type { Alert } from '@/types'
+import { capitalizeName } from '@/utils/utils'
 
 const router = useRouter()
 const { stats, isLoading } = useDashboard()

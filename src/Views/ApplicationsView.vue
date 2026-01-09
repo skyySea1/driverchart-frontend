@@ -1,8 +1,10 @@
-<!-- src/Views/ApplicationsView.vue -->
 <template>
   <div class="space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between ">
       <h2 class="text-lg font-bold text-slate-800">Driver Applications</h2>
+      <p class="text-[10px] justify-en font-bold text-slate-400 uppercase tracking-widest">
+        Check Applicant Profile for approval
+      </p>
       <a
         href="/apply"
         target="_blank"
@@ -14,7 +16,15 @@
 
     <div class="bg-white rounded-lg shadow overflow-hidden border border-slate-200">
       <div class="overflow-x-auto">
-        <DefaultTable :columns="tableColumns" :items="applications" :loading="loading">
+        <DefaultTable
+          :columns="tableColumns"
+          :items="sortedApplications"
+          :loading="loading"
+          :current-sort-key="currentSort.key"
+          :current-sort-order="currentSort.order"
+          @sort="handleSort"
+          @row-dblclick="openApplicantProfile"
+        >
           <template #cell(firstName)="{ item }">
             <router-link
               v-if="item.id"
@@ -23,7 +33,9 @@
             >
               {{ capitalizeName(item.firstName) }} {{ capitalizeName(item.lastName) }}
             </router-link>
-            <span v-else class="font-medium text-slate-800">{{ capitalizeName(item.firstName) }} {{ capitalizeName(item.lastName) }}</span>
+            <span v-else class="font-medium text-slate-800"
+              >{{ capitalizeName(item.firstName) }} {{ capitalizeName(item.lastName) }}</span
+            >
           </template>
 
           <template #cell(contact)="{ item }">
@@ -50,25 +62,6 @@
             <span class="text-sm text-slate-500">{{ value }}</span>
           </template>
 
-          <template #cell(actions)="{ item }">
-            <div class="flex items-center justify-end gap-2" v-if="item.status === 'Pending'">
-              <button
-                @click="updateStatus(item.id, 'Approved')"
-                class="p-1.5 text-slate-500 hover:text-green-600 hover:bg-green-50 rounded transition-colors cursor-pointer"
-                title="Approve"
-              >
-                <Check class="w-4 h-4" />
-              </button>
-              <button
-                @click="updateStatus(item.id, 'Rejected')"
-                class="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
-                title="Reject"
-              >
-                <X class="w-4 h-4" />
-              </button>
-            </div>
-          </template>
-
           <template #empty>No applications found.</template>
         </DefaultTable>
       </div>
@@ -77,25 +70,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { dataService } from '@/services/dataService'
 import type { Application, Column } from '@/types'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
-import { Check, X, ExternalLink } from 'lucide-vue-next'
-import { capitalizeName } from '@/utils/utils'
+import { ExternalLink } from 'lucide-vue-next'
+import { capitalizeName, compareValues } from '@/utils/utils'
+
 
 const applications = ref<Application[]>([])
 const loading = ref(false)
+const currentSort = ref<{ key: string; order: 'asc' | 'desc' | null }>({ key: '', order: null })
+const router = useRouter()
 
-const tableColumns: Column[] = [
-  { key: 'firstName', label: 'Name', align: 'center' },
+const tableColumns: Column<Application>[] = [
+  { key: 'firstName', label: 'Name', align: 'center', sortable: true },
   { key: 'contact', label: 'Contact', align: 'center' },
-  { key: 'cdlNumber', label: 'CDL #', align: 'center' },
-  { key: 'experienceYears', label: 'Exp (Yrs)', align: 'center' },
-  { key: 'appliedDate', label: 'Applied Date', align: 'center' },
-  { key: 'status', label: 'Status', align: 'center' },
-  { key: 'actions', label: 'Actions', align: 'right' },
-]
+  { key: 'cdlNumber', label: 'Cdl', align: 'center' },
+  { key: 'experienceYears', label: 'Exp (Yrs)', align: 'center', sortable: true },
+  { key: 'appliedDate', label: 'Applied Date', align: 'center', sortable: true },
+  { key: 'status', label: 'Status', align: 'center', sortable: true },]
 
 async function fetchApplications() {
   loading.value = true
@@ -108,37 +103,38 @@ async function fetchApplications() {
   }
 }
 
-async function updateStatus(id: string, status: 'Approved' | 'Rejected') {
-  // Optimistically update local state to avoid refetching the full list
-  const index = applications.value.findIndex((app) => app.id === id)
-  if (index === -1) {
-    console.warn(`Application with id ${id} not found`)
-    return
-  }
+function handleSort(payload: { key: string; order: 'asc' | 'desc' | null }) {
+  currentSort.value = payload
+}
 
-  const app = applications.value[index]
-  if (!app) return
-
-  const previousStatus = app.status
-  applications.value[index] = {
-    ...app,
-    status,
-  }
-
-  try {
-    await dataService.updateApplicationStatus(id, status)
-  } catch (err) {
-    console.error('Error updating status:', err)
-    // Revert optimistic update on error to keep local state consistent
-    const currentApp = applications.value[index]
-    if (currentApp) {
-      applications.value[index] = {
-        ...currentApp,
-        status: previousStatus,
-      }
-    }
+function openApplicantProfile(item: Application) {
+  if (item.id) {
+    router.push({ name: 'applicant-profile', params: { id: item.id } })
   }
 }
+// review what kinda of sort is implemented here
+const sortedApplications = computed<Application[]>(() => {
+  const list = [...applications.value] // Create a shallow copy to sort
+
+  if (currentSort.value.key && currentSort.value.order) {
+    const { key, order } = currentSort.value
+    list.sort((a, b) => {
+      const valA = a[key as keyof Application]
+      const valB = b[key as keyof Application]
+      
+      // Ensure values match comparedValues type (string | number | null | undefined)
+      if (
+        (typeof valA === 'string' || typeof valA === 'number' || valA === null || valA === undefined) &&
+        (typeof valB === 'string' || typeof valB === 'number' || valB === null || valB === undefined)
+      ) {
+        return compareValues(valA, valB, order)
+      }
+      return 0
+    })
+  }
+
+  return list
+})
 
 onMounted(() => {
   fetchApplications()
