@@ -4,6 +4,8 @@ import { apiClient } from './apiService'
 import type { Driver, Vehicle, Alert, DocumentLog, Application, DashboardStats } from '@/types'
 import { getApp } from 'firebase/app'
 
+
+// migrate for enitty based service and document handling
 export const dataService = {
   // --- Drivers ---
   getDrivers: async (): Promise<
@@ -57,9 +59,12 @@ export const dataService = {
     await apiClient.delete(`/drivers/${id}`)
   },
 
-
-uploadDocument: async(type: string, file: File, id: string, uploadDate: string) => {
+// review ahtat kinda of file is sended
+uploadDocument: async(id: string, type: string, file: File, uploadDate: string, entityName: string) => {
      const data = new FormData()
+     data.append('driverId', id)
+      data.append('entityName', entityName)
+     data.append('uploadDate', uploadDate)
      data.append('file', file)
      data.append('documentType', type)
      await fetch('/api/drivers/documents', {
@@ -67,7 +72,6 @@ uploadDocument: async(type: string, file: File, id: string, uploadDate: string) 
        body: data
      })
    },
-
 
   // --- Vehicles ---
   getVehicles: async (): Promise<Vehicle[]> => {
