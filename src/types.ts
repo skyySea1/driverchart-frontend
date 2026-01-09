@@ -76,7 +76,7 @@ export type BadgeVariant =
   | 'purple'
   | 'green'
 
-export interface Column<T = any> {
+export interface Column<T = unknown> {
   key: keyof T | string
   label: string
   align?: 'left' | 'center' | 'right'
