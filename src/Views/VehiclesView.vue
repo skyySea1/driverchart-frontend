@@ -168,7 +168,6 @@ import { STATUS_ACTIVE, STATUS_INACTIVE, STATUS_MAINTENANCE } from '@/utils/cons
 import { compareValues } from '@/utils/utils'
 
 import { parseVehicleDoc } from '@/utils/firestoreParsers'
-import type { comparedValues } from '../types';
 
 const router = useRouter()
 const route = useRoute()
