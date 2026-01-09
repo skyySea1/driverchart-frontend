@@ -66,6 +66,9 @@ export interface Application extends FirestoreDoc {
 // We are normalizing to use the nested structure in forms too.
 export type DriverForm = Driver
 
+export type SortOrder = 'asc' | 'desc' | null
+
+export type comparedValues = string | number | null | undefined
 export type BadgeVariant =
   | 'default'
   | 'secondary'
@@ -131,7 +134,7 @@ export type ViewState =
   | 'dashboard'
   | 'drivers'
   | 'vehicles'
-  | 'auditreports '
+  | 'auditreports'
   | 'documentregistry'
   | 'applications'
   | 'login'

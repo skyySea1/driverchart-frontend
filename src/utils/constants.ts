@@ -62,3 +62,11 @@ export const US_STATES = [
   { code: 'WI', name: 'Wisconsin' },
   { code: 'WY', name: 'Wyoming' },
 ]
+
+
+export const ORGANIZATION = {
+  name: 'Phoenix Bus Orlando',
+  domain: 'phoenixbusorlando.com',
+  address: 'Orlando, FL',
+  email: 'contact@phoenixbusorlando.com',
+}

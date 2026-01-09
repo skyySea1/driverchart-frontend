@@ -22,19 +22,19 @@
         <div>
           <label class="font-bold block text-sm">Social Security No.</label>
           <div class="border-b border-black h-8 pt-1 text-blue-800 font-mono text-lg">
-            {{ data.ssn }}
+            {{ driver.ssn }}
           </div>
         </div>
         <div>
           <label class="font-bold block text-sm">Driver's License No.</label>
           <div class="border-b border-black h-8 pt-1 text-blue-800 font-mono text-lg">
-            {{ data.cdlNumber }}
+            {{ driver.cdl?.documentNumber }}
           </div>
         </div>
         <div>
           <label class="font-bold block text-sm">State</label>
           <div class="border-b border-black h-8 pt-1 text-blue-800 font-mono text-lg">
-            {{ data.cdlState }}
+            {{ driver.cdl?.state }}
           </div>
         </div>
       </div>
@@ -56,7 +56,7 @@
           on
           <span
             class="inline-block border-b border-black w-32 mx-2 text-center text-blue-800 font-mono"
-            >{{ data.roadTestDate }}</span
+            >{{ driver.roadTest?.date }}</span
           >, consisting of approximately
           <span class="inline-block border-b border-black w-20 mx-2 text-center"></span>
           miles of driving.
@@ -71,7 +71,7 @@
         <div>
           <label class="font-bold block text-sm">Signature of Examiner</label>
           <div class="border-b border-black h-8 mt-4"></div>
-          <p class="text-xs text-blue-800 mt-1 font-mono">{{ data.roadTestExaminer }}</p>
+          <p class="text-xs text-blue-800 mt-1 font-mono">{{ driver.roadTest?.examiner }}</p>
         </div>
         <div>
           <label class="font-bold block text-sm">Title</label>
@@ -94,17 +94,14 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { Driver } from '@/types'
 
-const props = defineProps({
-  data: {
-    type: Object,
-    required: true,
-    default: () => ({}),
-  },
-})
+const props = defineProps<{
+  driver: Driver
+}>()
 
 const fullName = computed(() => {
-  const { firstName, middleName, lastName } = props.data || {}
+  const { firstName, middleName, lastName } = props.driver || {}
   return `${firstName || ''} ${middleName || ''} ${lastName || ''}`.trim()
 })
 </script>

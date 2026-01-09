@@ -285,7 +285,10 @@ async function handleLogout() {
 
 // Close dropdowns when clicking outside
 function handleClickOutside(e: MouseEvent) {
-  if (!(e.target as HTMLElement).closest('.header-menu')) {
+  const target = e.target
+  if (!(target instanceof HTMLElement)) return
+
+  if (!target.closest('.header-menu')) {
     activeDropdown.value = null
   }
 }
