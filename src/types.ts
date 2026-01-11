@@ -101,7 +101,7 @@ export interface DashboardStats {
   alertsCount: number
   alerts: Alert[]
   expiringMedCards: number
-  expiringLicenses: number
+  expiringCDL: number
   expiringClearinghouse: number
   auditScore: string
   newApplications: number
@@ -111,7 +111,7 @@ export interface DashboardStats {
 // CardType expansion to support multiple views
 export type CardType =
   | 'inspections'
-  | 'licenses'
+  | 'CDL'
   | 'clearinghouse'
   | 'drivers'
   | 'medical'

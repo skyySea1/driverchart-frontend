@@ -11,7 +11,7 @@
 
     <div v-else-if="applicant" class="space-y-6">
       <!-- Back Button -->
-      <BaseButton label="Back to Drivers" :icon="ArrowLeft" :variant="'blue'" @click="$router.back()"
+      <BaseButton label="Back to Applicants" :icon="ArrowLeft" :variant="'blue'" @click="$router.back()"
         class=" text-sm font-medium shadow-sm"
           />
       <!-- Header -->
