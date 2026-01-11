@@ -220,7 +220,7 @@
               <div class="p-2 bg-white rounded shadow-sm text-slate-500">
                 <CreditCard class="w-5 h-5" />
               </div>
-              <div class="text-sm font-bold text-slate-700">Cdl Information</div>
+              <div class="text-sm font-bold text-slate-700">CDL Information</div>
             </div>
             <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="flex space-x-2 col-span-2">

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useDashboard} from '@/Composables/useDashboard'
+import { useDashboard } from '@/Composables/useDashboard'
 import { dataService } from '@/services/dataService'
 
 // Mock dataService
@@ -30,7 +30,7 @@ describe('useDashboard', () => {
       alertsCount: 2,
       alerts: [],
       expiringMedCards: 1,
-      expiringLicenses: 0,
+      expiringCDL: 0,
       expiringClearinghouse: 0,
       auditScore: '95%',
       newApplications: 3,
