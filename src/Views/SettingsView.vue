@@ -66,7 +66,7 @@
                   disabled
                 />
                 <!-- TODO add nested user role to user object-->
-            
+
               </div>
                <div class="space-y-1">
                 <InputGroup
@@ -96,22 +96,6 @@
               </div>
             </div>
           </template>
-
-          <template v-if="activeSection === 'security'">
-            <div class="p-4 border border-amber-100 bg-amber-50 rounded-xl flex gap-3">
-              <ShieldAlert class="w-5 h-5 text-amber-600 shrink-0" />
-              <div>
-                <p class="text-sm font-bold text-amber-900">Two-Factor Authentication</p>
-                <p class="text-xs text-amber-700 mt-1">
-                  Enhance your account security by enabling 2FA. Currently disabled.
-                </p>
-                <button class="mt-3 text-xs font-black uppercase text-indigo-600 hover:underline">
-                  Enable Now
-                </button>
-              </div>
-            </div>
-          </template>
-
           <template v-if="activeSection === 'company'">
             <div class="space-y-4">
               <div class="space-y-1">
@@ -149,7 +133,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { User, Bell, LucideShieldX, Globe, ShieldAlert } from 'lucide-vue-next'
+import { User, Bell, Globe } from 'lucide-vue-next'
 import InputGroup from '@/Components/ui/InputGroup.vue'
 import BaseButton from '@/Components/ui/BaseButton.vue'
 import { ORGANIZATION } from '@/utils/constants'
@@ -168,7 +152,6 @@ const formProfile = ref({
 const menuOptions = [
   { id: 'profile', label: 'User Profile', icon: User },
   { id: 'notifications', label: 'Notifications', icon: Bell },
-  { id: 'security', label: 'Security', icon: LucideShieldX },
   { id: 'company', label: 'Organization', icon: Globe },
 ]
 

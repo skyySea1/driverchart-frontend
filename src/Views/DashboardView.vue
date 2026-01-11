@@ -12,9 +12,9 @@
         @click="router.push('/audit')"
       />
       <StatCard
-        type="licenses"
-        title="Expiring Licenses"
-        :value="stats?.expiringLicenses ?? 0"
+        type="CDL"
+        title="Expiring CDLs"
+        :value="stats?.expiringCDL ?? 0"
         :loading="isLoading"
         is-clickable
         @click="router.push('/drivers?status=expiring')"
@@ -91,8 +91,8 @@
                 <div class="flex justify-between items-center">
                   <div class="text-slate-700">
                     <span class="font-bold text-blue-600 group-hover:underline">
-                      {{capitalizeName( a.entityName || a.entity || 'Driver') }}
-                    </span>: {{ capitalizeName(a.message) }}
+                      {{ capitalizeName(a.entityName || a.entity || 'Driver') }} </span
+                    >: {{ capitalizeName(a.message) }}
                   </div>
                   <div
                     class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded group-hover:bg-orange-100 group-hover:text-orange-700 transition-colors"
@@ -149,7 +149,7 @@ const navigateToDriver = (alert: Alert) => {
   if (driverName) {
     router.push({
       path: '/drivers',
-      query: { search: driverName }
+      query: { search: driverName },
     })
   }
 }

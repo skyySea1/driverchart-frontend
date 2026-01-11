@@ -27,7 +27,7 @@ describe('dataService Logic', () => {
               id: '1',
               firstName: 'John',
               lastName: 'Expiring',
-              cdl: { expiryDate: expiringDate }, // +1 Expiring License
+              cdl: { expiryDate: expiringDate }, // +1 Expiring cdl
               medical: { expiryDate: validDate },
               drugAlcohol: { expiryDate: validDate },
               mvr: { expiryDate: validDate },
@@ -64,7 +64,7 @@ describe('dataService Logic', () => {
     expect(stats.newApplications).toBe(1) // 1 Pending
 
     // Logic Checks
-    expect(stats.expiringLicenses).toBe(1) // John's Cdl
+    expect(stats.expiringCDL).toBe(1) // John's Cdl
     expect(stats.annualRecordReview).toBe(1) // Jane's MVR
   })
 })
