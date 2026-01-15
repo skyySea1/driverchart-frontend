@@ -60,7 +60,7 @@
         @click="router.push('/audit')"
       />
     </div>
-
+<!-- padronize for use the same alert component -->
     <div class="mt-3 grid grid-cols-1 lg:grid-cols-3 gap-4">
       <!-- Priority Alerts Section -->
       <div class="lg:col-span-2">
@@ -145,7 +145,7 @@ const formatDate = (date?: string) => {
 
 // todo remove query in select filter  (duplication with AlertsView(ai suggestion)
 const navigateToDriver = (alert: Alert) => {
-  const driverName = alert.entityName || alert.entity
+  const driverName = alert.entityName
   if (driverName) {
     router.push({
       path: '/drivers',

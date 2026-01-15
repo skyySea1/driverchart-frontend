@@ -3,6 +3,11 @@ import { z } from 'zod'
 import { DriverSchema, ComplianceItemSchema } from '@/shared/schemas/DriverSchema'
 
 export type AlertType = 'error' | 'success' | 'warning' | 'info'
+export type HireStatusType = 'Active' | 'Terminated'
+export type ApplicationStatusType = 'Pending' | 'Approved' | 'Rejected'
+export type ComplianceItem = z.infer<typeof ComplianceItemSchema>
+export type DriverBase = z.infer<typeof DriverSchema> // Inferred Driver Type + Firestore ID + UI-only fields
+
 export interface Alert {
   id: string
   type: 'critical' | 'warning' | 'info'
@@ -11,9 +16,6 @@ export interface Alert {
   entityName?: string
   dueDate: string
 }
-
-export type HireStatusType = 'Active' | 'Terminated'
-export type ComplianceItem = z.infer<typeof ComplianceItemSchema>
 
 export interface DocumentLog {
   id: string
@@ -29,8 +31,7 @@ export interface FirestoreDoc {
   [key: string]: unknown
 }
 
-// Inferred Driver Type + Firestore ID + UI-only fields
-type DriverBase = z.infer<typeof DriverSchema>
+
 export interface Driver extends Omit<DriverBase, 'id'>, FirestoreDoc {
   ssnDocFile?: File | null
   ssnDocPreviewUrl?: string
@@ -49,21 +50,18 @@ export interface DriverRow extends Driver {
   clearinghouseDate: string
   actions?: string
 }
-// implementn more fields #task10
+// implementn more fields
 export interface Application extends FirestoreDoc {
   firstName: string
   lastName: string
   email: string
   phone: string
-  status: 'Pending' | 'Approved' | 'Rejected'
+  status: ApplicationStatusType
   appliedDate: string
   experienceYears?: number
   cdlNumber?: string
   notes?: string
 }
-
-// DriverForm is now just the Driver structure (plus UI fields if needed)
-// We are normalizing to use the nested structure in forms too.
 export type DriverForm = Driver
 
 export type SortOrder = 'asc' | 'desc' | null
