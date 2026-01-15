@@ -113,7 +113,7 @@
 
             <div class="space-y-1">
               <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
-                >Cdl Number</label
+                >CDL Number</label
               >
 
               <input
@@ -199,7 +199,7 @@ async function submit() {
     loading.value = false
   }
 }
-// implement reset using loop
+// implement reset using loop iteration
 function reset() {
   form.value = {
     firstName: '',
