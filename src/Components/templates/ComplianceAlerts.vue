@@ -56,7 +56,7 @@ import type { Alert } from '@/types'
 import { capitalizeName } from '@/utils/utils'
 
 const router = useRouter()
-const { stats, isLoading } = useDashboard()
+const { statsData, isLoading } = useDashboard()
 
 const { title = 'Compliance Alerts', icon = AlertTriangle } = defineProps<{
   title?: string
@@ -64,7 +64,7 @@ const { title = 'Compliance Alerts', icon = AlertTriangle } = defineProps<{
 }>()
 
 const alerts = computed(() => {
-  return stats.value?.alerts || []
+  return statsData.value?.alerts || []
 })
 
 const formatDate = (date?: string) => {
@@ -84,11 +84,11 @@ function alertClass(type: Alert['type']) {
 }
 
 const navigateToDriver = (alert: Alert) => {
-  const driverName = alert.entityName || alert.entity
-  if (driverName) {
+  const searchTerm = alert.entityId || alert.entityName || alert.entity
+  if (searchTerm) {
     router.push({
       path: '/drivers',
-      query: { search: driverName }
+      query: { search: searchTerm }
     })
   }
 }

@@ -52,7 +52,7 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
     middleName: asString(getProp(doc, 'middleName')),
     lastName: asString(getProp(doc, 'lastName')),
     dob: asString(getProp(doc, 'dob')),
-    ssnNumber: asString(getProp(doc, 'ssn')),
+    ssnNumber: asString(getProp(doc, 'ssnNumber')),
     phone: asString(getProp(doc, 'phone')),
     email: asString(getProp(doc, 'email')),
     address: asString(getProp(doc, 'address')),

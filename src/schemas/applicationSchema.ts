@@ -13,6 +13,7 @@ export const PersonalInfoSchema = z.object({
     .string()
     .regex(/^\d{3}-\d{2}-\d{4}$/, 'SSN must be in format XXX-XX-XXXX')
     .or(z.literal('')),
+  medicalExpirationDate: z.string().optional(),
 })
 
 // Address History (last 3 years)
@@ -23,6 +24,7 @@ export const AddressSchema = z.object({
   zip: z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code'),
   fromDate: pastIsoDate('From date is required'),
   toDate: z.string().optional(), // Optional for current address
+  present: z.boolean().optional(),
 })
 
 // License
@@ -63,11 +65,17 @@ export const EmploymentSchema = z.object({
   zip: z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code'),
   phone: usPhoneNumber('Phone must be in format (XXX) XXX-XXXX or XXX-XXX-XXXX'),
   position: z.string().min(1, 'Position is required'),
+  description: z.string().optional().default(''),
   fromDate: pastIsoDate('From date is required'),
   toDate: z.string().min(1, 'To date is required').optional(), // Optional for current employment
   reasonForLeaving: z.string().default(''),
   wasCDL: z.boolean().default(false),
 })
+
+export const VehicleExperienceSchema = z.object({
+  type: z.string(),
+  totalMileage: z.string(),
+});
 
 // Driver Application Form Schema
 export const DriverApplicationFormSchema = z.object({
@@ -75,10 +83,14 @@ export const DriverApplicationFormSchema = z.object({
   personalInfo: PersonalInfoSchema,
   addresses: z.array(AddressSchema).min(1, 'At least one address is required'),
   licenses: z.array(LicenseSchema).min(1, 'At least one license is required'),
-  vehicleTypes: z.array(z.string()).default([]),
+  vehicleExperience: z.array(VehicleExperienceSchema).min(1, 'At least one vehicle type is required'),
   experienceYears: z.number().min(0, 'Experience years cannot be negative').default(0),
   accidents: z.array(AccidentSchema).default([]),
   violations: z.array(ViolationSchema).default([]),
+  forfeitures: z.string().optional().default(''),
+  deniedLicense: z.boolean().default(false),
+  suspendedLicense: z.boolean().default(false),
+  denialSuspensionExplanation: z.string().optional().default(''),
   employmentHistory: z.array(EmploymentSchema).default([]),
   notes: z.string().optional().default(''),
 })
