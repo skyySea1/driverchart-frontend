@@ -1,5 +1,4 @@
 // src/utils/constants.ts
-// This file will contain project-wide constants.
 
 export const STATUS_ACTIVE = 'Active'
 export const STATUS_INACTIVE = 'Inactive'

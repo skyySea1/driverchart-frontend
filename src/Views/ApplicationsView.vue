@@ -31,10 +31,10 @@
               :to="{ name: 'applicant-profile', params: { id: item.id } }"
               class="font-medium text-slate-800 hover:text-blue-600 hover:underline"
             >
-              {{ capitalizeName(item.firstName) }} {{ capitalizeName(item.lastName) }}
+              {{ capitalizeName(item.personalInfo.firstName) }} {{ capitalizeName(item.personalInfo.lastName) }}
             </router-link>
             <span v-else class="font-medium text-slate-800"
-              >{{ capitalizeName(item.firstName) }} {{ capitalizeName(item.lastName) }}</span
+              >{{ capitalizeName(item.personalInfo.firstName) }} {{ capitalizeName(item.personalInfo.lastName) }}</span
             >
           </template>
 
@@ -73,18 +73,18 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { dataService } from '@/services/dataService'
-import type { Application, Column } from '@/types'
+import type { Applications, Column } from '@/types'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
 import { ExternalLink } from 'lucide-vue-next'
 import { capitalizeName, compareValues } from '@/utils/utils'
 
 
-const applications = ref<Application[]>([])
+const applications = ref<Applications[]>([])
 const loading = ref(false)
 const currentSort = ref<{ key: string; order: 'asc' | 'desc' | null }>({ key: '', order: null })
 const router = useRouter()
 
-const tableColumns: Column<Application>[] = [
+const tableColumns: Column<Applications>[] = [
   { key: 'firstName', label: 'Name', align: 'center', sortable: true },
   { key: 'contact', label: 'Contact', align: 'center' },
   { key: 'cdlNumber', label: 'Cdl', align: 'center' },
@@ -107,21 +107,21 @@ function handleSort(payload: { key: string; order: 'asc' | 'desc' | null }) {
   currentSort.value = payload
 }
 
-function openApplicantProfile(item: Application) {
+function openApplicantProfile(item: Applications) {
   if (item.id) {
     router.push({ name: 'applicant-profile', params: { id: item.id } })
   }
 }
 // review what kinda of sort is implemented here
-const sortedApplications = computed<Application[]>(() => {
+const sortedApplications = computed<Applications[]>(() => {
   const list = [...applications.value] // Create a shallow copy to sort
 
   if (currentSort.value.key && currentSort.value.order) {
     const { key, order } = currentSort.value
     list.sort((a, b) => {
-      const valA = a[key as keyof Application]
-      const valB = b[key as keyof Application]
-      
+      const valA = a[key as keyof Applications]
+      const valB = b[key as keyof Applications]
+
       // Ensure values match comparedValues type (string | number | null | undefined)
       if (
         (typeof valA === 'string' || typeof valA === 'number' || valA === null || valA === undefined) &&

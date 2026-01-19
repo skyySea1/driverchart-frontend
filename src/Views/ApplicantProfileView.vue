@@ -22,11 +22,11 @@
           <div
             class="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-600 border border-slate-200 uppercase"
           >
-            {{ applicant.firstName[0] }}{{ applicant.lastName[0] }}
+            {{ applicant.personalInfo.firstName[0] }}{{ applicant.personalInfo.lastName[0] }}
           </div>
           <div>
             <h1 class="text-2xl font-bold text-slate-900">
-              {{ capitalizeName(applicant.firstName) }} {{ capitalizeName(applicant.lastName) }}
+              {{ capitalizeName(applicant.personalInfo.firstName) }} {{ capitalizeName(applicant.personalInfo.lastName) }}
             </h1>
             <div class="flex items-center gap-2 mt-1">
               <span
@@ -72,17 +72,17 @@
             <div class="flex flex-col gap-1">
               <span class="text-slate-500">Full Name</span>
               <span class="font-medium text-slate-900"
-                >{{ capitalizeName(applicant.firstName) }}
-                {{ capitalizeName(applicant.lastName) }}</span
+                >{{ capitalizeName(applicant.personalInfo.firstName) }}
+                {{ capitalizeName(applicant.personalInfo.lastName) }}</span
               >
             </div>
             <div class="flex flex-col gap-1">
               <span class="text-slate-500">Contact</span>
               <div class="flex items-center gap-2 text-slate-900">
-                <Phone class="w-3 h-3 text-slate-400" /> {{ applicant.phone }}
+                <Phone class="w-3 h-3 text-slate-400" /> {{ applicant.personalInfo.phone }}
               </div>
               <div class="flex items-center gap-2 text-slate-900">
-                <Mail class="w-3 h-3 text-slate-400" /> {{ applicant.email }}
+                <Mail class="w-3 h-3 text-slate-400" /> {{ applicant.personalInfo.email }}
               </div>
             </div>
           </div>
@@ -119,7 +119,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { dataService } from '@/services/dataService'
-import type { Application } from '@/types'
+import type { Applications } from '@/types'
 import { capitalizeName, formatDate } from '@/utils/utils'
 import { User, Phone, Mail, Calendar, Check, X, Briefcase, ArrowLeft } from 'lucide-vue-next'
 import BaseButton from '@/Components/ui/BaseButton.vue'
@@ -130,7 +130,7 @@ const applicationId = computed(() => {
   return Array.isArray(id) ? id[0] : id
 })
 
-const applicant = ref<Application | null>(null)
+const applicant = ref<Applications | null>(null)
 const isLoading = ref(true)
 const error = ref<string | null>(null)
 
