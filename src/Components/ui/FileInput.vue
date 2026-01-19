@@ -19,7 +19,7 @@ import { Upload, CheckCircle } from 'lucide-vue-next'
 
 defineProps<{
   label?: string
-  fileName?: string
+  fileName?: string|undefined
   type?: 'button' | 'input'
 }>()
 
@@ -28,12 +28,13 @@ const emit = defineEmits<{
   (e: 'update:fileName', value: string): void // Optional for name two-way binding
 }>()
 
-function handleChange(event: Event ) {
+function handleChange(event: Event) {
+  if (!(event.target instanceof HTMLInputElement)) return
+
+  const file = event.target.files?.[0]
+  if (!file) return
+  
   emit('change', event)
-  // Optional: Update the file name if using v-model
-  const target: HTMLInputElement = event.target as HTMLInputElement
-  if (target.files && target.files.length > 0) {
-    // todo: handle multiple files if needed
-  }
+  emit('update:fileName', file.name)
 }
 </script>

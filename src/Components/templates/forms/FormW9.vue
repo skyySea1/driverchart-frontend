@@ -163,7 +163,7 @@
             <label class="text-xs block mb-1">Social Security Number</label>
             <div class="flex gap-2">
               <div class="border border-black p-1 w-full text-center font-mono text-lg bg-slate-50">
-                {{ data.ssn || '   -  -    ' }}
+                {{ data.ssnNumber || '   -  -    ' }}
               </div>
             </div>
           </div>
