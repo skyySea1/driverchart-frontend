@@ -1,9 +1,8 @@
 // src/services/dataService.ts
 import dayjs from 'dayjs'
 import { apiClient } from './apiService'
-import type { Driver, Vehicle, Alert, DocumentLog, Application, DashboardStats } from '@/types'
+import type { Driver, Vehicle, Alert, DocumentLog, Applications, DriverApplicationForm, DashboardStats } from '@/types'
 import { getApp } from 'firebase/app'
-
 
 // migrate for enitty based service and document handling
 export const dataService = {
@@ -59,19 +58,27 @@ export const dataService = {
     await apiClient.delete(`/drivers/${id}`)
   },
 
-// review ahtat kinda of file is sended
-uploadDocument: async(id: string, type: string, file: File, uploadDate: string, entityName: string) => {
-     const data = new FormData()
-     data.append('driverId', id)
-      data.append('entityName', entityName)
-     data.append('uploadDate', uploadDate)
-     data.append('file', file)
-     data.append('documentType', type)
-     await fetch('/api/drivers/documents', {
-       method: 'POST',
-       body: data
-     })
-   },
+  // review ahtat kinda of file is sended
+  uploadDocument: async (
+    id: string,
+    type: string,
+    file: File,
+    uploadDate: string,
+    entityName: string,
+  ) => {
+    const data = new FormData()
+    data.append('driverId', id)
+    data.append('entityName', entityName)
+    data.append('uploadDate', uploadDate)
+    data.append('file', file)
+    data.append('documentType', type)
+    
+    await apiClient.post('/drivers/documents', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
 
   // --- Vehicles ---
   getVehicles: async (): Promise<Vehicle[]> => {
@@ -128,21 +135,21 @@ uploadDocument: async(id: string, type: string, file: File, uploadDate: string, 
     }
   },
 
-  // reviewed: get the Firebase Application Instance ID
+  // reviewed: get the Firebase Applications Instance ID
   getApplicationInstanceId: async (): Promise<string> => {
     const app = getApp()
     return app.options.appId || 'unknown-app-id'
   },
 
   // --- Applications ---
-  getApplications: async (): Promise<Application[]> => {
-    const response = await apiClient.get<Application[]>('/applications')
+  getApplications: async (): Promise<Applications[]> => {
+    const response = await apiClient.get<Applications[]>('/applications')
     return response.data
   },
 
-  getApplicationById: async (id: string): Promise<Application | null> => {
+  getApplicationById: async (id: string): Promise<Applications | null> => {
     try {
-      const response = await apiClient.get<Application>(`/applications/${id}`)
+      const response = await apiClient.get<Applications>(`/applications/${id}`)
       return response.data
     } catch (error) {
       console.warn(`Failed to fetch application with id ${id}`, error)
@@ -151,7 +158,7 @@ uploadDocument: async(id: string, type: string, file: File, uploadDate: string, 
   },
 
   submitApplication: async (
-    application: Omit<Application, 'id' | 'status' | 'appliedDate'>,
+    application: Omit<DriverApplicationForm, 'id'>,
   ): Promise<void> => {
     await apiClient.post('/applications', {
       ...application,
@@ -172,7 +179,7 @@ uploadDocument: async(id: string, type: string, file: File, uploadDate: string, 
         apiClient.get<Driver[]>('/drivers'),
         apiClient.get<Vehicle[]>('/vehicles'),
         apiClient.get<Alert[]>('/expiration/alerts'),
-        apiClient.get<Application[]>('/applications'),
+        apiClient.get<Applications[]>('/applications'),
       ])
 
       const drivers = driversRes.data
@@ -195,18 +202,46 @@ uploadDocument: async(id: string, type: string, file: File, uploadDate: string, 
         return dayjs(dateStr).isBefore(today, 'day')
       }
 
+      const {
+        expiringMedCardsDrivers,
+        expiringCDLDrivers,
+        expiringClearinghouseDrivers,
+        expiredMvrDrivers,
+      } = drivers.reduce(
+        (acc, d) => {
+          if (isExpiringSoon(d.medical?.expiryDate)) {
+            acc.expiringMedCardsDrivers.push(d)
+          }
+          if (isExpiringSoon(d.cdl?.expiryDate)) {
+            acc.expiringCDLDrivers.push(d)
+          }
+          if (isExpiringSoon(d.drugAlcohol?.expiryDate)) {
+            acc.expiringClearinghouseDrivers.push(d)
+          }
+          if (isExpired(d.mvr?.expiryDate)) {
+            acc.expiredMvrDrivers.push(d)
+          }
+          return acc
+        },
+        {
+          expiringMedCardsDrivers: [] as Driver[],
+          expiringCDLDrivers: [] as Driver[],
+          expiringClearinghouseDrivers: [] as Driver[],
+          expiredMvrDrivers: [] as Driver[],
+        },
+      )
+
       const stats = {
         totalDrivers: drivers.length,
         totalVehicles: vehicles.length,
         alertsCount: alerts.length,
         alerts: alerts,
-        expiringMedCards: drivers.filter((d) => isExpiringSoon(d.medical?.expiryDate)).length,
-        expiringLicenses: drivers.filter((d) => isExpiringSoon(d.cdl?.expiryDate)).length,
-        expiringClearinghouse: drivers.filter((d) => isExpiringSoon(d.drugAlcohol?.expiryDate))
-          .length,
+        expiringMedCards: expiringMedCardsDrivers.length,
+        expiringCDL: expiringCDLDrivers.length,
+        expiringClearinghouse: expiringClearinghouseDrivers.length,
         auditScore: '94%',
         newApplications: pendingApplicationsCount,
-        annualRecordReview: drivers.filter((d) => isExpired(d.mvr?.expiryDate)).length,
+        annualRecordReview: expiredMvrDrivers.length,
       }
       return stats
     } catch (error) {
@@ -217,7 +252,7 @@ uploadDocument: async(id: string, type: string, file: File, uploadDate: string, 
         alertsCount: 0,
         alerts: [],
         expiringMedCards: 0,
-        expiringLicenses: 0,
+        expiringCDL: 0,
         expiringClearinghouse: 0,
         auditScore: '0%',
         newApplications: 0,

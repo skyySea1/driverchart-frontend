@@ -34,7 +34,7 @@
       </div>
       <div class="grid grid-cols-3 gap-2">
         <div class="text-xs border-b border-slate-400">
-          <span class="font-bold">SSN:</span> {{ data.ssn }}
+          <span class="font-bold">SSN:</span> {{ data.ssnNumber }}
         </div>
         <div class="text-xs border-b border-slate-400">
           <span class="font-bold">Email:</span> {{ data.email }}

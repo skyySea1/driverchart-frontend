@@ -1,5 +1,8 @@
-
 import type { comparedValues } from '@/types'
+import { z } from 'zod'
+import dayjs from 'dayjs'
+
+
 export const getDaysDiff = (dateStr: string | null | undefined): number => {
   if (!dateStr) return 0
   const today = new Date()
@@ -72,12 +75,9 @@ export const capitalizeName = (str: string): string => {
   return str
     .toLowerCase()
     .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
-
 }
-
-
 
 export function getHireStatusColor(status: unknown) {
   const s = typeof status === 'string' ? status : ''
@@ -103,13 +103,28 @@ export function compareValues(a: comparedValues, b: comparedValues, order: 'asc'
   const bVal = b ?? ''
 
   if (typeof aVal === 'string' && typeof bVal === 'string') {
-    return order === 'asc'
-      ? aVal.localeCompare(bVal)
-      : bVal.localeCompare(aVal)
+    return order === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal)
   }
 
   // Cast for generic comparison since we handled strings/nulls
-  if ((aVal) < (bVal)) return order === 'asc' ? -1 : 1
-  if ((aVal) > (bVal)) return order === 'asc' ? 1 : -1
+  if (aVal < bVal) return order === 'asc' ? -1 : 1
+  if (aVal > bVal) return order === 'asc' ? 1 : -1
   return 0
 }
+
+export const futureIsoDate = (message = "Date must be in the future") =>
+  z.string()
+    .min(1, { message })
+    .pipe(z.iso.date())
+    .refine((dateStr) => dayjs(dateStr).isAfter(dayjs()), { message });
+
+export const pastIsoDate = (message = "Date must be in the past") =>
+  z.string()
+    .min(1, { message })
+    .pipe(z.iso.date())
+    .refine((dateStr) => dayjs(dateStr).isBefore(dayjs()), { message });
+
+export const usPhoneNumber = (
+  message = "Phone must be in format (XXX) XXX-XXXX or XXX-XXX-XXXX"
+) => z.string().regex(/^(\(\d{3}\)\s?\d{3}-\d{4}|\d{3}-\d{3}-\d{4})$/, message);
+

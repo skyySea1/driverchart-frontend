@@ -17,7 +17,7 @@
         :value="stats?.expiringCDL ?? 0"
         :loading="isLoading"
         is-clickable
-        @click="router.push('/drivers?status=expiring')"
+        @click="router.push('/drivers?expiration=expiring')"
       />
       <StatCard
         type="clearinghouse"
@@ -25,7 +25,7 @@
         :value="stats?.expiringClearinghouse ?? 0"
         :loading="isLoading"
         is-clickable
-        @click="router.push('/drivers?status=expiring')"
+        @click="router.push('/drivers?expiration=expiring')"
       />
       <StatCard
         type="medical"
@@ -33,7 +33,7 @@
         :value="stats?.expiringMedCards ?? 0"
         :loading="isLoading"
         is-clickable
-        @click="router.push('/drivers?status=expiring')"
+        @click="router.push('/drivers?expiration=expiring')"
       />
       <StatCard
         type="applications"

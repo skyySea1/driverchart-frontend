@@ -22,7 +22,7 @@
         <div>
           <label class="font-bold block text-sm">Social Security No.</label>
           <div class="border-b border-black h-8 pt-1 text-blue-800 font-mono text-lg">
-            {{ driver.ssn }}
+            {{ driver.ssnNumber }}
           </div>
         </div>
         <div>
