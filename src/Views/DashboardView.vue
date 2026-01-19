@@ -6,7 +6,7 @@
       <StatCard
         type="alerts"
         title="Alerts"
-        :value="stats?.alertsCount ?? 0"
+        :value="statsData?.alertsCount ?? 0"
         :loading="isLoading"
         is-clickable
         @click="router.push('/audit')"
@@ -14,7 +14,7 @@
       <StatCard
         type="CDL"
         title="Expiring CDLs"
-        :value="stats?.expiringCDL ?? 0"
+        :value="statsData?.expiringCDL ?? 0"
         :loading="isLoading"
         is-clickable
         @click="router.push('/drivers?expiration=expiring')"
@@ -22,7 +22,7 @@
       <StatCard
         type="clearinghouse"
         title="Expiring Clearinghouses"
-        :value="stats?.expiringClearinghouse ?? 0"
+        :value="statsData?.expiringClearinghouse ?? 0"
         :loading="isLoading"
         is-clickable
         @click="router.push('/drivers?expiration=expiring')"
@@ -30,7 +30,7 @@
       <StatCard
         type="medical"
         title="Expiring Med Cards"
-        :value="stats?.expiringMedCards ?? 0"
+        :value="statsData?.expiringMedCards ?? 0"
         :loading="isLoading"
         is-clickable
         @click="router.push('/drivers?expiration=expiring')"
@@ -38,7 +38,7 @@
       <StatCard
         type="applications"
         title="New Applications"
-        :value="stats?.newApplications ?? 0"
+        :value="statsData?.newApplications ?? 0"
         :loading="isLoading"
         is-clickable
         @click="router.push('/applications')"
@@ -46,7 +46,7 @@
       <StatCard
         type="reviews"
         title="Annual Record Review"
-        :value="stats?.annualRecordReview ?? 0"
+        :value="statsData?.annualRecordReview ?? 0"
         :loading="isLoading"
         is-clickable
         @click="router.push('/audit')"
@@ -54,7 +54,7 @@
       <StatCard
         type="audit"
         title="Audit Score"
-        :value="stats?.auditScore ?? '0%'"
+        :value="statsData?.auditScore ?? '0%'"
         :loading="isLoading"
         is-clickable
         @click="router.push('/audit')"
@@ -71,7 +71,7 @@
           </h3>
 
           <ul class="mt-3 space-y-2">
-            <template v-if="isLoading && !stats">
+            <template v-if="isLoading && !statsData">
               <li
                 v-for="i in 3"
                 :key="i"
@@ -132,10 +132,10 @@ import type { Alert } from '@/types'
 import { capitalizeName } from '@/utils/utils'
 
 const router = useRouter()
-const { stats, isLoading } = useDashboard()
+const { statsData, isLoading } = useDashboard()
 
 const priorityAlerts = computed(() => {
-  return stats.value?.alerts || []
+  return statsData.value?.alerts || []
 })
 
 const formatDate = (date?: string) => {
@@ -145,11 +145,11 @@ const formatDate = (date?: string) => {
 
 // todo remove query in select filter  (duplication with AlertsView(ai suggestion)
 const navigateToDriver = (alert: Alert) => {
-  const driverName = alert.entityName
-  if (driverName) {
+  const searchTerm = alert.entityId || alert.entityName || alert.entity
+  if (searchTerm) {
     router.push({
       path: '/drivers',
-      query: { search: driverName },
+      query: { search: searchTerm }
     })
   }
 }

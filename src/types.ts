@@ -13,6 +13,7 @@ export interface Alert {
   type: 'critical' | 'warning' | 'info'
   message: string
   entity?: string
+  entityId?: string
   entityName?: string
   dueDate: string
 }
@@ -182,6 +183,16 @@ export type USState =
 
 // User Role Types
 export type UserRole = 'admin' | 'manager' | 'dispatcher' | 'auditor' | 'viewer'
+export type VehicleTypes =
+
+  'Passenger Bus'
+  |'School Bus'
+  |'Charter Bus'
+  |'Straight Truck'
+  |'Semi-Truck/Trailer'
+  |'Van/Doubles'
+  |'Tractor'
+  |''
 
 // Login Status Types
 export type LoginStatus =
@@ -192,7 +203,7 @@ export type LoginStatus =
   | 'unauthorized'
   | 'session_expired'
   | 'mfa_required'
-  | 'mfa_pending'
+  | 'mfa_pending';
 
 // User Interface with Login Info
 export interface User extends FirestoreDoc {
@@ -247,14 +258,19 @@ export type I9FormData = Partial<Driver> & {
 
 // Application Form Data Type
 
-export interface Address { street: string; city: string; state: USState; zip: string; fromDate: string; toDate: string;}
+export interface Address { street: string; city: string; state: USState; zip: string; fromDate: string; toDate?: string; present?: boolean;}
 
 // Personal Info
-export interface PersonalInfo { firstName: string; middleName: string; lastName: string; dob: string; email: string; phone: string; ssnNumber: string;}
-export interface License { number: string; state: USState; class: string; endorsements: string; restrictions: string; expirationDate: string;}
+export interface PersonalInfo { firstName: string; middleName: string; lastName: string; dob: string; email: string; phone: string; ssnNumber: string; medicalExpirationDate?: string; }
+export interface License { number: string; state: USState; class: string; endorsements: string; restrictions: string; emitionDate: string; expirationDate: string;}
 export interface Accident { date: string; location: string; description: string; injuries: boolean; fatalities: boolean;}
 export interface Violation { date: string; violation: string;  location: string; penalty: string; }
-export interface Employment { companyName: string; address: string; city: string; state: USState; zip: string; phone: string; position: string; fromDate: string; toDate: string; reasonForLeaving: string; cdlNumber?: string; wasCDL: boolean}
+export interface Employment { companyName: string; address: string; city: string; state: USState; zip: string; phone: string; position: string; description?: string; fromDate: string; toDate: string; reasonForLeaving: string; cdlNumber?: string; wasCDL: boolean; present?: boolean; }
+
+export interface VehicleExperience {
+  type: VehicleTypes
+  totalMileage: string|number
+}
 
 // Table view - simplified application data
 export interface Applications extends FirestoreDoc {
@@ -271,8 +287,7 @@ export interface Applications extends FirestoreDoc {
   appliedDate: string
   addresses: Address[]
   licenses: License[]
-  experienceYears: number
-  vehicleTypes: string[]
+  vehicleExperience: VehicleExperience[]
   notes?: string
 }
 
@@ -287,12 +302,16 @@ export interface DriverApplicationForm extends FirestoreDoc {
   licenses: License[]
 
   // Driving Experience
-  vehicleTypes: string[]
-  experienceYears: number
+  vehicleExperience: VehicleExperience[]
 
   // Accident & Violation History (last 3 years)
   accidents: Accident[]
   violations: Violation[]
+  forfeitures?: string
+  deniedLicense: boolean
+  suspendedLicense: boolean
+  denialSuspensionExplanation?: string
+
   employmentHistory: Employment[]
 
   notes?: string

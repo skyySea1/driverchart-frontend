@@ -62,6 +62,15 @@ export const US_STATES = [
   { code: 'WY', name: 'Wyoming' },
 ]
 
+export const VEHICLE_TYPES = [
+  'Passenger Bus',
+  'School Bus',
+  'Charter Bus',
+  'Straight Truck',
+  'Semi-Truck/Trailer',
+  'Van/Doubles',
+  'Tractor',
+]
 
 export const ORGANIZATION = {
   name: 'Phoenix Bus Orlando',

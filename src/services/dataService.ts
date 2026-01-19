@@ -1,7 +1,15 @@
 // src/services/dataService.ts
 import dayjs from 'dayjs'
 import { apiClient } from './apiService'
-import type { Driver, Vehicle, Alert, DocumentLog, Applications, DriverApplicationForm, DashboardStats } from '@/types'
+import type {
+  Driver,
+  Vehicle,
+  Alert,
+  DocumentLog,
+  Applications,
+  DriverApplicationForm,
+  DashboardStats,
+} from '@/types'
 import { getApp } from 'firebase/app'
 
 // migrate for enitty based service and document handling
@@ -72,7 +80,7 @@ export const dataService = {
     data.append('uploadDate', uploadDate)
     data.append('file', file)
     data.append('documentType', type)
-    
+
     await apiClient.post('/drivers/documents', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -157,9 +165,7 @@ export const dataService = {
     }
   },
 
-  submitApplication: async (
-    application: Omit<DriverApplicationForm, 'id'>,
-  ): Promise<void> => {
+  submitApplication: async (application: Omit<DriverApplicationForm, 'id'>): Promise<void> => {
     await apiClient.post('/applications', {
       ...application,
       status: 'Pending',
@@ -207,7 +213,12 @@ export const dataService = {
         expiringCDLDrivers,
         expiringClearinghouseDrivers,
         expiredMvrDrivers,
-      } = drivers.reduce(
+      } = drivers.reduce<{
+        expiringMedCardsDrivers: Driver[]
+        expiringCDLDrivers: Driver[]
+        expiringClearinghouseDrivers: Driver[]
+        expiredMvrDrivers: Driver[]
+      }>(
         (acc, d) => {
           if (isExpiringSoon(d.medical?.expiryDate)) {
             acc.expiringMedCardsDrivers.push(d)
@@ -224,10 +235,10 @@ export const dataService = {
           return acc
         },
         {
-          expiringMedCardsDrivers: [] as Driver[],
-          expiringCDLDrivers: [] as Driver[],
-          expiringClearinghouseDrivers: [] as Driver[],
-          expiredMvrDrivers: [] as Driver[],
+          expiringMedCardsDrivers: [],
+          expiringCDLDrivers: [],
+          expiringClearinghouseDrivers: [],
+          expiredMvrDrivers: [],
         },
       )
 

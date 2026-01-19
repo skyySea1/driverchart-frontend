@@ -16,10 +16,10 @@ describe('useDashboard', () => {
   })
 
   it('should initialize with default values', () => {
-    const { stats, error } = useDashboard()
+    const { statsData, error } = useDashboard()
     // Since fetchDashboardStats is called immediately, isLoading might be true depending on execution order
     // But initially stats and error should be null
-    expect(stats.value).toBeNull()
+    expect(statsData.value).toBeNull()
     expect(error.value).toBeNull()
   })
 
@@ -40,13 +40,13 @@ describe('useDashboard', () => {
     // Setup the mock resolution
     vi.mocked(dataService.getDashboardStats).mockResolvedValue(mockStats)
 
-    const { stats, isLoading, fetchDashboardStats } = useDashboard()
+    const { statsData, isLoading, fetchDashboardStats } = useDashboard()
 
     // Wait for the initial fetch (or call it explicitly if needed for test determinism)
     await fetchDashboardStats()
 
     expect(isLoading.value).toBe(false)
-    expect(stats.value).toEqual(mockStats)
+    expect(statsData.value).toEqual(mockStats)
     expect(dataService.getDashboardStats).toHaveBeenCalled()
   })
 
@@ -54,12 +54,12 @@ describe('useDashboard', () => {
     const mockError = new Error('Network Error')
     vi.mocked(dataService.getDashboardStats).mockRejectedValue(mockError)
 
-    const { stats, isLoading, error, fetchDashboardStats } = useDashboard()
+    const { statsData, isLoading, error, fetchDashboardStats } = useDashboard()
 
     await fetchDashboardStats()
 
     expect(isLoading.value).toBe(false)
-    expect(stats.value).toBeNull() // Should remain null or previous value
+    expect(statsData.value).toBeNull() // Should remain null or previous value
     expect(error.value).toEqual(mockError)
   })
 })

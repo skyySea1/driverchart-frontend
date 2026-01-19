@@ -3,7 +3,7 @@ import { dataService } from '@/services/dataService'
 import type { DashboardStats } from '@/types'
 
 // Singleton State
-const stats = ref<DashboardStats | null>(null)
+const statsData = ref<DashboardStats | null>(null)
 const isLoading = ref(false)
 const error = ref<unknown | null>(null)
 let pollingInterval: number | null = null
@@ -15,10 +15,10 @@ export function useDashboard() {
     error.value = null
     try {
       const data = await dataService.getDashboardStats()
-      stats.value = data
+      statsData.value = data
     } catch (err) {
       error.value = err
-      console.error('Failed to load dashboard stats', err)
+      console.error('Failed to load dashboard stats Data', err)
     } finally {
       if (!silent) isLoading.value = false
     }
@@ -45,7 +45,7 @@ export function useDashboard() {
 
   // Init logic
   listeners++
-  if (!stats.value && !isLoading.value) {
+  if (!statsData.value && !isLoading.value) {
     fetchDashboardStats()
   }
   startPolling()
@@ -57,7 +57,7 @@ export function useDashboard() {
   })
 
   return {
-    stats,
+    statsData,
     isLoading,
     error,
     fetchDashboardStats,
