@@ -184,15 +184,14 @@ export type USState =
 // User Role Types
 export type UserRole = 'admin' | 'manager' | 'dispatcher' | 'auditor' | 'viewer'
 export type VehicleTypes =
-
-  'Passenger Bus'
-  |'School Bus'
-  |'Charter Bus'
-  |'Straight Truck'
-  |'Semi-Truck/Trailer'
-  |'Van/Doubles'
-  |'Tractor'
-  |''
+  | 'Passenger Bus'
+  | 'School Bus'
+  | 'Charter Bus'
+  | 'Straight Truck'
+  | 'Semi-Truck/Trailer'
+  | 'Van/Doubles'
+  | 'Tractor'
+  | ''
 
 // Login Status Types
 export type LoginStatus =
@@ -203,7 +202,7 @@ export type LoginStatus =
   | 'unauthorized'
   | 'session_expired'
   | 'mfa_required'
-  | 'mfa_pending';
+  | 'mfa_pending'
 
 // User Interface with Login Info
 export interface User extends FirestoreDoc {
@@ -254,22 +253,71 @@ export type I9FormData = Partial<Driver> & {
   i9EmployerTitle?: string
 }
 
-
-
 // Application Form Data Type
 
-export interface Address { street: string; city: string; state: USState; zip: string; fromDate: string; toDate?: string; present?: boolean;}
+export interface Address {
+  street: string
+  city: string
+  state: USState
+  zip: string
+  fromDate: string
+  toDate?: string
+  present?: boolean
+}
 
 // Personal Info
-export interface PersonalInfo { firstName: string; middleName: string; lastName: string; dob: string; email: string; phone: string; ssnNumber: string; medicalExpirationDate?: string; }
-export interface License { number: string; state: USState; class: string; endorsements: string; restrictions: string; emitionDate: string; expirationDate: string;}
-export interface Accident { date: string; location: string; description: string; injuries: boolean; fatalities: boolean;}
-export interface Violation { date: string; violation: string;  location: string; penalty: string; }
-export interface Employment { companyName: string; address: string; city: string; state: USState; zip: string; phone: string; position: string; description?: string; fromDate: string; toDate: string; reasonForLeaving: string; cdlNumber?: string; wasCDL: boolean; present?: boolean; }
+export interface PersonalInfo {
+  firstName: string
+  middleName: string
+  lastName: string
+  dob: string
+  email: string
+  phone: string
+  ssnNumber: string
+  medicalExpirationDate?: string
+}
+export interface License {
+  number: string
+  state: USState
+  class: string
+  endorsements: string
+  restrictions: string
+  emissionDate: string
+  expirationDate: string
+}
+export interface Accident {
+  date: string
+  location: string
+  description: string
+  injuries: boolean
+  fatalities: boolean
+}
+export interface Violation {
+  date: string
+  violation: string
+  location: string
+  penalty: string
+}
+export interface Employment {
+  companyName: string
+  address: string
+  city: string
+  state: USState
+  zip: string
+  phone: string
+  position: string
+  description?: string
+  fromDate: string
+  toDate: string
+  reasonForLeaving: string
+  cdlNumber?: string
+  wasCDL: boolean
+  present?: boolean
+}
 
 export interface VehicleExperience {
   type: VehicleTypes
-  totalMileage: string|number
+  totalMileage: string | number
 }
 
 // Table view - simplified application data

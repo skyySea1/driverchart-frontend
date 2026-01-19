@@ -105,7 +105,7 @@
                 required
               />
 
-               <InputGroup
+              <InputGroup
                 v-model="form.personalInfo.medicalExpirationDate"
                 label="Medical Expiration Date"
                 placeholder="MM/DD/YYYY"
@@ -253,7 +253,7 @@
                     placeholder="P, S, N"
                   />
                   <InputGroup
-                    v-model="license.emitionDate"
+                    v-model="license.emissionDate"
                     label="Emission Date"
                     type="date"
                     required
@@ -310,7 +310,7 @@
                 </label>
                 <div class="space-y-2">
                   <div
-                    v-for="vehicleType in (VEHICLE_TYPES as VehicleTypes[])"
+                    v-for="vehicleType in VEHICLE_TYPES as VehicleTypes[]"
                     :key="vehicleType"
                     class="flex flex-col gap-2 p-3 border border-slate-100 rounded-lg bg-slate-50/50"
                   >
@@ -318,7 +318,12 @@
                       <input
                         type="checkbox"
                         :checked="isVehicleSelected(vehicleType)"
-                        @change="toggleVehicleType(vehicleType, ($event.target as HTMLInputElement).checked)"
+                        @change="
+                          toggleVehicleType(
+                            vehicleType,
+                            ($event.target as HTMLInputElement).checked,
+                          )
+                        "
                         class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                       />
                       <span class="font-medium text-slate-700">{{ vehicleType }}</span>
@@ -497,7 +502,9 @@
                   <label class="block text-xs font-bold text-slate-700 uppercase"
                     >Forfeitures Previous 3 Years</label
                   >
-                  <p class="text-xs font-bold text-slate-500 mb-1">List any forfeitures in the past 3 years.</p>
+                  <p class="text-xs font-bold text-slate-500 mb-1">
+                    List any forfeitures in the past 3 years.
+                  </p>
                   <textarea
                     v-model="form.forfeitures"
                     rows="3"
@@ -560,16 +567,11 @@
                     </div>
                   </div>
 
-                  <div
-                    v-if="form.deniedLicense || form.suspendedLicense"
-                    class="space-y-1"
-                  >
+                  <div v-if="form.deniedLicense || form.suspendedLicense" class="space-y-1">
                     <label class="block text-xs font-bold text-slate-700 uppercase"
                       >C. Explanation</label
                     >
-                    <p class="text-xs text-slate-500 mb-1">
-                      Briefly describe the circumstances.
-                    </p>
+                    <p class="text-xs text-slate-500 mb-1">Briefly describe the circumstances.</p>
                     <textarea
                       v-model="form.denialSuspensionExplanation"
                       rows="3"
@@ -776,11 +778,29 @@ const totalSteps = 7
 
 const form = ref<DriverApplicationForm>({
   id: '',
-  personalInfo: { firstName: '', middleName: '', lastName: '', dob: '', email: '', phone: '', ssnNumber: '' },
+  personalInfo: {
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    dob: '',
+    email: '',
+    phone: '',
+    ssnNumber: '',
+  },
   addresses: [{ street: '', city: '', state: '', zip: '', fromDate: '', toDate: '' }],
 
   // License Data
-  licenses: [{ number: '', state: '', class: '', endorsements: '', restrictions: '', emitionDate: '', expirationDate: '' }],
+  licenses: [
+    {
+      number: '',
+      state: '',
+      class: '',
+      endorsements: '',
+      restrictions: '',
+      emissionDate: '',
+      expirationDate: '',
+    },
+  ],
 
   // Accident & Violation History (last 3 years)
   accidents: [],
@@ -869,22 +889,40 @@ async function submit() {
 
 function reset() {
   form.value = {
-  id: '',
-  personalInfo: { firstName: '', middleName: '', lastName: '', dob: '', email: '', phone: '', ssnNumber: '' },
-  addresses: [{ street: '', city: '', state: '', zip: '', fromDate: '', toDate: '' }],
-  licenses: [{ number: '', state: '', class: '', endorsements: '', restrictions: '', emitionDate: '', expirationDate: '' }],
-  accidents: [],
-  violations: [],
-  forfeitures: '',
-  deniedLicense: false,
-  suspendedLicense: false,
-  denialSuspensionExplanation: '',
-  employmentHistory: [],
-  notes: '',
-  vehicleExperience: [ { type: '', totalMileage: 0}],
+    id: '',
+    personalInfo: {
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      dob: '',
+      email: '',
+      phone: '',
+      ssnNumber: '',
+    },
+    addresses: [{ street: '', city: '', state: '', zip: '', fromDate: '', toDate: '' }],
+    licenses: [
+      {
+        number: '',
+        state: '',
+        class: '',
+        endorsements: '',
+        restrictions: '',
+        emissionDate: '',
+        expirationDate: '',
+      },
+    ],
+    accidents: [],
+    violations: [],
+    forfeitures: '',
+    deniedLicense: false,
+    suspendedLicense: false,
+    denialSuspensionExplanation: '',
+    employmentHistory: [],
+    notes: '',
+    vehicleExperience: [{ type: '', totalMileage: 0 }],
 
-  experienceYears: 0,
-}
+    experienceYears: 0,
+  }
   currentStep.value = 1
   submitted.value = false
 
@@ -916,7 +954,7 @@ function addLicense() {
     class: '',
     endorsements: '',
     restrictions: '',
-    emitionDate: '',
+    emissionDate: '',
     expirationDate: '',
   })
 }
