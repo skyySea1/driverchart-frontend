@@ -10,7 +10,7 @@
         <div class="flex flex-col items-center gap-3">
           <div class="flex items-center gap-3">
             <Bus class="w-8 h-8 text-blue-400 shrink-0" />
-            <h1 class="text-2xl font-bold text-white">CharterSafe</h1>
+            <h1 class="text-2xl font-bold text-white">PhoenixBus</h1>
           </div>
 
           <div class="space-y-0.5">
@@ -105,6 +105,14 @@
                 required
               />
 
+               <InputGroup
+                v-model="form.personalInfo.medicalExpirationDate"
+                label="Medical Expiration Date"
+                placeholder="MM/DD/YYYY"
+                type="date"
+                required
+              />
+
               <InputGroup
                 v-model="form.personalInfo.email"
                 label="Email Address"
@@ -162,16 +170,21 @@
                   <InputGroup v-model="address.state" label="State" required placeholder="FL" />
                 </div>
 
-                <div class="grid grid-cols-3 gap-3">
-                  <InputGroup v-model="address.zip" label="ZIP" required placeholder="32801" />
+                <div class="grid grid-cols-2 gap-3">
                   <InputGroup v-model="address.fromDate" label="From" type="date" required />
                   <InputGroup
                     v-model="address.toDate"
+                    :checkboxValue="address.present || false"
+                    @update:checkboxValue="address.present = $event"
+                    :isEnabled="!address.present"
+                    enableCheck
+                    toggleTitle="Mark if this is your current address"
                     label="To"
                     type="date"
                     placeholder="Current"
                   />
                 </div>
+                <InputGroup v-model="address.zip" label="ZIP" required placeholder="32801" />
               </div>
 
               <button
@@ -193,6 +206,11 @@
                   List all licenses/CDLs with numbers, classes, and restrictions
                 </p>
               </div>
+
+              <BaseAlert
+                type="warning"
+                message="Failure to enter accurate license information may result in non-consideration and a rejected application!"
+              />
 
               <div
                 v-for="(license, index) in form.licenses"
@@ -221,7 +239,7 @@
                   <InputGroup v-model="license.state" label="State" required placeholder="FL" />
                 </div>
 
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-2 gap-3">
                   <InputGroup
                     v-model="license.class"
                     label="Class"
@@ -230,8 +248,15 @@
                   />
                   <InputGroup
                     v-model="license.endorsements"
+                    type=""
                     label="Endorsements"
                     placeholder="P, S, N"
+                  />
+                  <InputGroup
+                    v-model="license.emitionDate"
+                    label="Emission Date"
+                    type="date"
+                    required
                   />
                   <InputGroup
                     v-model="license.expirationDate"
@@ -284,27 +309,36 @@
                   Vehicle Types (Select all that apply)
                 </label>
                 <div class="space-y-2">
-                  <label
-                    v-for="type in [
-                      'Passenger Bus',
-                      'School Bus',
-                      'Charter Bus',
-                      'Straight Truck',
-                      'Semi-Truck/Trailer',
-                      'Van',
-                      'Other',
-                    ]"
-                    :key="type"
-                    class="flex items-center gap-2 text-sm"
+                  <div
+                    v-for="vehicleType in (VEHICLE_TYPES as VehicleTypes[])"
+                    :key="vehicleType"
+                    class="flex flex-col gap-2 p-3 border border-slate-100 rounded-lg bg-slate-50/50"
                   >
-                    <input
-                      type="checkbox"
-                      :value="type"
-                      v-model="form.vehicleTypes"
-                      class="rounded border-slate-300"
-                    />
-                    <span>{{ type }}</span>
-                  </label>
+                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                      <input
+                        type="checkbox"
+                        :checked="isVehicleSelected(vehicleType)"
+                        @change="toggleVehicleType(vehicleType, ($event.target as HTMLInputElement).checked)"
+                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <span class="font-medium text-slate-700">{{ vehicleType }}</span>
+                    </label>
+
+                    <div
+                      v-if="isVehicleSelected(vehicleType)"
+                      class="ml-6 animate-in fade-in slide-in-from-top-1 duration-200"
+                    >
+                      <InputGroup
+                        v-if="getVehicleEntry(vehicleType)"
+                        v-model.number="getVehicleEntry(vehicleType)!.totalMileage"
+                        label="Total Mileage"
+                        type="number"
+                        min="0"
+                        placeholder="e.g. 5000"
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -456,6 +490,95 @@
                   + Add Violation
                 </button>
               </div>
+
+              <!-- Forfeitures & Legal Questions -->
+              <div class="space-y-4 mt-6 border-t border-slate-100 pt-4">
+                <div class="space-y-2">
+                  <label class="block text-xs font-bold text-slate-700 uppercase"
+                    >Forfeitures Previous 3 Years</label
+                  >
+                  <p class="text-xs font-bold text-slate-500 mb-1">List any forfeitures in the past 3 years.</p>
+                  <textarea
+                    v-model="form.forfeitures"
+                    rows="3"
+                    class="input-base w-full resize-none"
+                    placeholder="List details here..."
+                  ></textarea>
+                </div>
+
+                <div class="space-y-3">
+                  <div class="space-y-1">
+                    <p class="text-sm font-medium text-slate-700">
+                      A. Have you ever been denied a license, permit or privilege to operate a motor
+                      vehicle?
+                    </p>
+                    <div class="flex gap-4">
+                      <label class="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          v-model="form.deniedLicense"
+                          :value="true"
+                          class="text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span class="text-sm">Yes</span>
+                      </label>
+                      <label class="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          v-model="form.deniedLicense"
+                          :value="false"
+                          class="text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span class="text-sm">No</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="space-y-1">
+                    <p class="text-sm font-medium text-slate-700">
+                      B. Has any license, permit or privilege ever been suspended or revoked?
+                    </p>
+                    <div class="flex gap-4">
+                      <label class="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          v-model="form.suspendedLicense"
+                          :value="true"
+                          class="text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span class="text-sm">Yes</span>
+                      </label>
+                      <label class="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          v-model="form.suspendedLicense"
+                          :value="false"
+                          class="text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span class="text-sm">No</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="form.deniedLicense || form.suspendedLicense"
+                    class="space-y-1"
+                  >
+                    <label class="block text-xs font-bold text-slate-700 uppercase"
+                      >C. Explanation</label
+                    >
+                    <p class="text-xs text-slate-500 mb-1">
+                      Briefly describe the circumstances.
+                    </p>
+                    <textarea
+                      v-model="form.denialSuspensionExplanation"
+                      rows="3"
+                      class="input-base w-full resize-none"
+                      placeholder="Explanation..."
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Step 6: Employment History -->
@@ -532,16 +655,27 @@
                   />
                   <InputGroup
                     v-model="job.position"
-                    label="Position"
+                    label="Position Held"
                     required
                     placeholder="Bus Driver"
                   />
                 </div>
 
+                <InputGroup
+                  v-model="job.description"
+                  label="Employment Description"
+                  placeholder="Describe your duties..."
+                />
+
                 <div class="grid grid-cols-2 gap-2">
                   <InputGroup v-model="job.fromDate" label="From Date" type="date" required />
                   <InputGroup
                     v-model="job.toDate"
+                    :checkboxValue="job.present || false"
+                    @update:checkboxValue="job.present = $event"
+                    :isEnabled="!job.present"
+                    enableCheck
+                    toggleTitle="Check if this is your current job"
                     label="To Date"
                     type="date"
                     placeholder="Current"
@@ -631,7 +765,9 @@ import { Check, Bus, Loader2, ArrowRight, ArrowLeft } from 'lucide-vue-next'
 import AnimatedBody from '@/Components/ui/AnimatedBody.vue'
 import InputGroup from '@/Components/ui/InputGroup.vue'
 import BaseButton from '@/Components/ui/BaseButton.vue'
-import type { DriverApplicationForm } from '@/types'
+import BaseAlert from '@/Components/ui/BaseAlert.vue'
+import { VEHICLE_TYPES } from '@/utils/constants'
+import type { DriverApplicationForm, VehicleTypes } from '@/types'
 
 const loading = ref(false)
 const submitted = ref(false)
@@ -640,34 +776,32 @@ const totalSteps = 7
 
 const form = ref<DriverApplicationForm>({
   id: '',
-  personalInfo: {
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    dob: '',
-    email: '',
-    phone: '',
-    ssnNumber: '',
-  },
+  personalInfo: { firstName: '', middleName: '', lastName: '', dob: '', email: '', phone: '', ssnNumber: '' },
   addresses: [{ street: '', city: '', state: '', zip: '', fromDate: '', toDate: '' }],
 
   // License Data
-  licenses: [
-    { number: '', state: '', class: '', endorsements: '', restrictions: '', expirationDate: '' },
-  ],
-
-  // Driving Experience
-  vehicleTypes: [],
-  experienceYears: 0,
+  licenses: [{ number: '', state: '', class: '', endorsements: '', restrictions: '', emitionDate: '', expirationDate: '' }],
 
   // Accident & Violation History (last 3 years)
   accidents: [],
   violations: [],
+  forfeitures: '',
+  deniedLicense: false,
+  suspendedLicense: false,
+  denialSuspensionExplanation: '',
 
   // Employment History
   employmentHistory: [],
   notes: '',
+
+  // Driving Experience
+  vehicleExperience: [{ type: 'Passenger Bus', totalMileage: 0 }],
+
+  experienceYears: 0,
 })
+
+// Track if address end-date field; when enabled, we set "present"
+const presentAddress = ref<boolean>(false)
 
 const currentStepName = computed(() => {
   switch (currentStep.value) {
@@ -735,33 +869,38 @@ async function submit() {
 
 function reset() {
   form.value = {
-    id: '',
-    personalInfo: {
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      dob: '',
-      email: '',
-      phone: '',
-      ssnNumber: '',
-    },
-    addresses: [{ street: '', city: '', state: '', zip: '', fromDate: '', toDate: '' }],
-    licenses: [
-      { number: '', state: '', class: '', endorsements: '', restrictions: '', expirationDate: '' },
-    ],
-    vehicleTypes: [],
-    experienceYears: 0,
-    accidents: [],
-    violations: [],
-    employmentHistory: [],
-    notes: '',
-  }
+  id: '',
+  personalInfo: { firstName: '', middleName: '', lastName: '', dob: '', email: '', phone: '', ssnNumber: '' },
+  addresses: [{ street: '', city: '', state: '', zip: '', fromDate: '', toDate: '' }],
+  licenses: [{ number: '', state: '', class: '', endorsements: '', restrictions: '', emitionDate: '', expirationDate: '' }],
+  accidents: [],
+  violations: [],
+  forfeitures: '',
+  deniedLicense: false,
+  suspendedLicense: false,
+  denialSuspensionExplanation: '',
+  employmentHistory: [],
+  notes: '',
+  vehicleExperience: [ { type: '', totalMileage: 0}],
+
+  experienceYears: 0,
+}
   currentStep.value = 1
   submitted.value = false
+
+  presentAddress.value = false
 }
 
 function addAddress() {
-  form.value.addresses.push({ street: '', city: '', state: '', zip: '', fromDate: '', toDate: '' })
+  form.value.addresses.push({
+    street: '',
+    city: '',
+    state: '',
+    zip: '',
+    fromDate: '',
+    toDate: '',
+    present: undefined,
+  })
 }
 
 function removeAddress(index: number) {
@@ -777,6 +916,7 @@ function addLicense() {
     class: '',
     endorsements: '',
     restrictions: '',
+    emitionDate: '',
     expirationDate: '',
   })
 }
@@ -818,6 +958,7 @@ function addEmployment() {
     zip: '',
     phone: '',
     position: '',
+    description: '',
     fromDate: '',
     toDate: '',
     reasonForLeaving: '',
@@ -827,6 +968,27 @@ function addEmployment() {
 
 function removeEmployment(index: number) {
   form.value.employmentHistory.splice(index, 1)
+}
+
+function isVehicleSelected(type: string) {
+  return form.value.vehicleExperience.some((v) => v.type === type)
+}
+
+function toggleVehicleType(type: VehicleTypes, checked: boolean) {
+  if (checked) {
+    if (!isVehicleSelected(type)) {
+      form.value.vehicleExperience.push({ type, totalMileage: 0 })
+    }
+  } else {
+    const index = form.value.vehicleExperience.findIndex((v) => v.type === type)
+    if (index !== -1) {
+      form.value.vehicleExperience.splice(index, 1)
+    }
+  }
+}
+
+function getVehicleEntry(type: VehicleTypes) {
+  return form.value.vehicleExperience.find((v) => v.type === type)
 }
 </script>
 

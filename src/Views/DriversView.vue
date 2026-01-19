@@ -354,6 +354,7 @@ const driversData = computed<DriverRow[]>(() => {
     list = list.filter((d) => {
       const fullName = `${d.firstName} ${d.lastName}`.toLowerCase()
       return (
+        (d.id && d.id.toLowerCase().includes(query)) ||
         fullName.includes(query) ||
         d.firstName.toLowerCase().includes(query) ||
         d.lastName.toLowerCase().includes(query)

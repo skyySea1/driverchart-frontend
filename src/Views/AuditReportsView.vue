@@ -62,5 +62,5 @@ import { useDashboard } from '@/Composables/useDashboard'
 import { AlertTriangle } from 'lucide-vue-next'
 
 const router = useRouter()
-const { stats, isLoading } = useDashboard()
+const { statsData: stats, isLoading } = useDashboard()
 </script>
