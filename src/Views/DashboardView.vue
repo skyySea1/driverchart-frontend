@@ -84,7 +84,7 @@
             <template v-else>
               <li
                 v-for="a in priorityAlerts"
-                :key="a.id"
+                :key="a.entityName"
                 @click="navigateToDriver(a)"
                 class="p-2 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors group cursor-pointer"
               >
