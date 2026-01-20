@@ -145,7 +145,7 @@ const formatDate = (date?: string) => {
 
 // todo remove query in select filter  (duplication with AlertsView(ai suggestion)
 const navigateToDriver = (alert: Alert) => {
-  const searchTerm = alert.entityId || alert.entityName || alert.entity
+  const searchTerm = alert.entityName || alert.entity
   if (searchTerm) {
     router.push({
       path: '/drivers',
