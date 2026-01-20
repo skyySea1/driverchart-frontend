@@ -84,7 +84,7 @@ function alertClass(type: Alert['type']) {
 }
 
 const navigateToDriver = (alert: Alert) => {
-  const searchTerm = alert.entityId || alert.entityName || alert.entity
+  const searchTerm = alert.entityName || alert.entity
   if (searchTerm) {
     router.push({
       path: '/drivers',

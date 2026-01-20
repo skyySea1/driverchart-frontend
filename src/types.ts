@@ -8,6 +8,7 @@ export type ApplicationStatusType = 'Pending' | 'Approved' | 'Rejected'
 export type ComplianceItem = z.infer<typeof ComplianceItemSchema>
 export type DriverBase = z.infer<typeof DriverSchema> // Inferred Driver Type + Firestore ID + UI-only fields
 
+// entity can be used for searching by name or type
 export interface Alert {
   id: string
   type: 'critical' | 'warning' | 'info'
