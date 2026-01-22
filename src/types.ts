@@ -318,7 +318,6 @@ export interface Employment {
 
 export interface VehicleExperience {
   type: VehicleTypes
-  totalMileage: string | number
 }
 
 // Table view - simplified application data
@@ -364,4 +363,27 @@ export interface DriverApplicationForm extends FirestoreDoc {
   employmentHistory: Employment[]
 
   notes?: string
+
+  // Uploads
+  licenseFront?: string | File | null
+  licenseBack?: string | File | null
+  medicalCard?: string | File | null
+
+  // Drug & Alcohol Statement
+  drugTestPositiveOrRefusal: boolean
+  drugTestDocumentation: 'Yes' | 'No' | 'N/A'
+  drugTestSignature: string
+  drugTestDate: string
+
+  // Authorization & Release
+  authReleaseSignature: string
+  authReleaseDate: string
+
+  // PSP Disclosure
+  pspDisclosureSignature: string
+  pspDisclosureDate: string
+
+  // FMCSA Clearinghouse Consent
+  fmcsaConsentSignature: string
+  fmcsaConsentDate: string
 }
