@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex items-center gap-2 mb-1">
-      <label class="block text-xs font-bold text-slate-700">
+      <label :class="['block text-xs font-bold text-slate-700', labelClass]">
         {{ label }}
         <span v-if="required" class="text-red-500">*</span>
       </label>
@@ -14,10 +14,10 @@
           @change="$emit('update:checkboxValue', ($event.target as HTMLInputElement).checked)"
           class="w-4 h-4 rounded border-slate-300 cursor-pointer"
         />
-        <span class="text-[10px] text-slate-600 font-semibold uppercase tracking-tight"
-          >{{checkboxTitle  || 'undefined checkboxTitle'}}</span
-          >
-        </label>
+        <span class="text-[10px] text-slate-600 font-semibold uppercase tracking-tight">{{
+          checkboxTitle || 'undefined checkboxTitle'
+        }}</span>
+      </label>
 
       <!-- Tooltip -->
       <div v-if="tooltip" class="group relative flex items-center">
@@ -60,6 +60,7 @@ const {
   checkboxValue = false,
   toggleTitle = 'Enable/disable field',
   checkboxTitle = 'Present?',
+  labelClass = '', // avoid undefined
 } = defineProps<{
   label: string
   modelValue: string | number | undefined
@@ -73,6 +74,7 @@ const {
   checkboxValue?: boolean
   toggleTitle?: string
   checkboxTitle?: string
+  labelClass?: string
 }>()
 
 defineEmits<{
