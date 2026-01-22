@@ -74,7 +74,6 @@ export const EmploymentSchema = z.object({
 
 export const VehicleExperienceSchema = z.object({
   type: z.string(),
-  totalMileage: z.string(),
 });
 
 // Driver Application Form Schema
@@ -93,6 +92,19 @@ export const DriverApplicationFormSchema = z.object({
   denialSuspensionExplanation: z.string().optional().default(''),
   employmentHistory: z.array(EmploymentSchema).default([]),
   notes: z.string().optional().default(''),
+  licenseFront: z.union([z.string(), z.any()]).optional().nullable(),
+  licenseBack: z.union([z.string(), z.any()]).optional().nullable(),
+  medicalCard: z.union([z.string(), z.any()]).optional().nullable(),
+  drugTestPositiveOrRefusal: z.boolean().default(false),
+  drugTestDocumentation: z.enum(['Yes', 'No', 'N/A']).default('N/A'),
+  drugTestSignature: z.string().min(1, 'Signature is required'),
+  drugTestDate: z.string().min(1, 'Date signed is required'),
+  authReleaseSignature: z.string().min(1, 'Applicant Signature is required'),
+  authReleaseDate: z.string().min(1, 'Date Signed is required'),
+  pspDisclosureSignature: z.string().min(1, 'Prospective Employee Signature is required'),
+  pspDisclosureDate: z.string().min(1, 'Date Signed is required'),
+  fmcsaConsentSignature: z.string().min(1, 'Employee Signature is required'),
+  fmcsaConsentDate: z.string().min(1, 'Date Signed is required'),
 })
 
 export type DriverApplicationFormData = z.infer<typeof DriverApplicationFormSchema>
