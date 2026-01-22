@@ -5,7 +5,7 @@
     <!-- Application Card -->
     <div
       class="app-card bg-white rounded-2xl shadow-2xl w-full overflow-hidden z-10 flex flex-col transition-all duration-500 ease-in-out"
-      :class="currentStep >= 7 ? 'max-w-3xl' : 'max-w-md'"
+      :class="(currentStep === 7 || currentStep === 8) ? 'max-w-3xl' : 'max-w-md'"
     >
       <div class="bg-slate-900 p-6 text-center shrink-0">
         <div class="flex flex-col items-center gap-3">
@@ -706,7 +706,7 @@
                     </div>
                   </div>
 
-                  <div class="grid grid-cols-2 gap-4 mt-6">
+                  <div class="grid grid-cols-2 gap-4 mt-6 ml-1 mr-1 mb-2">
                     <InputGroup
                       v-model="form.drugTestSignature"
                       label="Employee Signature"
@@ -851,8 +851,7 @@
                     PSP Driver Disclosure & Authorization
                   </h3>
                   <div
-                    class="text-[12px] text-slate-600 leading-relaxed text-justify space-y-2 max-h-96 overflow-y-auto pr-2 border border-slate-100 rounded-lg p-3 bg-slate-50/50"
-                  >
+                    class="text-[12px] text-slate-600 leading-relaxed text-justify space-y-2 max-h-96 overflow-y-auto pr-2 border border-slate-100 rounded-lg p-3 bg-slate-50/50">
                     <p class="font-bold text-center">
                       THE BELOW DISCLOSURE AND AUTHORIZATION LANGUAGE IS FOR MANDATORY USE BY ALL
                       ACCOUNT HOLDERS
@@ -860,7 +859,6 @@
                     <p class="font-bold text-center">
                       IMPORTANT DISCLOSURE REGARDING BACKGROUND REPORTS FROM THE PSP Online Service
                     </p>
-
                     <p>
                       In connection with your application for employment with Phoenix Bus Inc
                       (“Prospective Employer”), Prospective Employer, its employees, agents or
@@ -868,7 +866,6 @@
                       inspection history from the Federal Motor Carrier Safety Administration
                       (FMCSA).
                     </p>
-
                     <p>
                       When the application for employment is submitted in person, if the Prospective
                       Employer uses any information it obtains from FMCSA in a decision to not hire
@@ -880,7 +877,6 @@
                       the Prospective Employer will notify you that the action has been taken and
                       that the action was based in part or in whole on this report.
                     </p>
-
                     <p>
                       When the application for employment is submitted by mail, telephone, computer,
                       or other similar means, if the Prospective Employer uses any information it
@@ -900,7 +896,6 @@
                       you a copy of your report and a summary of your rights under the Fair Credit
                       Reporting Act.
                     </p>
-
                     <p>
                       Neither the Prospective Employer nor the FMCSA contractor supplying the crash
                       and safety information has the capability to correct any safety data that
@@ -910,7 +905,6 @@
                       this data. Your request will be forwarded by the DataQs system to the
                       appropriate State for adjudication.
                     </p>
-
                     <p>
                       Any crash or inspection in which you were involved will display on your PSP
                       report. Since the PSP report does not report, or assign, or imply fault, it
@@ -921,19 +915,15 @@
                       Regulations (FMCSR) violations that have been adjudicated by a court of law
                       will also appear, and remain, on a PSP report.
                     </p>
-
                     <p>
                       The Prospective Employer cannot obtain background reports from FMCSA without
                       your authorization.
                     </p>
-
                     <p class="font-bold text-center">AUTHORIZATION</p>
-
                     <p>
                       If you agree that the Prospective Employer may obtain such background reports,
                       please read the following and sign below:
                     </p>
-
                     <p>
                       I authorize Phoenix Bus Inc (“Prospective Employer”) to access the FMCSA
                       Pre-Employment Screening Program (PSP) system to seek information regarding my
@@ -944,7 +934,6 @@
                       acknowledge that this release of information may assist the Prospective
                       Employer to make a determination regarding my suitability as an employee.
                     </p>
-
                     <p>
                       I further understand that neither the Prospective Employer nor the FMCSA
                       contractor supplying the crash and safety information has the capability to
@@ -955,7 +944,6 @@
                       request will be forwarded by the DataQs system to the appropriate State for
                       adjudication.
                     </p>
-
                     <p>
                       I understand that any crash or inspection in which I was involved will display
                       on my PSP report. Since the PSP report does not report, or assign, or imply
@@ -971,7 +959,6 @@
                       employees, authorized agents, and/or affiliates to obtain the information
                       authorized above.
                     </p>
-
                     <p class="text-[12px] mt-4 text-slate-500">
                       NOTICE: This form is made available to monthly account holders by NIC on
                       behalf of the U.S. Department of Transportation, Federal Motor Carrier Safety
@@ -991,16 +978,16 @@
                   </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-4 mr-1 mb-2">
                   <InputGroup
-                    :labelClass="currentStep >= 7 ? 'text-[8px]' : 'text-[20px]'"
+                    :labelClass="currentStep >= 7 ? 'text-[11.5px]' : 'text-[13px]'"
                     v-model="form.pspDisclosureSignature"
                     label="Prospective Employee Signature"
                     required
                     placeholder="Type your full name"
                   />
                   <InputGroup
-                    :labelClass="currentStep >= 7 ? 'text-[8px]' : 'text-[20px]'"
+                    :labelClass="currentStep >= 7 ? 'text-[11.5px]' : 'text-[13px]'"
                     v-model="form.pspDisclosureDate"
                     label="Date Signed"
                     type="date"
@@ -1010,23 +997,9 @@
               </div>
             </div>
 
-            <!-- Step 8: Additional Notes -->
+            <!-- Step 8: Authorization & Release -->
             <div v-else-if="currentStep === 8" class="space-y-4 flex-1 overflow-y-auto">
-              <div class="space-y-1">
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
-                  >Additional Notes</label
-                >
-
-                <textarea
-                  v-model="form.notes"
-                  rows="4"
-                  class="input-base w-full resize-none"
-                  placeholder="Any additional information, certifications, special qualifications, or comments..."
-                ></textarea>
-              </div>
-
-              <!-- Authorization & Release -->
-              <div class="mt-6 pt-6 border-t border-slate-100 space-y-4">
+              <div class="space-y-4">
                 <div class="space-y-2">
                   <h3 class="text-sm font-bold text-slate-700 uppercase tracking-tighter">
                     Authorization & Release
@@ -1086,6 +1059,19 @@
                 </div>
               </div>
             </div>
+            <!-- Step 9: Additional Notes -->
+            <div v-else-if="currentStep === 9" class="space-y-4 flex-1 overflow-y-auto max-h-96">
+              <div class="space-y-1">
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
+                  >Additional Notes</label>
+                <textarea
+                  v-model="form.notes"
+                  rows="4"
+                  class="input-base w-full resize-none"
+                  placeholder="Any additional information, certifications, special qualifications, or comments..."
+                ></textarea>
+              </div>
+            </div>
           </Transition>
 
           <div class="pt-6 mt-auto flex gap-3 border-t border-slate-100">
@@ -1132,7 +1118,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { dataService } from '@/services/dataService'
 import { Check, Bus, Loader2, ArrowRight, ArrowLeft } from 'lucide-vue-next'
 import AnimatedBody from '@/Components/ui/AnimatedBody.vue'
@@ -1275,6 +1261,48 @@ const progressPercentage = computed(() => {
   return (currentStep.value / totalSteps) * 100
 })
 
+// Persistence Logic
+const STORAGE_KEY = 'driver_application_progress'
+
+function saveProgress() {
+  try {
+    const dataToSave = {
+      form: form.value,
+      currentStep: currentStep.value,
+      lastUpdated: new Date().toISOString(),
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave))
+  } catch (e) {
+    console.warn('Failed to save application progress', e)
+  }
+}
+
+watch(
+  [form, currentStep],
+  () => {
+    saveProgress()
+  },
+  { deep: true },
+)
+
+onMounted(() => {
+  const saved = localStorage.getItem(STORAGE_KEY)
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved)
+      if (parsed.form) {
+        // Merge saved form with default structure to ensure new fields exist
+        form.value = { ...form.value, ...parsed.form }
+      }
+      if (parsed.currentStep) {
+        currentStep.value = parsed.currentStep
+      }
+    } catch (e) {
+      console.warn('Failed to restore application progress', e)
+    }
+  }
+})
+
 function nextStep() {
   if (currentStep.value < totalSteps) {
     currentStep.value++
@@ -1305,6 +1333,7 @@ async function submit() {
     })
 
     submitted.value = true
+    localStorage.removeItem(STORAGE_KEY)
   } catch (err) {
     console.error('Error submitting application:', err)
 
@@ -1374,6 +1403,7 @@ function reset() {
   licenseFrontName.value = ''
   licenseBackName.value = ''
   medicalCardName.value = ''
+  localStorage.removeItem(STORAGE_KEY)
 }
 
 function addAddress() {
@@ -1471,7 +1501,6 @@ function toggleVehicleType(type: VehicleTypes, checked: boolean) {
     }
   }
 }
-
 </script>
 
 <style scoped>
