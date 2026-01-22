@@ -80,7 +80,6 @@ const navItems = [
   { id: 'drivers', label: 'Drivers (DQ Files)', icon: Users },
   { id: 'vehicles', label: 'Fleet Maintenance', icon: Truck, hidden: true },
   { id: 'audit', label: ' Audit Reports', icon: PieChart },
-  { id: 'docs', label: 'Document Registry', icon: FileText },
   { id: 'applications', label: 'Applications', icon: UserPlus },
   { id: 'reports', label: 'Main Reports', icon: FileText },
   { id: 'settings', label: 'Settings', icon: Settings },
