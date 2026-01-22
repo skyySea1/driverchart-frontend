@@ -4,7 +4,8 @@
   <AnimatedBody>
     <!-- Application Card -->
     <div
-      class="app-card bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden z-10 flex flex-col"
+      class="app-card bg-white rounded-2xl shadow-2xl w-full overflow-hidden z-10 flex flex-col transition-all duration-500 ease-in-out"
+      :class="currentStep >= 7 ? 'max-w-3xl' : 'max-w-md'"
     >
       <div class="bg-slate-900 p-6 text-center shrink-0">
         <div class="flex flex-col items-center gap-3">
@@ -332,19 +333,53 @@
                     <div
                       v-if="isVehicleSelected(vehicleType)"
                       class="ml-6 animate-in fade-in slide-in-from-top-1 duration-200"
-                    >
-                      <InputGroup
-                        v-if="getVehicleEntry(vehicleType)"
-                        v-model.number="getVehicleEntry(vehicleType)!.totalMileage"
-                        label="Total Mileage"
-                        type="number"
-                        min="0"
-                        placeholder="e.g. 5000"
-                        required
-                      />
-                    </div>
+                    ></div>
                   </div>
                 </div>
+              </div>
+
+              <!-- Driver License Upload Section -->
+              <div class="mt-6 pt-6 border-t border-slate-100 space-y-4">
+                <div class="space-y-1">
+                  <h3 class="text-sm font-bold text-slate-700 uppercase tracking-tighter">
+                    Upload Florida Driver License: {{ form.licenses[0]?.number || '32065516205' }}
+                  </h3>
+                  <p class="text-xs text-slate-500">
+                    Please upload a copy of the drivers license specified above. (Supported Formats:
+                    .jpg, .png, .gif)
+                  </p>
+                </div>
+
+                <FileInput
+                  label="Please upload the FRONT copy of your drivers license."
+                  v-model:fileName="licenseFrontName"
+                  @change="handleLicenseFrontUpload"
+                />
+
+                <FileInput
+                  label="Please upload the BACK copy of your drivers license."
+                  v-model:fileName="licenseBackName"
+                  @change="handleLicenseBackUpload"
+                />
+              </div>
+
+              <!-- Medical Card Upload Section -->
+              <div class="mt-6 pt-6 border-t border-slate-100 space-y-4">
+                <div class="space-y-1">
+                  <h3 class="text-sm font-bold text-slate-700 uppercase tracking-tighter">
+                    Upload Medical Card Copy
+                  </h3>
+                  <p class="text-xs text-slate-500">
+                    Please scan and upload a copy of your medical card. (Supported Formats: .jpg,
+                    .png, .gif)
+                  </p>
+                </div>
+
+                <FileInput
+                  label="Please select the file(s) to upload."
+                  v-model:fileName="medicalCardName"
+                  @change="handleMedicalCardUpload"
+                />
               </div>
             </div>
 
@@ -581,6 +616,112 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Pre-Employment Employee Alcohol & Drug Test Statement -->
+              <div class="space-y-4 mt-6 border-t border-slate-100 pt-6">
+                <div class="space-y-2">
+                  <h3 class="text-sm font-bold text-slate-700 uppercase tracking-tighter">
+                    Pre-Employment Employee Alcohol & Drug Test Statement
+                  </h3>
+                  <p class="text-xs text-slate-600 leading-relaxed text-justify">
+                    49 CFR Part 40.25(j) states, as the employer, you must ask the employee whether
+                    he or she has tested positive, or refused to test, on any pre-employment drug or
+                    alcohol test administered by an employer to which the employee applied for, but
+                    did not obtain, safety-sensitive transportation work covered by DOT agency drug
+                    and alcohol testing rules during the past two years. If the employee admits that
+                    he or she had a positive test or a refusal to test, you must not use the
+                    employee to perform safety-sensitive functions for you, until and unless the
+                    employee documents successful completion of the return-to-duty process required
+                    in 49 CFR Subpart O.
+                  </p>
+                </div>
+
+                <div class="space-y-4">
+                  <div class="space-y-2">
+                    <p class="text-sm font-bold text-slate-700">
+                      As the prospective employee, have you:
+                    </p>
+                    <p class="text-sm text-slate-700">
+                      1. Tested positive, or refused to test, on any pre-employment drug or alcohol
+                      test administered by an employer to which the employee applied for, but did
+                      not obtain, safety-sensitive transportation work covered by DOT agency drug
+                      and alcohol testing rules during the past two years.
+                    </p>
+                    <div class="flex gap-6 mt-2">
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          v-model="form.drugTestPositiveOrRefusal"
+                          :value="true"
+                          class="text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                        />
+                        <span class="text-sm font-medium text-slate-700">Yes</span>
+                      </label>
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          v-model="form.drugTestPositiveOrRefusal"
+                          :value="false"
+                          class="text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                        />
+                        <span class="text-sm font-medium text-slate-700">No</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <p class="text-sm text-slate-700">
+                      2. If you answered yes to the above question, can you provide documentation of
+                      successful completion of DOT return-to-duty requirements (including follow-up
+                      tests).
+                    </p>
+                    <div class="flex gap-6 mt-2">
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          v-model="form.drugTestDocumentation"
+                          value="Yes"
+                          class="text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                        />
+                        <span class="text-sm font-medium text-slate-700">Yes</span>
+                      </label>
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          v-model="form.drugTestDocumentation"
+                          value="No"
+                          class="text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                        />
+                        <span class="text-sm font-medium text-slate-700">No</span>
+                      </label>
+                      <label class="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          v-model="form.drugTestDocumentation"
+                          value="N/A"
+                          class="text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                        />
+                        <span class="text-sm font-medium text-slate-700">N/A</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-4 mt-6">
+                    <InputGroup
+                      v-model="form.drugTestSignature"
+                      label="Employee Signature"
+                      required
+                      placeholder="Type your full name"
+                    />
+                    <InputGroup
+                      v-model="form.drugTestDate"
+                      label="Date Signed"
+                      type="date"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Step 6: Employment History -->
@@ -700,19 +841,249 @@
               </button>
             </div>
 
-            <!-- Step 7: Additional Notes -->
-            <div v-else-if="currentStep === 7" class="space-y-4 flex-1">
-              <div class="space-y-1 h-full flex flex-col">
+            <!-- Step 7: PSP Driver Disclosure & Authorization -->
+            <div v-else-if="currentStep === 7" class="space-y-4 flex-1 overflow-y-auto">
+              <div class="space-y-4">
+                <div class="space-y-2">
+                  <h3
+                    class="text-sm font-bold text-slate-700 uppercase tracking-tighter text-center"
+                  >
+                    PSP Driver Disclosure & Authorization
+                  </h3>
+                  <div
+                    class="text-[12px] text-slate-600 leading-relaxed text-justify space-y-2 max-h-96 overflow-y-auto pr-2 border border-slate-100 rounded-lg p-3 bg-slate-50/50"
+                  >
+                    <p class="font-bold text-center">
+                      THE BELOW DISCLOSURE AND AUTHORIZATION LANGUAGE IS FOR MANDATORY USE BY ALL
+                      ACCOUNT HOLDERS
+                    </p>
+                    <p class="font-bold text-center">
+                      IMPORTANT DISCLOSURE REGARDING BACKGROUND REPORTS FROM THE PSP Online Service
+                    </p>
+
+                    <p>
+                      In connection with your application for employment with Phoenix Bus Inc
+                      (“Prospective Employer”), Prospective Employer, its employees, agents or
+                      contractors may obtain one or more reports regarding your driving, and safety
+                      inspection history from the Federal Motor Carrier Safety Administration
+                      (FMCSA).
+                    </p>
+
+                    <p>
+                      When the application for employment is submitted in person, if the Prospective
+                      Employer uses any information it obtains from FMCSA in a decision to not hire
+                      you or to make any other adverse employment decision regarding you, the
+                      Prospective Employer will provide you with a copy of the report upon which its
+                      decision was based and a written summary of your rights under the Fair Credit
+                      Reporting Act before taking any final adverse action. If any final adverse
+                      action is taken against you based upon your driving history or safety report,
+                      the Prospective Employer will notify you that the action has been taken and
+                      that the action was based in part or in whole on this report.
+                    </p>
+
+                    <p>
+                      When the application for employment is submitted by mail, telephone, computer,
+                      or other similar means, if the Prospective Employer uses any information it
+                      obtains from FMCSA in a decision to not hire you or to make any other adverse
+                      employment decision regarding you, the Prospective Employer must provide you
+                      within three business days of taking adverse action oral, written or
+                      electronic notification: that adverse action has been taken based in whole or
+                      in part on information obtained from FMCSA; the name, address, and the toll
+                      free telephone number of FMCSA; that the FMCSA did not make the decision to
+                      take the adverse action and is unable to provide you the specific reasons why
+                      the adverse action was taken; and that you may, upon providing proper
+                      identification, request a free copy of the report and may dispute with the
+                      FMCSA the accuracy or completeness of any information or report. If you
+                      request a copy of a driver record from the Prospective Employer who procured
+                      the report, then, within 3 business days of receiving your request, together
+                      with proper identification, the Prospective Employer must send or provide to
+                      you a copy of your report and a summary of your rights under the Fair Credit
+                      Reporting Act.
+                    </p>
+
+                    <p>
+                      Neither the Prospective Employer nor the FMCSA contractor supplying the crash
+                      and safety information has the capability to correct any safety data that
+                      appears to be incorrect. You may challenge the accuracy of the data by
+                      submitting a request to https://dataqs.fmcsa.dot.gov. If you challenge crash
+                      or inspection information reported by a State, FMCSA cannot change or correct
+                      this data. Your request will be forwarded by the DataQs system to the
+                      appropriate State for adjudication.
+                    </p>
+
+                    <p>
+                      Any crash or inspection in which you were involved will display on your PSP
+                      report. Since the PSP report does not report, or assign, or imply fault, it
+                      will include all Commercial Motor Vehicle (CMV) crashes where you were a
+                      driver or co-driver and where those crashes were reported to FMCSA, regardless
+                      of fault. Similarly, all inspections, with or without violations, appear on
+                      the PSP report. State citations associated with Federal Motor Carrier Safety
+                      Regulations (FMCSR) violations that have been adjudicated by a court of law
+                      will also appear, and remain, on a PSP report.
+                    </p>
+
+                    <p>
+                      The Prospective Employer cannot obtain background reports from FMCSA without
+                      your authorization.
+                    </p>
+
+                    <p class="font-bold text-center">AUTHORIZATION</p>
+
+                    <p>
+                      If you agree that the Prospective Employer may obtain such background reports,
+                      please read the following and sign below:
+                    </p>
+
+                    <p>
+                      I authorize Phoenix Bus Inc (“Prospective Employer”) to access the FMCSA
+                      Pre-Employment Screening Program (PSP) system to seek information regarding my
+                      commercial driving safety record and information regarding my safety
+                      inspection history. I understand that I am authorizing the release of safety
+                      performance information including crash data from the previous five (5) years
+                      and inspection history from the previous three (3) years. I understand and
+                      acknowledge that this release of information may assist the Prospective
+                      Employer to make a determination regarding my suitability as an employee.
+                    </p>
+
+                    <p>
+                      I further understand that neither the Prospective Employer nor the FMCSA
+                      contractor supplying the crash and safety information has the capability to
+                      correct any safety data that appears to be incorrect. I understand I may
+                      challenge the accuracy of the data by submitting a request to
+                      https://dataqs.fmcsa.dot.gov. If I challenge crash or inspection information
+                      reported by a State, FMCSA cannot change or correct this data. I understand my
+                      request will be forwarded by the DataQs system to the appropriate State for
+                      adjudication.
+                    </p>
+
+                    <p>
+                      I understand that any crash or inspection in which I was involved will display
+                      on my PSP report. Since the PSP report does not report, or assign, or imply
+                      fault, I acknowledge it will include all CMV crashes where I was a driver or
+                      co-driver and where those crashes were reported to FMCSA, regardless of fault.
+                      Similarly, I understand all inspections, with or without violations, will
+                      appear on my PSP report, and State citations associated with FMCSR violations
+                      that have been adjudicated by a court of law will also appear, and remain, on
+                      my PSP report. I have read the above Disclosure Regarding Background Reports
+                      provided to me by Prospective Employer and I understand that if I sign this
+                      Disclosure and Authorization, Prospective Employer may obtain a report of my
+                      crash and inspection history. I hereby authorize Prospective Employer and its
+                      employees, authorized agents, and/or affiliates to obtain the information
+                      authorized above.
+                    </p>
+
+                    <p class="text-[12px] mt-4 text-slate-500">
+                      NOTICE: This form is made available to monthly account holders by NIC on
+                      behalf of the U.S. Department of Transportation, Federal Motor Carrier Safety
+                      Administration (FMCSA). Account holders are required by federal law to obtain
+                      an Applicant’s written or electronic consent prior to accessing the
+                      Applicant’s PSP report. Further, account holders are required by FMCSA to use
+                      the language contained in this Disclosure and Authorization form to obtain an
+                      Applicant’s consent. The language must be used in whole, exactly as provided.
+                      Further, the language on this form must exist as one stand-alone document. The
+                      language may NOT be included with other consent forms or any other language.
+                    </p>
+                    <p class="text-[12px] text-slate-400">
+                      NOTICE: The prospective employment concept referenced in this form
+                      contemplates the definition of "employee" contained at 49 C.F.R. 383.5.
+                    </p>
+                    <p class="text-[12px] text-slate-400">LAST UPDATED 2/11/2016</p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <InputGroup
+                    :labelClass="currentStep >= 7 ? 'text-[8px]' : 'text-[20px]'"
+                    v-model="form.pspDisclosureSignature"
+                    label="Prospective Employee Signature"
+                    required
+                    placeholder="Type your full name"
+                  />
+                  <InputGroup
+                    :labelClass="currentStep >= 7 ? 'text-[8px]' : 'text-[20px]'"
+                    v-model="form.pspDisclosureDate"
+                    label="Date Signed"
+                    type="date"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 8: Additional Notes -->
+            <div v-else-if="currentStep === 8" class="space-y-4 flex-1 overflow-y-auto">
+              <div class="space-y-1">
                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
                   >Additional Notes</label
                 >
 
                 <textarea
                   v-model="form.notes"
-                  rows="6"
-                  class="input-base w-full resize-none flex-1"
+                  rows="4"
+                  class="input-base w-full resize-none"
                   placeholder="Any additional information, certifications, special qualifications, or comments..."
                 ></textarea>
+              </div>
+
+              <!-- Authorization & Release -->
+              <div class="mt-6 pt-6 border-t border-slate-100 space-y-4">
+                <div class="space-y-2">
+                  <h3 class="text-sm font-bold text-slate-700 uppercase tracking-tighter">
+                    Authorization & Release
+                  </h3>
+                  <div
+                    class="text-xs text-slate-600 leading-relaxed text-justify space-y-2 max-h-60 overflow-y-auto pr-2 border border-slate-100 rounded-lg p-3 bg-slate-50/50"
+                  >
+                    <p>
+                      I hereby authorize release of information to this prospective employer from my
+                      employment file and my Department of Transportation regulated drug and alcohol
+                      testing records. This release is in accordance with DOT Regulation 49 CFR
+                      Parts 40.25/382.413/391.23. I understand that information to be released, by
+                      my previous employer, is limited to the previous three years. You are released
+                      from any and all liability which may result from releasing such information.
+                      Pursuant to the federal Fair Credit Reporting Act, I hereby authorize this
+                      company and its designated agents and representatives to conduct a
+                      comprehensive review of my background through any consumer report for
+                      employment. I understand that the scope of the consumer report/investigative
+                      consumer report may include, but is not limited to, the following areas:
+                      verification of Social Security number; current and previous residences;
+                      employment history, including all personnel files; education; references;
+                      credit history and reports; criminal history, including records from any
+                      criminal justice agency in any or all federal, state or county jurisdictions;
+                      birth records; motor vehicle records, including traffic citations and
+                      registration; and any other public records.
+                    </p>
+                    <p>
+                      I understand that it is my right to review information provided by previous
+                      employers; to have errors in the information corrected by the previous
+                      employer and for that previous employer to re-send the corrected information;
+                      as well as the right to have a rebuttal statement attached to the alleged
+                      erroneous information if the previous employer and I cannot agree on the
+                      accuracy of the information. I understand that if I wish to review previous
+                      employer-provided investigative information, I must submit a written request,
+                      which may be done at any time, including when applying, or as late as 30 days
+                      after being employed or being notified of denial of employment. I understand
+                      that if I have not arranged to pick up or receive the requested records within
+                      thirty (30) days of them becoming available, it may be considered that I have
+                      waived my request to review the record(s).
+                    </p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-2">
+                  <InputGroup
+                    v-model="form.authReleaseSignature"
+                    label="Applicant Signature"
+                    required
+                    placeholder="Type your full name"
+                  />
+                  <InputGroup
+                    v-model="form.authReleaseDate"
+                    label="Date Signed"
+                    type="date"
+                    required
+                  />
+                </div>
               </div>
             </div>
           </Transition>
@@ -761,20 +1132,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, } from 'vue'
 import { dataService } from '@/services/dataService'
 import { Check, Bus, Loader2, ArrowRight, ArrowLeft } from 'lucide-vue-next'
 import AnimatedBody from '@/Components/ui/AnimatedBody.vue'
 import InputGroup from '@/Components/ui/InputGroup.vue'
 import BaseButton from '@/Components/ui/BaseButton.vue'
 import BaseAlert from '@/Components/ui/BaseAlert.vue'
+import FileInput from '@/Components/ui/FileInput.vue'
 import { VEHICLE_TYPES } from '@/utils/constants'
 import type { DriverApplicationForm, VehicleTypes } from '@/types'
 
 const loading = ref(false)
 const submitted = ref(false)
 const currentStep = ref(1)
-const totalSteps = 7
+const totalSteps = 9
+
+const licenseFrontName = ref('')
+const licenseBackName = ref('')
+const medicalCardName = ref('')
 
 const form = ref<DriverApplicationForm>({
   id: '',
@@ -793,7 +1169,7 @@ const form = ref<DriverApplicationForm>({
   licenses: [
     {
       number: '',
-      state: '',
+      state: 'FL',
       class: '',
       endorsements: '',
       restrictions: '',
@@ -815,10 +1191,57 @@ const form = ref<DriverApplicationForm>({
   notes: '',
 
   // Driving Experience
-  vehicleExperience: [{ type: 'Passenger Bus', totalMileage: 0 }],
+  vehicleExperience: [{ type: 'Passenger Bus' }],
 
   experienceYears: 0,
+  licenseFront: null,
+  licenseBack: null,
+  medicalCard: null,
+
+  drugTestPositiveOrRefusal: false,
+  drugTestDocumentation: 'N/A',
+  drugTestSignature: '',
+  drugTestDate: '',
+  authReleaseSignature: '',
+  authReleaseDate: '',
+  pspDisclosureSignature: '',
+  pspDisclosureDate: '',
+  fmcsaConsentSignature: '',
+  fmcsaConsentDate: '',
 })
+
+function handleLicenseFrontUpload(event: Event) {
+  const target = event.target
+  if (target instanceof HTMLInputElement) {
+    const file = target.files?.[0]
+    if (file) {
+      form.value.licenseFront = file
+    }
+    return
+  }
+}
+
+function handleLicenseBackUpload(event: Event) {
+  const target = event.target
+  if (target instanceof HTMLInputElement) {
+    const file = target.files?.[0]
+    if (file) {
+      form.value.licenseBack = file
+    }
+    return
+  }
+}
+
+function handleMedicalCardUpload(event: Event) {
+  const target = event.target
+  if (target instanceof HTMLInputElement) {
+    const file = target.files?.[0]
+    if (file) {
+      form.value.medicalCard = file
+    }
+    return
+  }
+}
 
 // Track if address end-date field; when enabled, we set "present"
 const presentAddress = ref<boolean>(false)
@@ -838,6 +1261,10 @@ const currentStepName = computed(() => {
     case 6:
       return 'Employment History'
     case 7:
+      return 'PSP Disclosure'
+    case 8:
+      return 'FMCSA Clearinghouse'
+    case 9:
       return 'Additional Info'
     default:
       return ''
@@ -898,12 +1325,15 @@ function reset() {
       email: '',
       phone: '',
       ssnNumber: '',
+      medicalExpirationDate: '',
     },
-    addresses: [{ street: '', city: '', state: '', zip: '', fromDate: '', toDate: '' }],
+    addresses: [
+      { street: '', city: '', state: '', zip: '', fromDate: '', toDate: '', present: undefined },
+    ],
     licenses: [
       {
         number: '',
-        state: '',
+        state: 'FL',
         class: '',
         endorsements: '',
         restrictions: '',
@@ -919,14 +1349,31 @@ function reset() {
     denialSuspensionExplanation: '',
     employmentHistory: [],
     notes: '',
-    vehicleExperience: [{ type: '', totalMileage: 0 }],
+    vehicleExperience: [{ type: '' }],
 
     experienceYears: 0,
+    licenseFront: null,
+    licenseBack: null,
+    medicalCard: null,
+
+    drugTestPositiveOrRefusal: false,
+    drugTestDocumentation: 'N/A',
+    drugTestSignature: '',
+    drugTestDate: '',
+    authReleaseSignature: '',
+    authReleaseDate: '',
+    pspDisclosureSignature: '',
+    pspDisclosureDate: '',
+    fmcsaConsentSignature: '',
+    fmcsaConsentDate: '',
   }
   currentStep.value = 1
   submitted.value = false
 
   presentAddress.value = false
+  licenseFrontName.value = ''
+  licenseBackName.value = ''
+  medicalCardName.value = ''
 }
 
 function addAddress() {
@@ -1015,7 +1462,7 @@ function isVehicleSelected(type: string) {
 function toggleVehicleType(type: VehicleTypes, checked: boolean) {
   if (checked) {
     if (!isVehicleSelected(type)) {
-      form.value.vehicleExperience.push({ type, totalMileage: 0 })
+      form.value.vehicleExperience.push({ type })
     }
   } else {
     const index = form.value.vehicleExperience.findIndex((v) => v.type === type)
@@ -1025,9 +1472,6 @@ function toggleVehicleType(type: VehicleTypes, checked: boolean) {
   }
 }
 
-function getVehicleEntry(type: VehicleTypes) {
-  return form.value.vehicleExperience.find((v) => v.type === type)
-}
 </script>
 
 <style scoped>
