@@ -97,13 +97,10 @@
             <div class="flex flex-col gap-1">
               <span class="text-slate-500">Cdl Number</span>
               <span class="font-medium text-slate-900 font-mono">{{
-                applicant.cdlNumber || 'Not Provided'
+                applicant.licenses[0]?.number || 'Not Provided'
               }}</span>
             </div>
-            <div class="flex flex-col gap-1">
-              <span class="text-slate-500">Experience</span>
-              <span class="font-medium text-slate-900">{{ applicant.experienceYears }} Years</span>
-            </div>
+
             <div class="flex flex-col gap-1 pt-2 border-t border-slate-100">
               <span class="text-slate-500">Notes / Cover Letter</span>
               <p class="text-slate-700 italic">{{ applicant.notes || 'No notes provided.' }}</p>
