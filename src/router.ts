@@ -75,15 +75,6 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'docs',
-        name: 'docs',
-        component: DocumentRegistry,
-        meta: {
-          title: 'Document Registry',
-          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-        },
-      },
-      {
         path: 'audit',
         name: 'audit',
         component: AuditReports,
