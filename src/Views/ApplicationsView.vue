@@ -39,8 +39,12 @@
           </template>
 
           <template #cell(contact)="{ item }">
-            <div class="font-medium text-xs text-slate-800">{{ item.phone }}</div>
-            <div class="font-extralight text-xs text-slate-800">{{ item.email }}</div>
+            <div class="font-medium text-xs text-slate-800">{{ item.personalInfo.phone }}</div>
+            <div class="font-extralight text-xs text-slate-800">{{ item.personalInfo.email }}</div>
+          </template>
+
+          <template #cell(cdlNumber)="{ item }">
+            <div class="font-medium text-xs text-slate-800">{{ item.licenses[0]?.number }}</div>
           </template>
 
           <template #cell(status)="{ value }">
@@ -88,7 +92,6 @@ const tableColumns: Column<Applications>[] = [
   { key: 'firstName', label: 'Name', align: 'center', sortable: true },
   { key: 'contact', label: 'Contact', align: 'center' },
   { key: 'cdlNumber', label: 'Cdl', align: 'center' },
-  { key: 'experienceYears', label: 'Exp (Yrs)', align: 'center', sortable: true },
   { key: 'appliedDate', label: 'Applied Date', align: 'center', sortable: true },
   { key: 'status', label: 'Status', align: 'center', sortable: true },]
 

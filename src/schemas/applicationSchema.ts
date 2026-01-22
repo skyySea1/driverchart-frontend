@@ -74,13 +74,14 @@ export const EmploymentSchema = z.object({
 
 export const VehicleExperienceSchema = z.object({
   type: z.string(),
+  experienceYears: z.number().min(0, 'Experience years cannot be negative').default(0),
 });
 
 // Driver Application Form Schema
 export const DriverApplicationFormSchema = z.object({
   id: z.string().optional(),
   personalInfo: PersonalInfoSchema,
-  addresses: z.array(AddressSchema).min(1, 'At least one address is required'),
+  addresses: z.array(AddressSchema).min(1, 'At least one address is required').max(3, 'A maximum of three addresses is allowed'),
   licenses: z.array(LicenseSchema).min(1, 'At least one license is required'),
   vehicleExperience: z.array(VehicleExperienceSchema).min(1, 'At least one vehicle type is required'),
   experienceYears: z.number().min(0, 'Experience years cannot be negative').default(0),
@@ -105,6 +106,12 @@ export const DriverApplicationFormSchema = z.object({
   pspDisclosureDate: z.string().min(1, 'Date Signed is required'),
   fmcsaConsentSignature: z.string().min(1, 'Employee Signature is required'),
   fmcsaConsentDate: z.string().min(1, 'Date Signed is required'),
+  alcoholDrugPolicySignature: z.string().min(1, 'Prospective Employee Signature is required'),
+  alcoholDrugPolicyDate: z.string().min(1, 'Date Signed is required'),
+  generalWorkPolicySignature: z.string().min(1, 'Prospective Employee Signature is required'),
+  generalWorkPolicyDate: z.string().min(1, 'Date Signed is required'),
+  fairCreditReportingSignature: z.string().min(1, 'Applicant Signature is required'),
+  fairCreditReportingDate: z.string().min(1, 'Date Signed is required'),
 })
 
 export type DriverApplicationFormData = z.infer<typeof DriverApplicationFormSchema>

@@ -320,6 +320,8 @@ export interface VehicleExperience {
   type: VehicleTypes
 }
 
+export type ConsentOption = 'Yes' | 'No'
+
 // Table view - simplified application data
 export interface Applications extends FirestoreDoc {
   personalInfo: {
@@ -386,4 +388,19 @@ export interface DriverApplicationForm extends FirestoreDoc {
   // FMCSA Clearinghouse Consent
   fmcsaConsentSignature: string
   fmcsaConsentDate: string
+
+  // Alcohol & Drug Policy
+  alcoholDrugPolicySignature: string
+  alcoholDrugPolicyDate: string
+
+  // General Work Policy
+  generalWorkPolicySignature: string
+  generalWorkPolicyDate: string
+
+  // Fair Credit Reporting Authorization
+  fairCreditReportingSignature: string
+  fairCreditReportingDate: string
+
 }
+
+

@@ -5,7 +5,11 @@
     <!-- Application Card -->
     <div
       class="app-card bg-white rounded-2xl shadow-2xl w-full overflow-hidden z-10 flex flex-col transition-all duration-500 ease-in-out"
-      :class="(currentStep === 7 || currentStep === 8) ? 'max-w-3xl' : 'max-w-md'"
+      :class="
+        currentStep === 7 || currentStep === 8 || currentStep === 10 || currentStep === 11
+          ? 'max-w-3xl'
+          : 'max-w-md'
+      "
     >
       <div class="bg-slate-900 p-6 text-center shrink-0">
         <div class="flex flex-col items-center gap-3">
@@ -718,6 +722,7 @@
                       label="Date Signed"
                       type="date"
                       required
+                      :disabled="true"
                     />
                   </div>
                 </div>
@@ -842,6 +847,7 @@
             </div>
 
             <!-- Step 7: PSP Driver Disclosure & Authorization -->
+
             <div v-else-if="currentStep === 7" class="space-y-4 flex-1 overflow-y-auto">
               <div class="space-y-4">
                 <div class="space-y-2">
@@ -850,22 +856,28 @@
                   >
                     PSP Driver Disclosure & Authorization
                   </h3>
+
                   <div
-                    class="text-[12px] text-slate-600 leading-relaxed text-justify space-y-2 max-h-96 overflow-y-auto pr-2 border border-slate-100 rounded-lg p-3 bg-slate-50/50">
+                    class="text-[12px] text-slate-600 leading-relaxed text-justify space-y-2 max-h-96 overflow-y-auto pr-2 border border-slate-100 rounded-lg p-3 bg-slate-50/50"
+                  >
                     <p class="font-bold text-center">
                       THE BELOW DISCLOSURE AND AUTHORIZATION LANGUAGE IS FOR MANDATORY USE BY ALL
                       ACCOUNT HOLDERS
                     </p>
+
                     <p class="font-bold text-center">
                       IMPORTANT DISCLOSURE REGARDING BACKGROUND REPORTS FROM THE PSP Online Service
                     </p>
+
                     <p>
-                      In connection with your application for employment with Phoenix Bus Inc
+                      In connection with your application for employment with
+                      <strong>Phoenix Bus Inc</strong>
                       (“Prospective Employer”), Prospective Employer, its employees, agents or
                       contractors may obtain one or more reports regarding your driving, and safety
                       inspection history from the Federal Motor Carrier Safety Administration
                       (FMCSA).
                     </p>
+
                     <p>
                       When the application for employment is submitted in person, if the Prospective
                       Employer uses any information it obtains from FMCSA in a decision to not hire
@@ -877,6 +889,7 @@
                       the Prospective Employer will notify you that the action has been taken and
                       that the action was based in part or in whole on this report.
                     </p>
+
                     <p>
                       When the application for employment is submitted by mail, telephone, computer,
                       or other similar means, if the Prospective Employer uses any information it
@@ -896,6 +909,7 @@
                       you a copy of your report and a summary of your rights under the Fair Credit
                       Reporting Act.
                     </p>
+
                     <p>
                       Neither the Prospective Employer nor the FMCSA contractor supplying the crash
                       and safety information has the capability to correct any safety data that
@@ -915,25 +929,31 @@
                       Regulations (FMCSR) violations that have been adjudicated by a court of law
                       will also appear, and remain, on a PSP report.
                     </p>
+
                     <p>
                       The Prospective Employer cannot obtain background reports from FMCSA without
                       your authorization.
                     </p>
+
                     <p class="font-bold text-center">AUTHORIZATION</p>
+
                     <p>
                       If you agree that the Prospective Employer may obtain such background reports,
                       please read the following and sign below:
                     </p>
+
                     <p>
-                      I authorize Phoenix Bus Inc (“Prospective Employer”) to access the FMCSA
-                      Pre-Employment Screening Program (PSP) system to seek information regarding my
-                      commercial driving safety record and information regarding my safety
-                      inspection history. I understand that I am authorizing the release of safety
-                      performance information including crash data from the previous five (5) years
-                      and inspection history from the previous three (3) years. I understand and
-                      acknowledge that this release of information may assist the Prospective
-                      Employer to make a determination regarding my suitability as an employee.
+                      I authorize <strong>Phoenix Bus Inc</strong> (“Prospective Employer”) to
+                      access the FMCSA Pre-Employment Screening Program (PSP) system to seek
+                      information regarding my commercial driving safety record and information
+                      regarding my safety inspection history. I understand that I am authorizing the
+                      release of safety performance information including crash data from the
+                      previous five (5) years and inspection history from the previous three (3)
+                      years. I understand and acknowledge that this release of information may
+                      assist the Prospective Employer to make a determination regarding my
+                      suitability as an employee.
                     </p>
+
                     <p>
                       I further understand that neither the Prospective Employer nor the FMCSA
                       contractor supplying the crash and safety information has the capability to
@@ -944,6 +964,7 @@
                       request will be forwarded by the DataQs system to the appropriate State for
                       adjudication.
                     </p>
+
                     <p>
                       I understand that any crash or inspection in which I was involved will display
                       on my PSP report. Since the PSP report does not report, or assign, or imply
@@ -959,6 +980,7 @@
                       employees, authorized agents, and/or affiliates to obtain the information
                       authorized above.
                     </p>
+
                     <p class="text-[12px] mt-4 text-slate-500">
                       NOTICE: This form is made available to monthly account holders by NIC on
                       behalf of the U.S. Department of Transportation, Federal Motor Carrier Safety
@@ -970,40 +992,113 @@
                       Further, the language on this form must exist as one stand-alone document. The
                       language may NOT be included with other consent forms or any other language.
                     </p>
+
                     <p class="text-[12px] text-slate-400">
                       NOTICE: The prospective employment concept referenced in this form
                       contemplates the definition of "employee" contained at 49 C.F.R. 383.5.
                     </p>
+
                     <p class="text-[12px] text-slate-400">LAST UPDATED 2/11/2016</p>
                   </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 mr-1 mb-2">
+                <div class="grid grid-cols-2 gap-4">
                   <InputGroup
-                    :labelClass="currentStep >= 7 ? 'text-[11.5px]' : 'text-[13px]'"
+                    :labelClass="currentStep >= 7 ? 'text-[10px]' : 'text-[20px]'"
                     v-model="form.pspDisclosureSignature"
                     label="Prospective Employee Signature"
                     required
                     placeholder="Type your full name"
                   />
+
                   <InputGroup
-                    :labelClass="currentStep >= 7 ? 'text-[11.5px]' : 'text-[13px]'"
+                    :labelClass="currentStep >= 7 ? 'text-[10px]' : 'text-[20px]'"
                     v-model="form.pspDisclosureDate"
                     label="Date Signed"
                     type="date"
                     required
+                    :disabled="true"
                   />
                 </div>
               </div>
             </div>
 
-            <!-- Step 8: Authorization & Release -->
+            <!-- Step 8: FMCSA Clearinghouse Consent -->
+
             <div v-else-if="currentStep === 8" class="space-y-4 flex-1 overflow-y-auto">
+              <div class="space-y-4">
+                <div class="space-y-2">
+                  <h3
+                    class="text-sm font-bold text-slate-700 uppercase tracking-tighter text-center"
+                  >
+                    General Consent for Limited Queries of the FMCSA Drug and Alcohol Clearinghouse
+                  </h3>
+
+                  <div
+                    class="text-[12px] text-slate-600 leading-relaxed text-justify space-y-2 max-h-96 overflow-y-auto pr-2 border border-slate-100 rounded-lg p-3 bg-slate-50/50"
+                  >
+                    <p>
+                      I,
+                      <strong
+                        >{{ capitalizeName(form.personalInfo.firstName) }}
+                        {{ capitalizeName(form.personalInfo.middleName) }}
+                        {{ form.personalInfo.lastName }}</strong
+                      >, hereby provide consent to <strong>Phoenix Bus Inc</strong> to conduct a
+                      limited query of the FMCSA Commercial Driver’s License Drug and Alcohol
+                      Clearinghouse (Clearinghouse) to determine whether drug or alcohol violation
+                      information about me exists in the Clearinghouse.
+                    </p>
+
+                    <p>
+                      I am consenting to multiple unlimited queries and for the duration of
+                      employment with <strong>Phoenix Bus Inc</strong>.
+                    </p>
+
+                    <p>
+                      I understand that if the limited query conducted by
+                      <strong>Phoenix Bus Inc</strong> indicates that drug or alcohol violation
+                      information about me exists in the Clearinghouse, FMCSA will not disclose that
+                      information to <strong>Phoenix Bus Inc</strong>
+                      without first obtaining additional specific consent from me.
+                    </p>
+
+                    <p>
+                      I further understand that if I refuse to provide consent for
+                      <strong>Phoenix Bus Inc</strong> to conduct a limited query of the
+                      Clearinghouse, <strong>Phoenix Bus Inc</strong> must prohibit me from
+                      performing safety-sensitive functions, including driving a commercial motor
+                      vehicle, as required by FMCSA’s drug and alcohol program regulations.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <InputGroup
+                    v-model="form.fmcsaConsentSignature"
+                    label="Employee Signature"
+                    required
+                    placeholder="Type your full name"
+                  />
+
+                  <InputGroup
+                    v-model="form.fmcsaConsentDate"
+                    label="Date Signed"
+                    type="date"
+                    required
+                    :disabled="true"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 9: Authorization & Release -->
+            <div v-else-if="currentStep === 9" class="space-y-4 flex-1 overflow-y-auto">
               <div class="space-y-4">
                 <div class="space-y-2">
                   <h3 class="text-sm font-bold text-slate-700 uppercase tracking-tighter">
                     Authorization & Release
                   </h3>
+
                   <div
                     class="text-xs text-slate-600 leading-relaxed text-justify space-y-2 max-h-60 overflow-y-auto pr-2 border border-slate-100 rounded-lg p-3 bg-slate-50/50"
                   >
@@ -1026,6 +1121,7 @@
                       birth records; motor vehicle records, including traffic citations and
                       registration; and any other public records.
                     </p>
+
                     <p>
                       I understand that it is my right to review information provided by previous
                       employers; to have errors in the information corrected by the previous
@@ -1041,29 +1137,212 @@
                       waived my request to review the record(s).
                     </p>
                   </div>
+                  <p class="text-xs font-bold text-slate-700 mt-2">
+                    I have read, fully understand and agree to all terms as set forth in the company
+                    Authorization Release.
+                  </p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4 mt-2">
+                <InputGroup
+                  v-model="form.authReleaseSignature"
+                  label="Applicant Signature"
+                  required
+                  placeholder="Type your full name"
+                />
+
+                <InputGroup
+                  v-model="form.authReleaseDate"
+                  label="Date Signed"
+                  type="date"
+                  required
+                  :disabled="true"
+                />
+              </div>
+            </div>
+
+            <!-- Step 10: Alcohol & Drug Testing Policy -->
+
+            <div v-else-if="currentStep === 10" class="space-y-4 flex-1 overflow-y-auto">
+              <div class="space-y-4">
+                <div class="space-y-2">
+                  <h3
+                    class="text-sm font-bold text-slate-700 uppercase tracking-tighter text-center"
+                  >
+                    Alcohol & Drug Testing Policy
+                  </h3>
+
+                  <p class="text-[14px] text-slate-600 text-justify">
+                    Please review the company alcohol and drug testing policy below. Once finished,
+                    electronically sign to confirm receipt, understanding and agree. Upon completion
+                    of the online application, you will be emailed a copy of this policy. You may
+                    also click the Download button in the top right corner of the viewer to save a
+                    copy of the policy now.
+                  </p>
+
+                  <div class="border border-slate-200 rounded-lg overflow-hidden h-150 bg-slate-50">
+                    <iframe
+                      src="/company_alcohol_and_drug_testing_policy.pdf"
+                      class="w-full h-full"
+                      title="Alcohol & Drug Testing Policy"
+                    ></iframe>
+                  </div>
+
+                  <p class="text-xs font-bold text-slate-700 mt-2">
+                    I have read, fully understand and agree to all terms as set forth in the company
+                    alcohol and drug testing policy.
+                  </p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 mt-2">
+                <div class="grid grid-cols-2 gap-4">
                   <InputGroup
-                    v-model="form.authReleaseSignature"
-                    label="Applicant Signature"
+                    v-model="form.alcoholDrugPolicySignature"
+                    label="Prospective Employee Signature"
                     required
                     placeholder="Type your full name"
                   />
+
                   <InputGroup
-                    v-model="form.authReleaseDate"
+                    v-model="form.alcoholDrugPolicyDate"
                     label="Date Signed"
                     type="date"
                     required
+                    :disabled="true"
                   />
                 </div>
               </div>
             </div>
-            <!-- Step 9: Additional Notes -->
-            <div v-else-if="currentStep === 9" class="space-y-4 flex-1 overflow-y-auto max-h-96">
+
+            <!-- Step 11: General Work Policy -->
+            <div v-else-if="currentStep === 11" class="space-y-4 flex-1 overflow-y-auto">
+              <div class="space-y-4">
+                <div class="space-y-2">
+                  <h3
+                    class="text-sm font-bold text-slate-700 uppercase tracking-tighter text-center"
+                  >
+                    General Work Policy
+                  </h3>
+
+                  <p class="text-[14px] text-slate-600 text-justify">
+                    Please review the company general work policy below. Once finished,
+                    electronically sign to confirm receipt, understanding and agree. Upon completion
+                    of the online application, you will be emailed a copy of this policy. You may
+                    also click the Download button in the top right corner of the viewer to save a
+                    copy of the policy now.
+                  </p>
+
+                  <div class="border border-slate-200 rounded-lg overflow-hidden h-150 bg-slate-50">
+                    <iframe
+                      src="/general_work_policy.pdf"
+                      class="w-full h-full"
+                      title="General Work Policy"
+                    ></iframe>
+                  </div>
+
+                  <p class="text-xs font-bold text-slate-700 mt-2">
+                    I have read, fully understand and agree to all terms as set forth in the company
+                    general work policy.
+                  </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <InputGroup
+                    v-model="form.generalWorkPolicySignature"
+                    label="Prospective Employee Signature"
+                    required
+                    placeholder="Type your full name"
+                  />
+
+                  <InputGroup
+                    v-model="form.generalWorkPolicyDate"
+                    label="Date Signed"
+                    type="date"
+                    required
+                    :disabled="true"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 12: Fair Credit Reporting Authorization -->
+
+            <div v-else-if="currentStep === 12" class="space-y-4 flex-1 overflow-y-auto">
+              <div class="space-y-4">
+                <div class="space-y-2">
+                  <h3
+                    class="text-sm font-bold text-slate-700 uppercase tracking-tighter text-center"
+                  />
+                    General Consent for Limited Queries of the FMCSA Drug and Alcohol Clearinghouse
+                    Fair Credit Reporting Authorization
+
+                  <div
+                    class="text-[12px] text-slate-600 leading-relaxed text-justify space-y-2 max-h-96 overflow-y-auto pr-2 border border-slate-100 rounded-lg p-3 bg-slate-50/50"
+                  >
+                    <p>
+                      Pursuant to the federal Fair Credit Reporting Act, I hereby authorize
+                      <strong>Phoenix Bus Inc</strong> and its designated agents and representatives
+                      to conduct a comprehensive review of my background through a consumer report
+                      and/or an investigative consumer report to be generated for employment,
+                      promotion, reassignment or retention as an employee. I understand that the
+                      scope of the consumer report/investigative consumer report may include, but is
+                      not limited to, the following areas: verification of Social Security number;
+                      current and previous residences; employment history, including all personnel
+                      files; education; references; credit history and reports; criminal history,
+                      including records from any criminal justice agency in any or all federal,
+                      state or county jurisdictions; birth records; motor vehicle records, including
+                      traffic citations and registration; and any other public records.
+                    </p>
+
+                    <p>
+                      I,
+                      <strong
+                        >{{ capitalizeName(form.personalInfo.firstName) }}
+                        {{ capitalizeName(form.personalInfo.middleName) }}
+                        {{ form.personalInfo.lastName }}</strong
+                      >, authorize the complete release of these records or data pertaining to me
+                      that an individual, company, firm, corporation or public agency may have. I
+                      hereby authorize and request any present or former employer, school, police
+                      department, financial institution or other persons having personal knowledge
+                      of me to furnish <strong>Phoenix Bus Inc</strong> or its designated agents
+                      with any and all information in their possession regarding me in connection
+                      with an application of employment. I am authorizing that a photocopy of this
+                      authorization be accepted with the same authority as the original.
+                    </p>
+
+                    <p>
+                      I understand that, pursuant to the federal Fair Credit Reporting Act, if any
+                      adverse action is to be taken based upon the consumer report, a copy of the
+                      report and a summary of the consumer's rights will be provided to me.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <InputGroup
+                    v-model="form.fairCreditReportingSignature"
+                    label="Applicant Signature"
+                    placeholder="Type your full name"
+                  />
+
+                  <InputGroup
+                    v-model="form.fairCreditReportingDate"
+                    label="Date Signed"
+                    type="date"
+                    required
+                    :disabled="true"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 13: Additional Notes -->
+
+            <div v-else-if="currentStep === 13" class="space-y-4 flex-1 overflow-y-auto">
               <div class="space-y-1">
                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-tighter"
-                  >Additional Notes</label>
+                  >Additional Notes</label
+                >
+
                 <textarea
                   v-model="form.notes"
                   rows="4"
@@ -1128,11 +1407,12 @@ import BaseAlert from '@/Components/ui/BaseAlert.vue'
 import FileInput from '@/Components/ui/FileInput.vue'
 import { VEHICLE_TYPES } from '@/utils/constants'
 import type { DriverApplicationForm, VehicleTypes } from '@/types'
+import { capitalizeName } from '../utils/utils'
 
 const loading = ref(false)
 const submitted = ref(false)
 const currentStep = ref(1)
-const totalSteps = 9
+const totalSteps = 13
 
 const licenseFrontName = ref('')
 const licenseBackName = ref('')
@@ -1177,9 +1457,13 @@ const form = ref<DriverApplicationForm>({
   notes: '',
 
   // Driving Experience
-  vehicleExperience: [{ type: 'Passenger Bus' }],
-
+  vehicleExperience: [
+    {
+      type: 'Passenger Bus',
+    },
+  ],
   experienceYears: 0,
+
   licenseFront: null,
   licenseBack: null,
   medicalCard: null,
@@ -1194,6 +1478,12 @@ const form = ref<DriverApplicationForm>({
   pspDisclosureDate: '',
   fmcsaConsentSignature: '',
   fmcsaConsentDate: '',
+  alcoholDrugPolicySignature: '',
+  alcoholDrugPolicyDate: '',
+  generalWorkPolicySignature: '',
+  generalWorkPolicyDate: '',
+  fairCreditReportingSignature: '',
+  fairCreditReportingDate: '',
 })
 
 function handleLicenseFrontUpload(event: Event) {
@@ -1251,6 +1541,14 @@ const currentStepName = computed(() => {
     case 8:
       return 'FMCSA Clearinghouse'
     case 9:
+      return 'Authorization & Release'
+    case 10:
+      return 'Alcohol & Drug Policy'
+    case 11:
+      return 'General Work Policy'
+    case 12:
+      return 'Fair Credit Report Authorization'
+    case 13:
       return 'Additional Info'
     default:
       return ''
@@ -1284,6 +1582,29 @@ watch(
   },
   { deep: true },
 )
+
+// Auto-fill dates on signature
+const today = new Date().toISOString().split('T')[0]
+
+function autoFillDateOnSignature(
+  signatureKey: keyof DriverApplicationForm,
+  dateKey: keyof DriverApplicationForm,
+) {
+  watch(
+    () => form.value[signatureKey],
+    (newVal) => {
+      form.value[dateKey] = newVal ? today : ''
+    },
+  )
+}
+
+autoFillDateOnSignature('drugTestSignature', 'drugTestDate')
+autoFillDateOnSignature('pspDisclosureSignature', 'pspDisclosureDate')
+autoFillDateOnSignature('fmcsaConsentSignature', 'fmcsaConsentDate')
+autoFillDateOnSignature('alcoholDrugPolicySignature', 'alcoholDrugPolicyDate')
+autoFillDateOnSignature('authReleaseSignature', 'authReleaseDate')
+autoFillDateOnSignature('generalWorkPolicySignature', 'generalWorkPolicyDate')
+autoFillDateOnSignature('fairCreditReportingSignature', 'fairCreditReportingDate')
 
 onMounted(() => {
   const saved = localStorage.getItem(STORAGE_KEY)
@@ -1378,9 +1699,8 @@ function reset() {
     denialSuspensionExplanation: '',
     employmentHistory: [],
     notes: '',
-    vehicleExperience: [{ type: '' }],
-
-    experienceYears: 0,
+    vehicleExperience: [{ type: ''}],
+    experienceYears: 0 ,
     licenseFront: null,
     licenseBack: null,
     medicalCard: null,
@@ -1395,6 +1715,12 @@ function reset() {
     pspDisclosureDate: '',
     fmcsaConsentSignature: '',
     fmcsaConsentDate: '',
+    alcoholDrugPolicySignature: '',
+    alcoholDrugPolicyDate: '',
+    generalWorkPolicySignature: '',
+    generalWorkPolicyDate: '',
+    fairCreditReportingSignature: '',
+    fairCreditReportingDate: '',
   }
   currentStep.value = 1
   submitted.value = false
@@ -1491,10 +1817,10 @@ function isVehicleSelected(type: string) {
 
 function toggleVehicleType(type: VehicleTypes, checked: boolean) {
   if (checked) {
+    form.value.vehicleExperience.push({ type })
     if (!isVehicleSelected(type)) {
-      form.value.vehicleExperience.push({ type })
+      form.value.vehicleExperience.push({ type})
     }
-  } else {
     const index = form.value.vehicleExperience.findIndex((v) => v.type === type)
     if (index !== -1) {
       form.value.vehicleExperience.splice(index, 1)
