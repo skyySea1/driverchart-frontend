@@ -96,19 +96,7 @@ export interface DashboardStats {
   annualRecordReview: number
 }
 
-// CardType expansion to support multiple views
-export type CardType =
-  | 'inspections'
-  | 'CDL'
-  | 'clearinghouse'
-  | 'drivers'
-  | 'medical'
-  | 'alerts'
-  | 'audit'
-  | 'applications'
-  | 'reviews'
-  | 'fleet'
-  | 'active_fleet'
+
 
 export interface StatConfig {
   icon: Component
@@ -118,92 +106,13 @@ export interface StatConfig {
   badgeVariant: BadgeVariant
 }
 
-export type ViewState =
-  | 'dashboard'
-  | 'drivers'
-  | 'vehicles'
-  | 'auditreports'
-  | 'documentregistry'
-  | 'applications'
-  | 'login'
-  | 'settings'
 
-export type USState =
-  | 'AL'
-  | 'AK'
-  | 'AZ'
-  | 'AR'
-  | 'CA'
-  | 'CO'
-  | 'CT'
-  | 'DE'
-  | 'FL'
-  | 'GA'
-  | 'HI'
-  | 'ID'
-  | 'IL'
-  | 'IN'
-  | 'IA'
-  | 'KS'
-  | 'KY'
-  | 'LA'
-  | 'ME'
-  | 'MD'
-  | 'MA'
-  | 'MI'
-  | 'MN'
-  | 'MS'
-  | 'MO'
-  | 'MT'
-  | 'NE'
-  | 'NV'
-  | 'NH'
-  | 'NJ'
-  | 'NM'
-  | 'NY'
-  | 'NC'
-  | 'ND'
-  | 'OH'
-  | 'OK'
-  | 'OR'
-  | 'PA'
-  | 'RI'
-  | 'SC'
-  | 'SD'
-  | 'TN'
-  | 'TX'
-  | 'UT'
-  | 'VT'
-  | 'VA'
-  | 'WA'
-  | 'WV'
-  | 'WI'
-  | 'WY'
-  | 'DC'
-  | ''
-
-// User Role Types
+export type CardType = 'inspections' | 'CDL' | 'clearinghouse' | 'drivers' | 'medical' | 'alerts' | 'audit' | 'applications' | 'reviews' | 'fleet' | 'active_fleet'
+export type ViewState = 'dashboard'| 'drivers' | 'vehicles'  | 'auditreports'  | 'documentregistry'  | 'applications' | 'login'  | 'settings'
+export type USState = 'AL'  | 'AK'  | 'AZ'  | 'AR'  | 'CA'  | 'CO'  | 'CT'  | 'DE'  | 'FL'  | 'GA'  | 'HI'  | 'ID' | 'IL'  | 'IN'  | 'IA'  | 'KS'  | 'KY'  | 'LA'  | 'ME'  | 'MD'  | 'MA'  | 'MI'  | 'MN'  | 'MS'  | 'MO'  | 'MT'  | 'NE'  | 'NV'  | 'NH'  | 'NJ'  | 'NM'  | 'NY'  | 'NC'  | 'ND'  | 'OH'  | 'OK'  | 'OR'  | 'PA'  | 'RI'  | 'SC'  | 'SD'  | 'TN'  | 'TX'  | 'UT'  | 'VT'  | 'VA'  | 'WA'  | 'WV' | 'WI'  | 'WY'  | 'DC'  | ''
 export type UserRole = 'admin' | 'manager' | 'dispatcher' | 'auditor' | 'viewer'
-export type VehicleTypes =
-  | 'Passenger Bus'
-  | 'School Bus'
-  | 'Charter Bus'
-  | 'Straight Truck'
-  | 'Semi-Truck/Trailer'
-  | 'Van/Doubles'
-  | 'Tractor'
-  | ''
-
-// Login Status Types
-export type LoginStatus =
-  | 'idle'
-  | 'loading'
-  | 'success'
-  | 'failed'
-  | 'unauthorized'
-  | 'session_expired'
-  | 'mfa_required'
-  | 'mfa_pending'
+export type VehicleTypes = 'Passenger Bus'  | 'School Bus' | 'Charter Bus'  | 'Straight Truck' | 'Semi-Truck/Trailer'  | 'Van/Doubles'  | 'Tractor'  | ''
+export type LoginStatus = 'idle' | 'loading' | 'success'  | 'failed' | 'unauthorized' | 'session_expired' | 'mfa_required' | 'mfa_pending'
 
 // User Interface with Login Info
 export interface User extends FirestoreDoc {
