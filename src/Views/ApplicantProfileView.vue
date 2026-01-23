@@ -11,9 +11,13 @@
 
     <div v-else-if="applicant" class="space-y-6">
       <!-- Back Button -->
-      <BaseButton label="Back to Applicants" :icon="ArrowLeft" :variant="'blue'" @click="$router.back()"
-        class=" text-sm font-medium shadow-sm"
-          />
+      <BaseButton
+        label="Back to Applicants"
+        :icon="ArrowLeft"
+        :variant="'blue'"
+        @click="$router.back()"
+        class="text-sm font-medium shadow-sm"
+      />
       <!-- Header -->
       <div
         class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200"
@@ -26,7 +30,8 @@
           </div>
           <div>
             <h1 class="text-2xl font-bold text-slate-900">
-              {{ capitalizeName(applicant.personalInfo.firstName) }} {{ capitalizeName(applicant.personalInfo.lastName) }}
+              {{ capitalizeName(applicant.personalInfo.firstName) }}
+              {{ capitalizeName(applicant.personalInfo.lastName) }}
             </h1>
             <div class="flex items-center gap-2 mt-1">
               <span
@@ -44,7 +49,7 @@
         <div class="flex gap-3">
           <!-- Actions for Applicant -->
           <button
-          v-cursor
+            v-cursor
             v-if="applicant.status === 'Pending'"
             @click="updateStatus('Approved')"
             class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm flex items-center gap-2"
@@ -52,7 +57,7 @@
             <Check class="w-4 h-4" /> Approve
           </button>
           <button
-          v-cursor
+            v-cursor
             v-if="applicant.status === 'Pending'"
             @click="updateStatus('Rejected')"
             class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm flex items-center gap-2"
@@ -119,7 +124,7 @@ import { dataService } from '@/services/dataService'
 import type { Applications } from '@/types'
 import { capitalizeName, formatDate } from '@/utils/utils'
 import { User, Phone, Mail, Calendar, Check, X, Briefcase, ArrowLeft } from 'lucide-vue-next'
-import BaseButton from '@/Components/ui/BaseButton.vue'
+import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 
 const route = useRoute()
 const applicationId = computed(() => {

@@ -171,7 +171,8 @@
           <tbody class="divide-y divide-slate-100">
             <tr v-for="d in drivers" :key="d.id" class="hover:bg-slate-50 transition-colors">
               <td class="p-3 text-left font-medium text-slate-900 whitespace-nowrap">
-                {{ capitalizeName(d.firstName) }} {{ capitalizeName(d.middleName) }} {{ capitalizeName(d.lastName) }}
+                {{ capitalizeName(d.firstName) }} {{ capitalizeName(d.middleName) }}
+                {{ capitalizeName(d.lastName) }}
               </td>
 
               <td class="p-3">
@@ -219,7 +220,7 @@ import { parseDriverDoc } from '@/utils/firestoreParsers'
 import StatusDot from '@/Components/ui/StatusDot.vue'
 import { Printer, Calendar, AlertTriangle, ShieldCheck, CheckCircle } from 'lucide-vue-next'
 import dayjs from 'dayjs'
-import BaseButton from '@/Components/ui/BaseButton.vue'
+import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import { capitalizeName } from '@/utils/utils'
 
 // Real-time Collections

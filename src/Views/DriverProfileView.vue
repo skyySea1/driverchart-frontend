@@ -8,16 +8,19 @@
 
     <div v-else-if="driver" class="space-y-6">
       <!-- Back Button -->
-      <BaseButton label="Back to Drivers" :icon="ArrowLeft" :variant="'blue'" @click="$router.back()"
-        class=" text-sm font-medium shadow-sm"
-          />
+      <BaseButton
+        label="Back to Drivers"
+        :icon="ArrowLeft"
+        :variant="'blue'"
+        @click="$router.back()"
+        class="text-sm font-medium shadow-sm"
+      />
 
       <!-- Header -->
       <div
         class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200"
       >
         <div>
-
           <div class="flex items-center gap-4">
             <div
               class="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-600 border border-slate-200 uppercase"
@@ -82,7 +85,8 @@
                   <Phone class="w-3 h-3 text-slate-400" /> {{ driver.phone }}
                 </div>
                 <div class="flex items-center gap-2 text-slate-900">
-                 <Mail class="w-3 h-3 text-slate-400" /> {{ driver.email }}</div>
+                  <Mail class="w-3 h-3 text-slate-400" /> {{ driver.email }}
+                </div>
               </div>
               <div class="flex flex-col gap-1">
                 <span class="text-slate-500">Address</span>
@@ -98,9 +102,10 @@
                   capitalizeName(driver.emergencyContact?.name || 'N/A')
                 }}</span>
                 <span class="flex items-center gap-2 text-slate-600">
-                 <Phone class="w-3 h-3 text-slate-400" />{{ driver.emergencyContact?.phone }}
-                  ({{ capitalizeName(driver.emergencyContact?.relationship || 'N/A') }})
-                  </span>
+                  <Phone class="w-3 h-3 text-slate-400" />{{ driver.emergencyContact?.phone }} ({{
+                    capitalizeName(driver.emergencyContact?.relationship || 'N/A')
+                  }})
+                </span>
               </div>
             </div>
           </div>
@@ -261,10 +266,11 @@ import {
   Download,
   History,
   ArrowLeft,
-  Mail } from 'lucide-vue-next'
+  Mail,
+} from 'lucide-vue-next'
 import dayjs from 'dayjs'
 import { capitalizeName } from '@/utils/utils'
-import BaseButton from '@/Components/ui/BaseButton.vue'
+import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import BaseLoading from '@/Components/ui/BaseLoading.vue'
 
 const route = useRoute()

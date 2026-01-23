@@ -32,16 +32,18 @@
         </div>
       </div>
     </div>
-
+<!--review why this use dynamic class binding -->
     <input
       :type="type"
       :required="required"
       :disabled="disabled || (enableCheck && !isEnabled)"
-      class="input-base disabled:opacity-60 disabled:bg-slate-100 disabled:cursor-not-allowed"
+      class="input-base disabled:opacity-60 disabled:bg-slate-100 disabled:cursor-not-allowed transition-colors duration-200"
+     :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-200': error }"
       :placeholder="placeholder"
       :value="modelValue"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
+    <p v-if="error" class="text-[10px] text-red-500 font-semibold mt-1 animate-pulse">{{ error }}</p>
   </div>
 </template>
 
@@ -61,6 +63,7 @@ const {
   toggleTitle = 'Enable/disable field',
   checkboxTitle = 'Present?',
   labelClass = '', // avoid undefined
+  error = '',
 } = defineProps<{
   label: string
   modelValue: string | number | undefined
@@ -75,6 +78,7 @@ const {
   toggleTitle?: string
   checkboxTitle?: string
   labelClass?: string
+  error?: string
 }>()
 
 defineEmits<{
