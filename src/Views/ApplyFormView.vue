@@ -81,12 +81,14 @@
                   label="First Name"
                   required
                   placeholder="John"
+                  :error="errors['personalInfo.firstName']"
                 />
                 <InputGroup
                   v-model="form.personalInfo.lastName"
                   label="Last Name"
                   required
                   placeholder="Doe"
+                  :error="errors['personalInfo.lastName']"
                 />
               </div>
 
@@ -94,6 +96,7 @@
                 v-model="form.personalInfo.middleName"
                 label="Middle Name"
                 placeholder="Optional"
+                :error="errors['personalInfo.middleName']"
               />
 
               <InputGroup
@@ -101,6 +104,7 @@
                 label="Date of Birth"
                 type="date"
                 required
+                :error="errors['personalInfo.dob']"
               />
 
               <InputGroup
@@ -108,6 +112,7 @@
                 label="Social Security Number"
                 placeholder="123-45-6789"
                 required
+                :error="errors['personalInfo.ssnNumber']"
               />
 
               <InputGroup
@@ -116,6 +121,7 @@
                 placeholder="MM/DD/YYYY"
                 type="date"
                 required
+                :error="errors['personalInfo.medicalExpirationDate']"
               />
 
               <InputGroup
@@ -124,6 +130,7 @@
                 type="email"
                 required
                 placeholder="john.doe@example.com"
+                :error="errors['personalInfo.email']"
               />
 
               <InputGroup
@@ -132,6 +139,7 @@
                 type="tel"
                 required
                 placeholder="(555) 000-0000"
+                :error="errors['personalInfo.phone']"
               />
             </div>
 
@@ -168,15 +176,34 @@
                   label="Street Address"
                   required
                   placeholder="123 Main St, Apt 4B"
+                  :error="errors[`addresses.${index}.street`]"
                 />
 
                 <div class="grid grid-cols-2 gap-3">
-                  <InputGroup v-model="address.city" label="City" required placeholder="Orlando" />
-                  <InputGroup v-model="address.state" label="State" required placeholder="FL" />
+                  <InputGroup
+                    v-model="address.city"
+                    label="City"
+                    required
+                    placeholder="Orlando"
+                    :error="errors[`addresses.${index}.city`]"
+                  />
+                  <InputGroup
+                    v-model="address.state"
+                    label="State"
+                    required
+                    placeholder="FL"
+                    :error="errors[`addresses.${index}.state`]"
+                  />
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
-                  <InputGroup v-model="address.fromDate" label="From" type="date" required />
+                  <InputGroup
+                    v-model="address.fromDate"
+                    label="From"
+                    type="date"
+                    required
+                    :error="errors[`addresses.${index}.fromDate`]"
+                  />
                   <InputGroup
                     v-model="address.toDate"
                     :checkboxValue="address.present || false"
@@ -187,9 +214,16 @@
                     label="To"
                     type="date"
                     placeholder="Current"
+                    :error="errors[`addresses.${index}.toDate`]"
                   />
                 </div>
-                <InputGroup v-model="address.zip" label="ZIP" required placeholder="32801" />
+                <InputGroup
+                  v-model="address.zip"
+                  label="ZIP"
+                  required
+                  placeholder="32801"
+                  :error="errors[`addresses.${index}.zip`]"
+                />
               </div>
 
               <button
@@ -240,8 +274,15 @@
                     label="License Number"
                     required
                     placeholder="A123-456-789"
+                    :error="errors[`licenses.${index}.number`]"
                   />
-                  <InputGroup v-model="license.state" label="State" required placeholder="FL" />
+                  <InputGroup
+                    v-model="license.state"
+                    label="State"
+                    required
+                    placeholder="FL"
+                    :error="errors[`licenses.${index}.state`]"
+                  />
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -250,24 +291,28 @@
                     label="Class"
                     required
                     placeholder="A, B, C"
+                    :error="errors[`licenses.${index}.class`]"
                   />
                   <InputGroup
                     v-model="license.endorsements"
                     type=""
                     label="Endorsements"
                     placeholder="P, S, N"
+                    :error="errors[`licenses.${index}.endorsements`]"
                   />
                   <InputGroup
                     v-model="license.emissionDate"
                     label="Emission Date"
                     type="date"
                     required
+                    :error="errors[`licenses.${index}.emissionDate`]"
                   />
                   <InputGroup
                     v-model="license.expirationDate"
                     label="Expiration"
                     type="date"
                     required
+                    :error="errors[`licenses.${index}.expirationDate`]"
                   />
                 </div>
 
@@ -275,6 +320,7 @@
                   v-model="license.restrictions"
                   label="Restrictions"
                   placeholder="None, or list restrictions"
+                  :error="errors[`licenses.${index}.restrictions`]"
                 />
               </div>
 
@@ -306,7 +352,17 @@
                   min="0"
                   required
                   class="input-base w-full"
+                  :class="{
+                    'border-red-500 focus:border-red-500 focus:ring-red-200':
+                      errors['experienceYears'],
+                  }"
                 />
+                <p
+                  v-if="errors['experienceYears']"
+                  class="text-[10px] text-red-500 font-semibold mt-1 animate-pulse"
+                >
+                  {{ errors['experienceYears'] }}
+                </p>
               </div>
 
               <div class="space-y-2">
@@ -428,12 +484,19 @@
                   </div>
 
                   <div class="grid grid-cols-2 gap-2">
-                    <InputGroup v-model="accident.date" label="Date" type="date" required />
+                    <InputGroup
+                      v-model="accident.date"
+                      label="Date"
+                      type="date"
+                      required
+                      :error="errors[`accidents.${index}.date`]"
+                    />
                     <InputGroup
                       v-model="accident.location"
                       label="Location"
                       required
                       placeholder="City, State"
+                      :error="errors[`accidents.${index}.location`]"
                     />
                   </div>
 
@@ -442,6 +505,7 @@
                     label="Description"
                     required
                     placeholder="Brief description of the accident"
+                    :error="errors[`accidents.${index}.description`]"
                   />
 
                   <div class="flex gap-4 text-xs">
@@ -503,12 +567,19 @@
                   </div>
 
                   <div class="grid grid-cols-2 gap-2">
-                    <InputGroup v-model="violation.date" label="Date" type="date" required />
+                    <InputGroup
+                      v-model="violation.date"
+                      label="Date"
+                      type="date"
+                      required
+                      :error="errors[`violations.${index}.date`]"
+                    />
                     <InputGroup
                       v-model="violation.location"
                       label="Location"
                       required
                       placeholder="City, State"
+                      :error="errors[`violations.${index}.location`]"
                     />
                   </div>
 
@@ -517,12 +588,14 @@
                     label="Violation Type"
                     required
                     placeholder="e.g., Speeding, Failure to yield"
+                    :error="errors[`violations.${index}.violation`]"
                   />
 
                   <InputGroup
                     v-model="violation.penalty"
                     label="Penalty/Outcome"
                     placeholder="e.g., Fine, Points, Court date"
+                    :error="errors[`violations.${index}.penalty`]"
                   />
                 </div>
 
@@ -616,7 +689,17 @@
                       rows="3"
                       class="input-base w-full resize-none"
                       placeholder="Explanation..."
+                      :class="{
+                        'border-red-500 focus:border-red-500 focus:ring-red-200':
+                          errors['denialSuspensionExplanation'],
+                      }"
                     ></textarea>
+                    <p
+                      v-if="errors['denialSuspensionExplanation']"
+                      class="text-[10px] text-red-500 font-semibold mt-1 animate-pulse"
+                    >
+                      {{ errors['denialSuspensionExplanation'] }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -708,6 +791,12 @@
                         <span class="text-sm font-medium text-slate-700">N/A</span>
                       </label>
                     </div>
+                    <p
+                      v-if="errors['drugTestDocumentation']"
+                      class="text-[10px] text-red-500 font-semibold mt-1 animate-pulse"
+                    >
+                      {{ errors['drugTestDocumentation'] }}
+                    </p>
                   </div>
 
                   <div class="grid grid-cols-2 gap-4 mt-6 ml-1 mr-1 mb-2">
@@ -716,6 +805,7 @@
                       label="Employee Signature"
                       required
                       placeholder="Type your full name"
+                      :error="errors['drugTestSignature']"
                     />
                     <InputGroup
                       v-model="form.drugTestDate"
@@ -723,6 +813,7 @@
                       type="date"
                       required
                       :disabled="true"
+                      :error="errors['drugTestDate']"
                     />
                   </div>
                 </div>
@@ -778,6 +869,7 @@
                   label="Company Name"
                   required
                   placeholder="ABC Transportation"
+                  :error="errors[`employmentHistory.${index}.companyName`]"
                 />
 
                 <InputGroup
@@ -785,12 +877,31 @@
                   label="Company Address"
                   required
                   placeholder="123 Business St"
+                  :error="errors[`employmentHistory.${index}.address`]"
                 />
 
                 <div class="grid grid-cols-3 gap-2">
-                  <InputGroup v-model="job.city" label="City" required placeholder="Orlando" />
-                  <InputGroup v-model="job.state" label="State" required placeholder="FL" />
-                  <InputGroup v-model="job.zip" label="ZIP" required placeholder="32801" />
+                  <InputGroup
+                    v-model="job.city"
+                    label="City"
+                    required
+                    placeholder="Orlando"
+                    :error="errors[`employmentHistory.${index}.city`]"
+                  />
+                  <InputGroup
+                    v-model="job.state"
+                    label="State"
+                    required
+                    placeholder="FL"
+                    :error="errors[`employmentHistory.${index}.state`]"
+                  />
+                  <InputGroup
+                    v-model="job.zip"
+                    label="ZIP"
+                    required
+                    placeholder="32801"
+                    :error="errors[`employmentHistory.${index}.zip`]"
+                  />
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
@@ -800,12 +911,14 @@
                     type="tel"
                     required
                     placeholder="(555) 000-0000"
+                    :error="errors[`employmentHistory.${index}.phone`]"
                   />
                   <InputGroup
                     v-model="job.position"
                     label="Position Held"
                     required
                     placeholder="Bus Driver"
+                    :error="errors[`employmentHistory.${index}.position`]"
                   />
                 </div>
 
@@ -813,10 +926,17 @@
                   v-model="job.description"
                   label="Employment Description"
                   placeholder="Describe your duties..."
+                  :error="errors[`employmentHistory.${index}.description`]"
                 />
 
                 <div class="grid grid-cols-2 gap-2">
-                  <InputGroup v-model="job.fromDate" label="From Date" type="date" required />
+                  <InputGroup
+                    v-model="job.fromDate"
+                    label="From Date"
+                    type="date"
+                    required
+                    :error="errors[`employmentHistory.${index}.fromDate`]"
+                  />
                   <InputGroup
                     v-model="job.toDate"
                     :checkboxValue="job.present || false"
@@ -827,6 +947,7 @@
                     label="To Date"
                     type="date"
                     placeholder="Current"
+                    :error="errors[`employmentHistory.${index}.toDate`]"
                   />
                 </div>
 
@@ -834,6 +955,7 @@
                   v-model="job.reasonForLeaving"
                   label="Reason for Leaving"
                   placeholder="e.g., Career advancement, relocation"
+                  :error="errors[`employmentHistory.${index}.reasonForLeaving`]"
                 />
               </div>
 
@@ -1009,6 +1131,7 @@
                     label="Prospective Employee Signature"
                     required
                     placeholder="Type your full name"
+                    :error="errors['pspDisclosureSignature']"
                   />
 
                   <InputGroup
@@ -1018,6 +1141,7 @@
                     type="date"
                     required
                     :disabled="true"
+                    :error="errors['pspDisclosureDate']"
                   />
                 </div>
               </div>
@@ -1078,6 +1202,7 @@
                     label="Employee Signature"
                     required
                     placeholder="Type your full name"
+                    :error="errors['fmcsaConsentSignature']"
                   />
 
                   <InputGroup
@@ -1086,6 +1211,7 @@
                     type="date"
                     required
                     :disabled="true"
+                    :error="errors['fmcsaConsentDate']"
                   />
                 </div>
               </div>
@@ -1149,6 +1275,7 @@
                   label="Applicant Signature"
                   required
                   placeholder="Type your full name"
+                  :error="errors['authReleaseSignature']"
                 />
 
                 <InputGroup
@@ -1157,6 +1284,7 @@
                   type="date"
                   required
                   :disabled="true"
+                  :error="errors['authReleaseDate']"
                 />
               </div>
             </div>
@@ -1200,6 +1328,7 @@
                     label="Prospective Employee Signature"
                     required
                     placeholder="Type your full name"
+                    :error="errors['alcoholDrugPolicySignature']"
                   />
 
                   <InputGroup
@@ -1208,6 +1337,7 @@
                     type="date"
                     required
                     :disabled="true"
+                    :error="errors['alcoholDrugPolicyDate']"
                   />
                 </div>
               </div>
@@ -1251,6 +1381,7 @@
                     label="Prospective Employee Signature"
                     required
                     placeholder="Type your full name"
+                    :error="errors['generalWorkPolicySignature']"
                   />
 
                   <InputGroup
@@ -1259,6 +1390,7 @@
                     type="date"
                     required
                     :disabled="true"
+                    :error="errors['generalWorkPolicyDate']"
                   />
                 </div>
               </div>
@@ -1272,8 +1404,8 @@
                   <h3
                     class="text-sm font-bold text-slate-700 uppercase tracking-tighter text-center"
                   />
-                    General Consent for Limited Queries of the FMCSA Drug and Alcohol Clearinghouse
-                    Fair Credit Reporting Authorization
+                  General Consent for Limited Queries of the FMCSA Drug and Alcohol Clearinghouse
+                  Fair Credit Reporting Authorization
 
                   <div
                     class="text-[12px] text-slate-600 leading-relaxed text-justify space-y-2 max-h-96 overflow-y-auto pr-2 border border-slate-100 rounded-lg p-3 bg-slate-50/50"
@@ -1322,6 +1454,7 @@
                     v-model="form.fairCreditReportingSignature"
                     label="Applicant Signature"
                     placeholder="Type your full name"
+                    :error="errors['fairCreditReportingSignature']"
                   />
 
                   <InputGroup
@@ -1330,6 +1463,7 @@
                     type="date"
                     required
                     :disabled="true"
+                    :error="errors['fairCreditReportingDate']"
                   />
                 </div>
               </div>
@@ -1402,17 +1536,20 @@ import { dataService } from '@/services/dataService'
 import { Check, Bus, Loader2, ArrowRight, ArrowLeft } from 'lucide-vue-next'
 import AnimatedBody from '@/Components/ui/AnimatedBody.vue'
 import InputGroup from '@/Components/ui/InputGroup.vue'
-import BaseButton from '@/Components/ui/BaseButton.vue'
+import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import BaseAlert from '@/Components/ui/BaseAlert.vue'
 import FileInput from '@/Components/ui/FileInput.vue'
 import { VEHICLE_TYPES } from '@/utils/constants'
 import type { DriverApplicationForm, VehicleTypes } from '@/types'
 import { capitalizeName } from '../utils/utils'
+import { ApplicationSchema } from '@/shared/schemas/ApplicationSchema'
+import { z } from 'zod'
 
 const loading = ref(false)
 const submitted = ref(false)
 const currentStep = ref(1)
 const totalSteps = 13
+const errors = ref<Record<string, string>>({})
 
 const licenseFrontName = ref('')
 const licenseBackName = ref('')
@@ -1636,7 +1773,188 @@ function prevStep() {
   }
 }
 
+async function validateStep() {
+  errors.value = {}
+  let stepSchema: z.ZodTypeAny | null = null
+  let dataToValidate = {}
+
+  // Map steps to schema parts
+  switch (currentStep.value) {
+    case 1: // Personal Info
+      stepSchema = ApplicationSchema.shape.personalInfo
+      dataToValidate = form.value.personalInfo
+      break
+    case 2: // Address History
+      stepSchema = ApplicationSchema.shape.addresses
+      dataToValidate = form.value.addresses
+      break
+    case 3: // License Data
+      stepSchema = ApplicationSchema.shape.licenses
+      dataToValidate = form.value.licenses
+      break
+    case 4: // Driving Experience
+      stepSchema = z.object({
+        experienceYears: ApplicationSchema.shape.experienceYears,
+        vehicleExperience: ApplicationSchema.shape.vehicleExperience,
+      })
+      dataToValidate = {
+        experienceYears: form.value.experienceYears,
+        vehicleExperience: form.value.vehicleExperience,
+      }
+      break
+    case 5: // Accidents & Violations
+      stepSchema = z
+        .object({
+          accidents: ApplicationSchema.shape.accidents,
+          violations: ApplicationSchema.shape.violations,
+          forfeitures: ApplicationSchema.shape.forfeitures,
+          deniedLicense: ApplicationSchema.shape.deniedLicense,
+          suspendedLicense: ApplicationSchema.shape.suspendedLicense,
+          denialSuspensionExplanation: ApplicationSchema.shape.denialSuspensionExplanation,
+        })
+        .superRefine((data, ctx) => {
+          if ((data.deniedLicense || data.suspendedLicense) && !data.denialSuspensionExplanation) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Explanation is required when license is denied or suspended',
+              path: ['denialSuspensionExplanation'],
+            })
+          }
+        })
+      dataToValidate = {
+        accidents: form.value.accidents,
+        violations: form.value.violations,
+        forfeitures: form.value.forfeitures,
+        deniedLicense: form.value.deniedLicense,
+        suspendedLicense: form.value.suspendedLicense,
+        denialSuspensionExplanation: form.value.denialSuspensionExplanation,
+      }
+      break
+    case 6: // Employment History
+      stepSchema = ApplicationSchema.shape.employmentHistory
+      dataToValidate = form.value.employmentHistory
+      break
+    case 7: // PSP
+      stepSchema = z.object({
+        pspDisclosureSignature: ApplicationSchema.shape.pspDisclosureSignature,
+        pspDisclosureDate: ApplicationSchema.shape.pspDisclosureDate,
+      })
+      dataToValidate = {
+        pspDisclosureSignature: form.value.pspDisclosureSignature,
+        pspDisclosureDate: form.value.pspDisclosureDate,
+      }
+      break
+    case 8: // FMCSA
+      stepSchema = z.object({
+        fmcsaConsentSignature: ApplicationSchema.shape.fmcsaConsentSignature,
+        fmcsaConsentDate: ApplicationSchema.shape.fmcsaConsentDate,
+      })
+      dataToValidate = {
+        fmcsaConsentSignature: form.value.fmcsaConsentSignature,
+        fmcsaConsentDate: form.value.fmcsaConsentDate,
+      }
+      break
+    case 9: // Auth Release
+      stepSchema = z.object({
+        authReleaseSignature: ApplicationSchema.shape.authReleaseSignature,
+        authReleaseDate: ApplicationSchema.shape.authReleaseDate,
+      })
+      dataToValidate = {
+        authReleaseSignature: form.value.authReleaseSignature,
+        authReleaseDate: form.value.authReleaseDate,
+      }
+      break
+    case 10: // Alcohol/Drug Policy
+      stepSchema = z.object({
+        alcoholDrugPolicySignature: ApplicationSchema.shape.alcoholDrugPolicySignature,
+        alcoholDrugPolicyDate: ApplicationSchema.shape.alcoholDrugPolicyDate,
+      })
+      dataToValidate = {
+        alcoholDrugPolicySignature: form.value.alcoholDrugPolicySignature,
+        alcoholDrugPolicyDate: form.value.alcoholDrugPolicyDate,
+      }
+      break
+    case 11: // General Work Policy
+      stepSchema = z.object({
+        generalWorkPolicySignature: ApplicationSchema.shape.generalWorkPolicySignature,
+        generalWorkPolicyDate: ApplicationSchema.shape.generalWorkPolicyDate,
+      })
+      dataToValidate = {
+        generalWorkPolicySignature: form.value.generalWorkPolicySignature,
+        generalWorkPolicyDate: form.value.generalWorkPolicyDate,
+      }
+      break
+    case 12: // Fair Credit
+      stepSchema = z.object({
+        fairCreditReportingSignature: ApplicationSchema.shape.fairCreditReportingSignature,
+        fairCreditReportingDate: ApplicationSchema.shape.fairCreditReportingDate,
+      })
+      dataToValidate = {
+        fairCreditReportingSignature: form.value.fairCreditReportingSignature,
+        fairCreditReportingDate: form.value.fairCreditReportingDate,
+      }
+      break
+    // Step 13 (Notes) is optional, no validation needed usually
+    default:
+      return true
+  }
+
+  if (stepSchema) {
+    const result = stepSchema.safeParse(dataToValidate)
+    if (!result.success) {
+      // Map Zod errors to errors ref
+      result.error.issues.forEach((issue) => {
+        // Flatten path for arrays: addresses[0].street -> "addresses.0.street"
+        // For simple objects: personalInfo.firstName -> "firstName" (because we validated partial object)
+
+        let key = issue.path.join('.')
+
+        // Special handling if we validated a partial object like in step 5, 7, etc.
+        // The path in issue will be relative to dataToValidate.
+        // E.g. dataToValidate = { pspDisclosureSignature: ... } -> path is ["pspDisclosureSignature"]
+        // So key is just "pspDisclosureSignature".
+
+        // However, for arrays like "addresses", path is [0, "street"]. key becomes "0.street".
+        // But in template we loop: errors[`addresses.${index}.street`] ?
+        // We validated form.value.addresses directly. So path is [0, "street"].
+        // So we need to prefix with parent key IF we are validating just that array.
+
+        if (currentStep.value === 2) {
+          key = `addresses.${key}`
+        } else if (currentStep.value === 3) {
+          key = `licenses.${key}`
+        } else if (currentStep.value === 6) {
+          key = `employmentHistory.${key}`
+        } else if (currentStep.value === 1) {
+          // Personal info is nested in form, but we validated the object directly.
+          // In template: form.personalInfo.firstName.
+          // Errors should probably be keyed by 'personalInfo.firstName' or just 'firstName' depending on binding.
+          // Let's bind with full path to avoid collision.
+          key = `personalInfo.${key}`
+        }
+
+        errors.value[key] = issue.message
+      })
+
+      // Scroll to top error?
+      return false
+    }
+  }
+
+  return true
+}
+
 async function handleNextOrSubmit() {
+  const isValid = await validateStep()
+  if (!isValid) {
+    // Optional: Scroll to first error
+    const firstError = document.querySelector('.border-red-500')
+    if (firstError) {
+      firstError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+    return
+  }
+
   if (currentStep.value < totalSteps) {
     nextStep()
   } else {
@@ -1699,8 +2017,8 @@ function reset() {
     denialSuspensionExplanation: '',
     employmentHistory: [],
     notes: '',
-    vehicleExperience: [{ type: ''}],
-    experienceYears: 0 ,
+    vehicleExperience: [{ type: '' }],
+    experienceYears: 0,
     licenseFront: null,
     licenseBack: null,
     medicalCard: null,
@@ -1819,7 +2137,7 @@ function toggleVehicleType(type: VehicleTypes, checked: boolean) {
   if (checked) {
     form.value.vehicleExperience.push({ type })
     if (!isVehicleSelected(type)) {
-      form.value.vehicleExperience.push({ type})
+      form.value.vehicleExperience.push({ type })
     }
     const index = form.value.vehicleExperience.findIndex((v) => v.type === type)
     if (index !== -1) {
