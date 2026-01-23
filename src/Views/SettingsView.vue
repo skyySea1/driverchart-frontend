@@ -2,7 +2,6 @@
 <template>
   <div class="space-y-6">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
       <!-- Sidebar Settings Nav -->
       <div class="space-y-2">
         <button
@@ -26,7 +25,7 @@
       <div
         class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
       >
-      <!-- Options container -->
+        <!-- Options container -->
         <div class="p-6 border-b border-slate-100">
           <h3 class="text-lg font-black text-slate-800">{{ selectedOption }}</h3>
           <p class="text-slate-500 text-sm italic">
@@ -66,9 +65,8 @@
                   disabled
                 />
                 <!-- TODO add nested user role to user object-->
-
               </div>
-               <div class="space-y-1">
+              <div class="space-y-1">
                 <InputGroup
                   label="Role"
                   type="text"
@@ -135,7 +133,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { User, Bell, Globe } from 'lucide-vue-next'
 import InputGroup from '@/Components/ui/InputGroup.vue'
-import BaseButton from '@/Components/ui/BaseButton.vue'
+import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import { ORGANIZATION } from '@/utils/constants'
 import { useAuthStore } from '@/stores/AuthStore'
 
