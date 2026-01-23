@@ -180,95 +180,81 @@ export const dataService = {
   // --- Dashboard Stats ---
   getDashboardStats: async (): Promise<DashboardStats> => {
     console.log('[Dashboard] Fetching stats...')
-    try {
-      const [driversRes, vehiclesRes, alertsRes, applicationsRes] = await Promise.all([
-        apiClient.get<Driver[]>('/drivers'),
-        apiClient.get<Vehicle[]>('/vehicles'),
-        apiClient.get<Alert[]>('/expiration/alerts'),
-        apiClient.get<Applications[]>('/applications'),
-      ])
+    // Removed try/catch block to let errors propagate to the caller (useDashboard)
+    // allowing it to maintain the previous valid state instead of overwriting with zeros.
+    const [driversRes, vehiclesRes, alertsRes, applicationsRes] = await Promise.all([
+      apiClient.get<Driver[]>('/drivers'),
+      apiClient.get<Vehicle[]>('/vehicles'),
+      apiClient.get<Alert[]>('/expiration/alerts'),
+      apiClient.get<Applications[]>('/applications'),
+    ])
 
-      const drivers = driversRes.data
-      const vehicles = vehiclesRes.data
-      const alerts = alertsRes.data
-      const applications = applicationsRes.data
+    const drivers = driversRes.data
+    const vehicles = vehiclesRes.data
+    const alerts = alertsRes.data
+    const applications = applicationsRes.data
 
-      const pendingApplicationsCount = applications.filter((a) => a.status === 'Pending').length
+    const pendingApplicationsCount = applications.filter((a) => a.status === 'Pending').length
 
-      const today = dayjs().startOf('day')
+    const today = dayjs().startOf('day')
 
-      const isExpiringSoon = (dateStr?: string) => {
-        if (!dateStr) return false
-        const diff = dayjs(dateStr).diff(today, 'day')
-        return diff >= 0 && diff <= 30
-      }
-
-      const isExpired = (dateStr?: string) => {
-        if (!dateStr) return false
-        return dayjs(dateStr).isBefore(today, 'day')
-      }
-
-      const {
-        expiringMedCardsDrivers,
-        expiringCDLDrivers,
-        expiringClearinghouseDrivers,
-        expiredMvrDrivers,
-      } = drivers.reduce<{
-        expiringMedCardsDrivers: Driver[]
-        expiringCDLDrivers: Driver[]
-        expiringClearinghouseDrivers: Driver[]
-        expiredMvrDrivers: Driver[]
-      }>(
-        (acc, d) => {
-          if (isExpiringSoon(d.medical?.expiryDate)) {
-            acc.expiringMedCardsDrivers.push(d)
-          }
-          if (isExpiringSoon(d.cdl?.expiryDate)) {
-            acc.expiringCDLDrivers.push(d)
-          }
-          if (isExpiringSoon(d.drugAlcohol?.expiryDate)) {
-            acc.expiringClearinghouseDrivers.push(d)
-          }
-          if (isExpired(d.mvr?.expiryDate)) {
-            acc.expiredMvrDrivers.push(d)
-          }
-          return acc
-        },
-        {
-          expiringMedCardsDrivers: [],
-          expiringCDLDrivers: [],
-          expiringClearinghouseDrivers: [],
-          expiredMvrDrivers: [],
-        },
-      )
-
-      const stats = {
-        totalDrivers: drivers.length,
-        totalVehicles: vehicles.length,
-        alertsCount: alerts.length,
-        alerts: alerts,
-        expiringMedCards: expiringMedCardsDrivers.length,
-        expiringCDL: expiringCDLDrivers.length,
-        expiringClearinghouse: expiringClearinghouseDrivers.length,
-        auditScore: '94%',
-        newApplications: pendingApplicationsCount,
-        annualRecordReview: expiredMvrDrivers.length,
-      }
-      return stats
-    } catch (error) {
-      console.error('[Dashboard] Stats fetch error:', error)
-      return {
-        totalDrivers: 0,
-        totalVehicles: 0,
-        alertsCount: 0,
-        alerts: [],
-        expiringMedCards: 0,
-        expiringCDL: 0,
-        expiringClearinghouse: 0,
-        auditScore: '0%',
-        newApplications: 0,
-        annualRecordReview: 0,
-      }
+    const isExpiringSoon = (dateStr?: string) => {
+      if (!dateStr) return false
+      const diff = dayjs(dateStr).diff(today, 'day')
+      return diff >= 0 && diff <= 30
     }
+
+    const isExpired = (dateStr?: string) => {
+      if (!dateStr) return false
+      return dayjs(dateStr).isBefore(today, 'day')
+    }
+
+    const {
+      expiringMedCardsDrivers,
+      expiringCDLDrivers,
+      expiringClearinghouseDrivers,
+      expiredMvrDrivers,
+    } = drivers.reduce<{
+      expiringMedCardsDrivers: Driver[]
+      expiringCDLDrivers: Driver[]
+      expiringClearinghouseDrivers: Driver[]
+      expiredMvrDrivers: Driver[]
+    }>(
+      (acc, d) => {
+        if (isExpiringSoon(d.medical?.expiryDate)) {
+          acc.expiringMedCardsDrivers.push(d)
+        }
+        if (isExpiringSoon(d.cdl?.expiryDate)) {
+          acc.expiringCDLDrivers.push(d)
+        }
+        if (isExpiringSoon(d.drugAlcohol?.expiryDate)) {
+          acc.expiringClearinghouseDrivers.push(d)
+        }
+        if (isExpired(d.mvr?.expiryDate)) {
+          acc.expiredMvrDrivers.push(d)
+        }
+        return acc
+      },
+      {
+        expiringMedCardsDrivers: [],
+        expiringCDLDrivers: [],
+        expiringClearinghouseDrivers: [],
+        expiredMvrDrivers: [],
+      },
+    )
+
+    const stats = {
+      totalDrivers: drivers.length,
+      totalVehicles: vehicles.length,
+      alertsCount: alerts.length,
+      alerts: alerts,
+      expiringMedCards: expiringMedCardsDrivers.length,
+      expiringCDL: expiringCDLDrivers.length,
+      expiringClearinghouse: expiringClearinghouseDrivers.length,
+      auditScore: '94%',
+      newApplications: pendingApplicationsCount,
+      annualRecordReview: expiredMvrDrivers.length,
+    }
+    return stats
   },
 }
