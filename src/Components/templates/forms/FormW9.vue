@@ -121,13 +121,14 @@
 
       <!-- 5. Address -->
       <div class="p-2 border-b border-black">
-        <label class="text-xs font-bold block">5 Address (number, street, and apt. no.)</label>
+        <label class="text-xs font-bold block">5 Address (street, number, and apt. no.)</label>
         <input
           type="text"
           class="w-full font-mono bg-transparent border-none focus:ring-0"
-          :value="data.w9Address || ''"
+          :value="address1"
           @input="onInput('w9Address', ($event.target as HTMLInputElement).value)"
           placeholder="Enter Address"
+          readonly
         />
       </div>
 
@@ -138,7 +139,7 @@
           <input
             type="text"
             class="w-full font-mono bg-transparent border-none focus:ring-0"
-            :value="data.w9CityStateZip || ''"
+            :value="address2"
             @input="onInput('w9CityStateZip', ($event.target as HTMLInputElement).value)"
             placeholder="City, State, ZIP"
           />
@@ -148,7 +149,7 @@
           <input
             type="text"
             class="w-full font-mono bg-transparent border-b border-dotted border-slate-300 focus:ring-0"
-            :value="data.accountNumber || ''"
+            :value="props.data.accountNumber || ''"
             @input="onInput('accountNumber', ($event.target as HTMLInputElement).value)"
             placeholder="Account number(s)"
           />
@@ -163,7 +164,7 @@
             <label class="text-xs block mb-1">Social Security Number</label>
             <div class="flex gap-2">
               <div class="border border-black p-1 w-full text-center font-mono text-lg bg-slate-50">
-                {{ data.ssnNumber || '   -  -    ' }}
+                {{ props.data.ssnNumber }}
               </div>
             </div>
           </div>
@@ -233,15 +234,21 @@
 </template>
 
 <script setup lang="ts">
+import type { Driver } from '@/types'
 import { computed } from 'vue'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const props = defineProps<{ data: any }>()
+const props = defineProps<{ data: Driver }>()
 const emit = defineEmits<{ 'update:data': [any] }>()
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 const fullName = computed(() =>
   [props.data.firstName, props.data.middleName, props.data.lastName].filter(Boolean).join(' '),
+)
+
+const address1 = computed(() => [props.data.address].filter(Boolean).join(' '))
+const address2 = computed(() =>
+  [props.data.city, props.data.state, props.data.zip].filter(Boolean).join(', '),
 )
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

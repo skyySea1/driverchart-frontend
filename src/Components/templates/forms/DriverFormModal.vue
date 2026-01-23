@@ -258,8 +258,8 @@
               label="Social Security Number (SSN)"
               placeholder="XXX-XX-XXXX"
               v-model.trim="form.ssnNumber"
+              required
             />
-            <span class="text-red-500">*</span>
             <FileInput
               label="Upload SSN Card"
               :fileName="form.ssnDocName"

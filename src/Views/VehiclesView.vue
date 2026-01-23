@@ -27,7 +27,7 @@
         </div>
       </div>
 
-       <div
+      <div
         class="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full lg:w-auto justify-end"
       >
         <!-- Filter Dropdown -->
@@ -63,7 +63,10 @@
           </template>
 
           <template #cell(vin)="{ value }">
-            <span class="font-mono text-xs text-slate-600 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{{ value }}</span>
+            <span
+              class="font-mono text-xs text-slate-600 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100"
+              >{{ value }}</span
+            >
           </template>
 
           <template #cell(vehicleStatus)="{ value }">
@@ -82,11 +85,16 @@
           </template>
 
           <template #cell(nextDue)="{ item }">
-             <span
-              :class="['px-2 py-1 rounded inline-block text-xs font-bold', getStatusColor(nextInspectionFor(item.lastAnnualInspection))]"
+            <span
+              :class="[
+                'px-2 py-1 rounded inline-block text-xs font-bold',
+                getStatusColor(nextInspectionFor(item.lastAnnualInspection)),
+              ]"
             >
-              <span class="block text-[11px] text-slate-500">{{ nextInspectionFor(item.lastAnnualInspection) || '-' }}</span>
-               <span v-if="item.lastAnnualInspection" class="block text-[9px] text-slate-500">
+              <span class="block text-[11px] text-slate-500">{{
+                nextInspectionFor(item.lastAnnualInspection) || '-'
+              }}</span>
+              <span v-if="item.lastAnnualInspection" class="block text-[9px] text-slate-500">
                 {{ daysToExpire(nextInspectionFor(item.lastAnnualInspection)) }}
               </span>
             </span>
@@ -111,16 +119,23 @@
           </template>
 
           <template #empty>
-             <div class="flex flex-col items-center justify-center py-12 text-center">
-                <div class="bg-slate-50 p-4 rounded-full mb-3">
-                  <Bus class="w-8 h-8 text-slate-300" />
-                </div>
-                <h3 class="text-sm font-medium text-slate-900">No vehicles found</h3>
-                <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
-                  Get started by adding a new vehicle to your fleet or try adjusting your search filters.
-                </p>
-                <BaseButton label="Add Vehicle" :icon="Plus" size="sm" class="mt-4" @click="openNew" />
-             </div>
+            <div class="flex flex-col items-center justify-center py-12 text-center">
+              <div class="bg-slate-50 p-4 rounded-full mb-3">
+                <Bus class="w-8 h-8 text-slate-300" />
+              </div>
+              <h3 class="text-sm font-medium text-slate-900">No vehicles found</h3>
+              <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
+                Get started by adding a new vehicle to your fleet or try adjusting your search
+                filters.
+              </p>
+              <BaseButton
+                label="Add Vehicle"
+                :icon="Plus"
+                size="sm"
+                class="mt-4"
+                @click="openNew"
+              />
+            </div>
           </template>
         </DefaultTable>
       </div>
@@ -133,7 +148,11 @@
       size="max-w-md"
       @close="closeModal"
     >
-      <VehicleForm :initial-data="modalStore.data as Vehicle" @saved="onVehicleSaved" @cancel="closeModal" />
+      <VehicleForm
+        :initial-data="modalStore.data as Vehicle"
+        @saved="onVehicleSaved"
+        @cancel="closeModal"
+      />
     </BaseModal>
 
     <!-- Delete confirmation component -->
@@ -158,8 +177,8 @@ import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
 import { useCompliance } from '@/Composables/useCompliance'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
 import BaseModal from '@/Components/ui/BaseModal.vue'
-import BaseButton from '@/Components/ui/BaseButton.vue'
-import SmallButton from '@/Components/ui/SmallButton.vue'
+import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
+import SmallButton from '@/Components/ui/buttons/SmallButton.vue'
 import VehicleForm from '@/Components/templates/forms/VehicleForm.vue'
 import DeleteConfirmation from '@/Components/ui/DeleteConfirmation.vue'
 import FilterDropdown, { type FilterOptions, type FilterState } from '@/Components/ui/FilterDropdown.vue'
@@ -175,10 +194,9 @@ const modalStore = useModalStore()
 const { getStatusColor, daysToExpire } = useCompliance()
 
 // Fetch Data
-const { items: vehiclesItems, loading } = useRealtimeCollection<Vehicle>(
-  'vehicles',
-  { map: parseVehicleDoc }
-)
+const { items: vehiclesItems, loading } = useRealtimeCollection<Vehicle>('vehicles', {
+  map: parseVehicleDoc,
+})
 
 const toDelete = ref<Vehicle | null>(null)
 const searchQuery = ref('')
@@ -217,12 +235,17 @@ onMounted(() => {
 })
 
 // Sync URL
-watch(activeFilters, (newFilters) => {
-   const query: LocationQuery = { ...route.query }
-   if (newFilters.status && newFilters.status.length > 0) query.status = newFilters.status.join(',')
-   else delete query.status
-   router.replace({ query })
-}, { deep: true })
+watch(
+  activeFilters,
+  (newFilters) => {
+    const query: LocationQuery = { ...route.query }
+    if (newFilters.status && newFilters.status.length > 0)
+      query.status = newFilters.status.join(',')
+    else delete query.status
+    router.replace({ query })
+  },
+  { deep: true },
+)
 
 watch(searchQuery, (val) => {
   const query: LocationQuery = { ...route.query }
@@ -230,7 +253,6 @@ watch(searchQuery, (val) => {
   else delete query.search
   router.replace({ query })
 })
-
 
 function handleSort(payload: { key: string; order: 'asc' | 'desc' | null }) {
   currentSort.value = payload
@@ -243,15 +265,14 @@ const vehiclesData = computed(() => {
   // Filter: Status
   const statusFilters = activeFilters.value.status || []
   if (statusFilters.length > 0) {
-    list = list.filter(v => statusFilters.includes(v.vehicleStatus || STATUS_INACTIVE))
+    list = list.filter((v) => statusFilters.includes(v.vehicleStatus || STATUS_INACTIVE))
   }
 
   // Filter: Search
   if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase().trim()
-    list = list.filter(v =>
-      v.busNumber.toLowerCase().includes(q) ||
-      v.vin.toLowerCase().includes(q)
+    list = list.filter(
+      (v) => v.busNumber.toLowerCase().includes(q) || v.vin.toLowerCase().includes(q),
     )
   }
 
@@ -262,8 +283,8 @@ const vehiclesData = computed(() => {
     sorted.sort((a, b) => {
       const rawA = a[key]
       const rawB = b[key]
-      const valA = (typeof rawA === 'string' || typeof rawA === 'number') ? rawA : null
-      const valB = (typeof rawB === 'string' || typeof rawB === 'number') ? rawB : null
+      const valA = typeof rawA === 'string' || typeof rawA === 'number' ? rawA : null
+      const valB = typeof rawB === 'string' || typeof rawB === 'number' ? rawB : null
       // Handle derived 'nextDue' sort if needed, or mapped fields
       // Simple direct property sort for now
       return compareValues(valA, valB, order)

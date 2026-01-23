@@ -192,11 +192,11 @@ import { dataService } from '@/services/dataService'
 import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
 import { useCompliance } from '@/Composables/useCompliance'
 import { Edit, Trash2, Bot, Search, X } from 'lucide-vue-next'
-import BaseButton from '@/Components/ui/BaseButton.vue'
+import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
 import { useModalStore } from '@/stores/ModalStore'
 import type { Driver, Column, DriverRow, SortOrder } from '@/types'
-import SmallButton from '@/Components/ui/SmallButton.vue'
+import SmallButton from '@/Components/ui/buttons/SmallButton.vue'
 import { parseDriverDoc } from '@/utils/firestoreParsers'
 import { capitalizeName, getHireStatusColor, compareValues } from '@/utils/utils'
 
@@ -269,7 +269,7 @@ onMounted(() => {
 watch(
   activeFilters,
   (newFilters) => {
-    const query:LocationQuery = { ...route.query }
+    const query: LocationQuery = { ...route.query }
 
     // Clean up undefined/null
     Object.keys(query).forEach((key) => query[key] === undefined && delete query[key])
