@@ -150,7 +150,12 @@
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Phone Number</label>
-            <input v-model.trim="form.emergencyContact.phone" type="tel" class="input-base" placeholder="(123) 456-7890"/>
+            <input
+              v-model.trim="form.emergencyContact.phone"
+              type="tel"
+              class="input-base"
+              placeholder="(123) 456-7890"
+            />
           </div>
         </div>
       </div>
@@ -312,13 +317,13 @@
       </div>
       <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
         <div class="space-y-4">
-          <!-- Cdl -->
+          <!-- license -->
           <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
             <div class="md:col-span-3 flex items-center gap-3">
               <div class="p-2 bg-white rounded shadow-sm text-slate-500">
                 <CreditCard class="w-5 h-5" />
               </div>
-              <div class="text-sm font-bold text-slate-700">CDL Information</div>
+              <div class="text-sm font-bold text-slate-700">License Information</div>
             </div>
             <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="flex space-x-2 col-span-2">
@@ -326,13 +331,13 @@
                   <label class="block text-[10px] font-bold text-slate-500"
                     >Number <span class="text-red-500">*</span></label
                   >
-                  <input v-model.trim="form.cdl.documentNumber" class="input-base" />
+                  <input v-model.trim="form.license.documentNumber" class="input-base" />
                 </div>
                 <div class="w-20 space-y-1">
                   <label class="block text-[10px] font-bold text-slate-500"
                     >State <span class="text-red-500">*</span></label
                   >
-                  <input v-model.trim="form.cdl.state" placeholder="FL" class="input-base" />
+                  <input v-model.trim="form.license.state" placeholder="FL" class="input-base" />
                 </div>
               </div>
               <div class="space-y-1">
@@ -340,24 +345,20 @@
                   >Expiration <span class="text-red-500">*</span></label
                 >
                 <div class="flex items-center gap-1">
-                  <input v-model="form.cdl.expiryDate" type="date" class="input-base w-34" />
+                  <input v-model="form.license.expiryDate" type="date" class="input-base w-34" />
                   <ActionIcon
                     :icon="Upload"
                     variant="default"
                     title="Upload Certificate"
-                    :status="uploadStatus.cdl"
-                    @click="triggerUpload('cdl')"
+                    :status="uploadStatus.license"
+                    @click="triggerUpload('license')"
                   />
-                  <ActionIcon
-                    :icon="Printer"
-                    variant="default"
-                    title="Print Certificate"
-                    @click="activeDocument = 'roadtest'"
-                  />
+
                 </div>
-                <p v-if="form.cdl.file" class="text-[9px] text-green-600 truncate max-w-37.5">
-                  File: {{ form.cdl.file }}
-                </p>
+                <div v-if="form.license.file" class="flex items-center gap-1 text-[9px] text-green-600 mt-1">
+                  <CheckCircle class="w-3 h-3" />
+                  <span class="truncate max-w-37.5" :title="form.license.file">Document Uploaded</span>
+                </div>
               </div>
             </div>
           </div>
@@ -390,16 +391,12 @@
                     :status="uploadStatus.medical"
                     @click="triggerUpload('medical')"
                   />
-                  <ActionIcon
-                    :icon="Printer"
-                    variant="default"
-                    title="Print Certificate"
-                    @click="activeDocument = 'roadtest'"
-                  />
+
                 </div>
-                <p v-if="form.medical.file" class="text-[9px] text-green-600 truncate max-w-37.5">
-                  File: {{ form.medical.file }}
-                </p>
+                <div v-if="form.medical.file" class="flex items-center gap-1 text-[9px] text-green-600 mt-1">
+                  <CheckCircle class="w-3 h-3" />
+                  <span class="truncate max-w-37.5" :title="form.medical.file">Document Uploaded</span>
+                </div>
               </div>
             </div>
           </div>
@@ -434,16 +431,12 @@
                     :status="uploadStatus.mvr"
                     @click="triggerUpload('mvr')"
                   />
-                  <ActionIcon
-                    :icon="Printer"
-                    variant="default"
-                    title="Print Certificate"
-                    @click="activeDocument = 'roadtest'"
-                  />
+
                 </div>
-                <p v-if="form.mvr.file" class="text-[9px] text-green-600 truncate max-w-37.5">
-                  File: {{ form.mvr.file }}
-                </p>
+                <div v-if="form.mvr.file" class="flex items-center gap-1 text-[9px] text-green-600 mt-1">
+                  <CheckCircle class="w-3 h-3" />
+                  <span class="truncate max-w-37.5" :title="form.mvr.file">Document Uploaded</span>
+                </div>
               </div>
             </div>
           </div>
@@ -482,19 +475,11 @@
                     :status="uploadStatus.drugAlcohol"
                     @click="triggerUpload('drugAlcohol')"
                   />
-                  <ActionIcon
-                    :icon="Printer"
-                    variant="default"
-                    title="Print Certificate"
-                    @click="activeDocument = 'roadtest'"
-                  />
                 </div>
-                <p
-                  v-if="form.drugAlcohol.file"
-                  class="text-[9px] text-green-600 truncate max-w-37.5"
-                >
-                  File: {{ form.drugAlcohol.file }}
-                </p>
+                <div v-if="form.drugAlcohol.file" class="flex items-center gap-1 text-[9px] text-green-600 mt-1">
+                  <CheckCircle class="w-3 h-3" />
+                  <span class="truncate max-w-37.5" :title="form.drugAlcohol.file">Document Uploaded</span>
+                </div>
               </div>
             </div>
           </div>
@@ -529,16 +514,12 @@
                     :status="uploadStatus.roadTest"
                     @click="triggerUpload('roadTest')"
                   />
-                  <ActionIcon
-                    :icon="Printer"
-                    variant="default"
-                    title="Print Certificate"
-                    @click="activeDocument = 'roadtest'"
-                  />
+
                 </div>
-                <p v-if="form.roadTest.file" class="text-[9px] text-green-600 truncate max-w-37.5">
-                  File: {{ form.roadTest.file }}
-                </p>
+                <div v-if="form.roadTest.file" class="flex items-center gap-1 text-[9px] text-green-600 mt-1">
+                  <CheckCircle class="w-3 h-3" />
+                  <span class="truncate max-w-37.5" :title="form.roadTest.file">Document Uploaded</span>
+                </div>
               </div>
             </div>
           </div>
@@ -615,7 +596,7 @@ import {
   ClipboardList,
   FlaskConical,
   Map,
-  Printer,
+
   Upload,
   Phone,
   Save,
@@ -632,7 +613,7 @@ const activeDocument = ref<string | null>(null)
 
 // Ref for the hidden file input
 const complianceFileInput = ref<HTMLInputElement | null>(null)
-// Track which document is being uploaded (cdl, medical, etc.)
+// Track which document is being uploaded (license, medical, etc.)
 const activeUploadDocType = ref<string | null>(null)
 // Backward-compatible alias; prefer `activeUploadDocType` in new code
 const uploadingDocType = activeUploadDocType
@@ -642,7 +623,7 @@ const isInitialized = ref(false)
 
 // Track upload status per document type
 const uploadStatus = ref<Record<string, 'idle' | 'loading' | 'success'>>({
-  cdl: 'idle',
+  license: 'idle',
   medical: 'idle',
   mvr: 'idle',
   drugAlcohol: 'idle',
@@ -670,7 +651,7 @@ const form = ref<DriverForm>({
     phone: '',
     relationship: '',
   },
-  cdl: {
+  license: {
     documentNumber: '',
     state: '',
     expiryDate: '',
@@ -722,7 +703,7 @@ onMounted(() => {
       bankName: capitalizeName(props.driver.bankName || ''),
       businessName: capitalizeName(props.driver.businessName || ''),
 
-      cdl: { ...form.value.cdl, ...props.driver.cdl },
+      license: { ...form.value.license, ...props.driver.license },
       medical: { ...form.value.medical, ...props.driver.medical },
       mvr: { ...form.value.mvr, ...props.driver.mvr },
       drugAlcohol: { ...form.value.drugAlcohol, ...props.driver.drugAlcohol },
@@ -796,7 +777,7 @@ function updateForm(newData: Partial<typeof form.value>) {
   form.value = { ...form.value, ...newData }
 }
 
-function handleFileChange(fieldName: 'ssnDocFile', event: Event) {
+async function handleFileChange(fieldName: 'ssnDocFile', event: Event) {
   if (!(event.target instanceof HTMLInputElement)) {
     console.warn('Event target is not an HTMLInputElement:', event.target)
     return
@@ -804,10 +785,39 @@ function handleFileChange(fieldName: 'ssnDocFile', event: Event) {
   const target = event.target
   if (target.files && target.files[0]) {
     const file = target.files[0]
+
+    // Validate Driver Context existence (ID or Name)
+    if (!form.value.id && (!form.value.firstName || !form.value.lastName)) {
+      errorMsg.value = 'Please fill in the driver\'s first and last name before uploading documents.'
+      target.value = '' // Reset input
+      return
+    }
+
     if (fieldName === 'ssnDocFile') {
-      form.value.ssnDocPreviewUrl = URL.createObjectURL(file)
-      form.value.ssnDocName = file.name
-      form.value.ssnDocFile = file
+      try {
+        const driverName = `${form.value.firstName} ${form.value.lastName}`
+        const today = new Date().toISOString()
+
+        // Optimistic UI update for preview (optional)
+        form.value.ssnDocPreviewUrl = URL.createObjectURL(file)
+
+        // Real Upload
+        const { url, filename } = await dataService.uploadDocument(
+          form.value.id || null,
+          'ssnDoc',
+          file,
+          today,
+          driverName,
+          undefined,
+          !form.value.id ? driverName : undefined
+        )
+
+        form.value.ssnDocName = filename
+        form.value.ssnDoc = url
+      } catch (e) {
+        console.error('SSN Upload failed', e)
+        errorMsg.value = 'Failed to upload SSN Card.'
+      }
     }
   }
 }
@@ -818,7 +828,7 @@ function triggerUpload(docType: string) {
   complianceFileInput.value?.click()
 }
 
-function onComplianceFileSelected(event: Event) {
+async function onComplianceFileSelected(event: Event) {
   if (!(event.target instanceof HTMLInputElement)) return
   const target = event.target
   if (target.files && target.files[0]) {
@@ -826,16 +836,38 @@ function onComplianceFileSelected(event: Event) {
     const docType = uploadingDocType.value
 
     if (docType) {
-      if (['cdl', 'medical', 'mvr', 'drugAlcohol', 'roadTest'].includes(docType)) {
+      if (['license', 'medical', 'mvr', 'drugAlcohol', 'roadTest'].includes(docType)) {
+        if (!form.value.id && (!form.value.firstName || !form.value.lastName)) {
+          errorMsg.value = 'Please fill in the driver\'s first and last name before uploading documents.'
+          target.value = ''
+          uploadingDocType.value = null
+          return
+        }
+
         const item = form.value[docType as keyof DriverForm] as ComplianceItem
         if (item) {
-          item.file = file.name
-
-          // Simulate Upload Process todo remove simulated
           uploadStatus.value[docType] = 'loading'
-          setTimeout(() => {
+          try {
+            const driverName = `${form.value.firstName} ${form.value.lastName}`
+            const today = new Date().toISOString()
+
+            const { url } = await dataService.uploadDocument(
+              form.value.id || null,
+              docType,
+              file,
+              today,
+              driverName,
+              item.expiryDate,
+              !form.value.id ? driverName : undefined
+            )
+
+            item.file = url
             uploadStatus.value[docType] = 'success'
-          }, 800)
+          } catch (e) {
+            console.error('Upload failed', e)
+            uploadStatus.value[docType] = 'idle'
+            errorMsg.value = 'Failed to upload document.'
+          }
         }
       }
     }
@@ -890,9 +922,9 @@ async function save() {
       firstName,
       middleName,
       lastName,
-      cdl: {
-        ...form.value.cdl,
-        state: form.value.cdl.state.toUpperCase(),
+      license: {
+        ...form.value.license,
+        state: form.value.license.state.toUpperCase(),
       },
       id: props.driver?.id || '',
     }

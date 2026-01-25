@@ -28,13 +28,13 @@
         <div>
           <label class="font-bold block text-sm">Driver's License No.</label>
           <div class="border-b border-black h-8 pt-1 text-blue-800 font-mono text-lg">
-            {{ driver.cdl?.documentNumber }}
+            {{ driver.license?.documentNumber }}
           </div>
         </div>
         <div>
           <label class="font-bold block text-sm">State</label>
           <div class="border-b border-black h-8 pt-1 text-blue-800 font-mono text-lg">
-            {{ driver.cdl?.state }}
+            {{ driver.license?.state }}
           </div>
         </div>
       </div>

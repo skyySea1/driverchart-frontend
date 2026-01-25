@@ -5,7 +5,6 @@
       props.collapsed ? '-translate-x-full md:-translate-x-56' : 'translate-x-0',
     ]"
   >
-    <!-- TODO CONFIGURE ROUTE -->
     <!-- Logo Section -->
     <div
       v-cursor
@@ -67,7 +66,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import UserBadge from '@/Components/ui/UserBadge.vue'
-import { LayoutDashboard, Users, Truck, FileText, PieChart, Settings, Bus, UserPlus } from 'lucide-vue-next'
+import { LayoutDashboard, Truck, Settings, Bus, UserPlus, ShieldCheck } from 'lucide-vue-next'
+import { useAuthStore } from '@/stores/AuthStore'
 
 const props = defineProps<{
   collapsed: boolean
@@ -75,15 +75,22 @@ const props = defineProps<{
 }>()
 defineEmits<{ navigate: [id: string] }>()
 
+const authStore = useAuthStore()
+
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'drivers', label: 'Drivers (DQ Files)', icon: Users },
-  { id: 'vehicles', label: 'Fleet Maintenance', icon: Truck, hidden: true },
-  { id: 'audit', label: ' Audit Reports', icon: PieChart },
+  { id: 'vehicles', label: 'Fleet Maintenance', icon: Truck, hidden: false },
   { id: 'applications', label: 'Applications', icon: UserPlus },
-  { id: 'reports', label: 'Main Reports', icon: FileText },
   { id: 'settings', label: 'Settings', icon: Settings },
+  { id: 'user-management', label: 'Users Management', icon: ShieldCheck, requiresAdmin: true },
 ]
-// hidden items that are filtered out
-const visibleNavItems = computed(() => navItems.filter((item) => !item.hidden))
+
+// Filter nav items based on visibility and permissions
+const visibleNavItems = computed(() => {
+  return navItems.filter((item) => {
+    if (item.hidden) return false
+    if (item.requiresAdmin && authStore.user?.role !== 'Admin') return false
+    return true
+  })
+})
 </script>

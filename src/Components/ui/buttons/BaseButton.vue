@@ -4,20 +4,23 @@
     :to="to"
     @click="$emit('click')"
     class="btn-up-hover-effect px-4 py-2 rounded-lg text-white flex items-center gap-2 shadow transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus:ring-2 cursor-pointer"
-    :class="variantClasses"
+    :class="[variantClasses, { 'opacity-70 pointer-events-none': loading }]"
   >
-    <component v-if="icon" :is="icon" class="w-4 h-4 pointer-events-none" />
+    <Loader2 v-if="loading" class="w-4 h-4 animate-spin" />
+    <component v-else-if="icon" :is="icon" class="w-4 h-4 pointer-events-none" />
     {{ label }}
   </RouterLink>
 
   <button
     v-else
-    type="button"
+    :type="type"
     @click="$emit('click')"
-    class="btn-up-hover-effect px-4 py-2 rounded-lg text-white flex items-center gap-2 shadow transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus:ring-2 cursor-pointer"
+    :disabled="loading"
+    class="btn-up-hover-effect px-4 py-2 rounded-lg text-white flex items-center gap-2 shadow transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-md focus:outline-none focus:ring-2 cursor-pointer disabled:opacity-70 disabled:pointer-events-none disabled:cursor-not-allowed"
     :class="variantClasses"
   >
-    <component v-if="icon" :is="icon" class="w-4 h-4 pointer-events-none" />
+    <Loader2 v-if="loading" class="w-4 h-4 animate-spin" />
+    <component v-else-if="icon" :is="icon" class="w-4 h-4 pointer-events-none" />
     {{ label }}
   </button>
 </template>
@@ -25,7 +28,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Icon } from 'lucide-vue-next'
-import { Plus } from 'lucide-vue-next'
+import { Plus, Loader2 } from 'lucide-vue-next'
 
 function getVariantClasses(variant: string) {
   switch (variant) {
@@ -53,11 +56,15 @@ const {
   to,
   icon = Plus,
   variant = 'primary',
+  loading = false,
+  type = 'button',
 } = defineProps<{
   label: string
   to?: string
   icon?: Icon
   variant?: 'primary' | 'secondary' | 'blue' | 'success' | 'warning' | 'danger' | 'outline'
+  loading?: boolean
+  type?: 'button' | 'submit' | 'reset'
 }>()
 
 // additional classes based on variant

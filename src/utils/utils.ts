@@ -88,6 +88,8 @@ export function getHireStatusColor(status: unknown) {
       return 'bg-red-100 border-red-500 text-red-800'
     case 'Rehired':
       return 'bg-blue-100 border-blue-500 text-blue-500'
+    case 'Pending':
+      return 'bg-amber-100 border-amber-500 text-amber-600'
     default:
       return 'bg-slate-50 border-slate-300 text-slate-500'
   }

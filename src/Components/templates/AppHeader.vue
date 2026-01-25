@@ -96,6 +96,21 @@
         </div>
       </div>
 
+      <div class="relative" v-if="props.showNotifications">
+        <button
+          class="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 shadow-sm transition-all hover:scale-105 active:scale-95 duration-200 hover:bg-indigo-50/30 group relative"
+          @click="modalStore.openModal('notification')"
+          aria-label="Send Notifications"
+          v-cursor
+        >
+          <Send class="w-5 h-5" />
+          <span
+            v-if="notifications.length > 0"
+            class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"
+          ></span>
+        </button>
+      </div>
+
       <!-- Dropdown -->
       <div class="relative" v-if="props.showMenu">
         <button
@@ -194,7 +209,7 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useModalStore } from '@/stores/ModalStore'
 import { useAuthStore } from '@/stores/AuthStore'
-import { Bell, Plus, Menu, Bus, UserPlus, Settings, LogOut, ChevronDown } from 'lucide-vue-next'
+import { Bell, Plus, Menu, Bus, UserPlus, Settings, LogOut, ChevronDown, Send } from 'lucide-vue-next'
 
 const props = withDefaults(
   defineProps<{
