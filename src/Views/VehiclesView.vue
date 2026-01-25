@@ -108,12 +108,6 @@
           <template #cell(actions)="{ item }">
             <div class="flex items-center justify-end gap-2" @dblclick.stop>
               <SmallButton class="p-0.5" @click="openEdit(item)" :icon="Edit" />
-              <button
-                class="text-slate-400 hover:text-blue-600 p-1 rounded hover:bg-slate-100 transition-colors"
-                title="Upload Docs"
-              >
-                <UploadCloud :size="14" />
-              </button>
               <SmallButton class="p-0.5" @click="confirmDelete(item)" :icon="Trash2" />
             </div>
           </template>
@@ -170,7 +164,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute, type LocationQuery } from 'vue-router'
 import dayjs from 'dayjs'
-import { Bus, UploadCloud, Trash2, Plus, Search, X, Edit } from 'lucide-vue-next'
+import { Bus, Trash2, Plus, Search, X, Edit } from 'lucide-vue-next'
 import type { Vehicle, Column } from '@/types'
 import { dataService } from '@/services/dataService'
 import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'

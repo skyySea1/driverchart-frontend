@@ -73,6 +73,7 @@
           <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
             <User class="w-5 h-5 text-slate-400" /> Applicant Details
           </h2>
+          <!-- Personal information -->
           <div class="space-y-3 text-sm">
             <div class="flex flex-col gap-1">
               <span class="text-slate-500">Full Name</span>
@@ -81,6 +82,7 @@
                 {{ capitalizeName(applicant.personalInfo.lastName) }}</span
               >
             </div>
+            <!-- Contact -->
             <div class="flex flex-col gap-1">
               <span class="text-slate-500">Contact</span>
               <div class="flex items-center gap-2 text-slate-900">
@@ -90,6 +92,8 @@
                 <Mail class="w-3 h-3 text-slate-400" /> {{ applicant.personalInfo.email }}
               </div>
             </div>
+
+
           </div>
         </div>
 
@@ -124,8 +128,8 @@
                 {{ completedCount }} of {{ complianceItems.length }} Requirements Met
               </span>
               <div class="w-48 h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div 
-                  class="h-full transition-all duration-500" 
+                <div
+                  class="h-full transition-all duration-500"
                   :class="progressBarColor"
                   :style="{ width: `${(completedCount / complianceItems.length) * 100}%` }"
                 ></div>
@@ -140,9 +144,9 @@
                 {{ category }}
               </h3>
               <ul class="space-y-2">
-                <li 
-                  v-for="item in group" 
-                  :key="item.label" 
+                <li
+                  v-for="item in group"
+                  :key="item.label"
                   class="flex items-start gap-3 p-2 rounded-lg transition-colors border"
                   :class="item.isCompleted ? 'bg-green-50/50 border-green-100' : 'bg-orange-50/50 border-orange-100'"
                 >
@@ -181,8 +185,8 @@ import { useRoute } from 'vue-router'
 import { dataService } from '@/services/dataService'
 import type { Applications, DriverApplicationForm } from '@/types'
 import { capitalizeName, formatDate } from '@/utils/utils'
-import { 
-  User, Phone, Mail, Calendar, Check, X, Briefcase, ArrowLeft, 
+import {
+  User, Phone, Mail, Calendar, Check, X, Briefcase, ArrowLeft,
   ClipboardCheck, CheckCircle2, XCircle, AlertCircle,
   FileText, FileSignature, Image as ImageIcon, MapPin
 } from 'lucide-vue-next'
@@ -209,17 +213,17 @@ const complianceItems = computed(() => {
     // Identity
     { label: 'SSN Number', isCompleted: !!a.personalInfo?.ssnNumber, category: 'Identity' },
     { label: 'DOB Provided', isCompleted: !!a.personalInfo?.dob, category: 'Identity' },
-    
+
     // History
     { label: 'Address History', isCompleted: (a.addresses?.length ?? 0) > 0, category: 'History' },
     { label: 'Licenses List', isCompleted: (a.licenses?.length ?? 0) > 0, category: 'History' },
     { label: 'Employment History', isCompleted: (a.employmentHistory?.length ?? 0) > 0, category: 'History' },
-    
+
     // Documents
     { label: 'License Front', isCompleted: !!a.licenseFront, category: 'Documents' },
     { label: 'License Back', isCompleted: !!a.licenseBack, category: 'Documents' },
     { label: 'Medical Card', isCompleted: !!a.medicalCard, category: 'Documents' },
-    
+
     // Signatures
     { label: 'Drug Test Consent', isCompleted: !!a.drugTestSignature, category: 'Signatures' },
     { label: 'PSP Disclosure', isCompleted: !!a.pspDisclosureSignature, category: 'Signatures' },

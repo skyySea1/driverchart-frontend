@@ -14,6 +14,46 @@
       </a>
     </div>
 
+    <!-- Filters & Search -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <!-- Search Input -->
+      <div class="relative w-full lg:max-w-xl">
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+          <Search class="w-4 h-4" />
+        </div>
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search applicants..."
+          class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-lg shadow-sm ring-1 ring-inset ring-slate-200 hover:bg-slate-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 block p-2.5 pl-10"
+        />
+        <button
+          v-if="searchQuery"
+          @click="searchQuery = ''"
+          class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200 ease-in-out"
+        >
+          <X class="w-5 h-5" />
+        </button>
+      </div>
+
+      <!-- Status Pills -->
+      <div class="flex items-center gap-2">
+        <button
+          v-for="status in statusPills"
+          :key="status.value"
+          @click="selectedStatus = status.value"
+          class="transition-all duration-200"
+        >
+          <BaseBadge
+            :variant="selectedStatus === status.value ? 'blue' : 'secondary'"
+            class="px-3 py-1 cursor-pointer border-slate-200"
+          >
+            {{ status.label }} ({{ status.count }})
+          </BaseBadge>
+        </button>
+      </div>
+    </div>
+
     <div class="bg-white rounded-lg shadow overflow-hidden border border-slate-200">
       <div class="overflow-x-auto">
         <DefaultTable
@@ -81,13 +121,35 @@ import { useRouter } from 'vue-router'
 import { dataService } from '@/services/dataService'
 import type { Applications, Column } from '@/types'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
-import { ExternalLink } from 'lucide-vue-next'
+import { ExternalLink, Search, X } from 'lucide-vue-next'
 import { capitalizeName, compareValues } from '@/utils/utils'
+import BaseBadge from '@/Components/ui/BaseBadge.vue'
 
 const applications = ref<Applications[]>([])
 const loading = ref(false)
 const currentSort = ref<{ key: string; order: 'asc' | 'desc' | null }>({ key: '', order: null })
 const router = useRouter()
+const searchQuery = ref('')
+const selectedStatus = ref('all')
+
+const statusPills = computed(() => [
+  { label: 'All', value: 'all', count: applications.value.length },
+  {
+    label: 'Pending',
+    value: 'Pending',
+    count: applications.value.filter((a) => a.status === 'Pending').length,
+  },
+  {
+    label: 'Approved',
+    value: 'Approved',
+    count: applications.value.filter((a) => a.status === 'Approved').length,
+  },
+  {
+    label: 'Rejected',
+    value: 'Rejected',
+    count: applications.value.filter((a) => a.status === 'Rejected').length,
+  },
+])
 
 const tableColumns: Column<Applications>[] = [
   { key: 'firstName', label: 'Name', align: 'center', sortable: true },
@@ -119,7 +181,25 @@ function openApplicantProfile(item: Applications) {
 }
 // review what kinda of sort is implemented here
 const sortedApplications = computed<Applications[]>(() => {
-  const list = [...applications.value] // Create a shallow copy to sort
+  let list = [...applications.value] // Create a shallow copy to sort
+
+  // Status Filter
+  if (selectedStatus.value !== 'all') {
+    list = list.filter((a) => a.status === selectedStatus.value)
+  }
+
+  // Search Filter
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.toLowerCase().trim()
+    list = list.filter((a) => {
+      const fullName = `${a.personalInfo.firstName} ${a.personalInfo.lastName}`.toLowerCase()
+      return (
+        fullName.includes(query) ||
+        a.personalInfo.email.toLowerCase().includes(query) ||
+        a.personalInfo.phone.includes(query)
+      )
+    })
+  }
 
   if (currentSort.value.key && currentSort.value.order) {
     const { key, order } = currentSort.value
