@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <div class="flex justify-between">
-      <h2 class="text-lg font-bold text-slate-800">Driver Applications</h2>
+      <h2 class="text-lg font-bold text-slate-800">New Applications</h2>
       <p class="text-[10px] justify-en font-bold text-slate-400 uppercase tracking-widest">
         Check Applicant Profile for approval
       </p>
