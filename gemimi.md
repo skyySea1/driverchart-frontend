@@ -9,7 +9,7 @@ you must add comment ahead if introduce block changes
 
 - **Charter_Bus_System**: The complete SPA application for compliance management
 - **Driver_Qualification_File**: Digital record containing all required documentation for a commercial driver per FMCSA regulations
-- **Cdl**: Commercial Driver's License required for operating commercial vehicles
+- **license**: Commercial Driver's License required for operating commercial vehicles
 - **MEC**: Medical Examiner's Certificate required for commercial drivers
 - **MVR**: Motor Vehicle Record showing driving history
 - **Clearinghouse**: FMCSA Drug and Alcohol Clearinghouse database
@@ -52,10 +52,10 @@ you must add comment ahead if introduce block changes
 
  Acceptance Criteria
 
-1. THE Charter_Bus_System SHALL display a driver table with columns for Name, Status, Contact, Cdl Exp, Medical Exp, Annual Review, Clearinghouse Review, and Actions
+1. THE Charter_Bus_System SHALL display a driver table with columns for Name, Status, Contact, license Exp, Medical Exp, Annual Review, Clearinghouse Review, and Actions
 2. WHEN creating or editing a driver, THE Charter_Bus_System SHALL provide fields for personal data, employment information, and compliance documentation
 3. THE Charter_Bus_System SHALL concatenate First Name, Middle Name, and Last Name for search functionality
-4. THE Charter_Bus_System SHALL provide standardized upload functionality for Cdl, Medical Certificate, MVR, Drug & Alcohol records, and Road Test certificates
+4. THE Charter_Bus_System SHALL provide standardized upload functionality for license, Medical Certificate, MVR, Drug & Alcohol records, and Road Test certificates
 5. WHEN a document is uploaded, THE Charter_Bus_System SHALL change the upload button icon to green to indicate file presence
 
 ### Requirement 4

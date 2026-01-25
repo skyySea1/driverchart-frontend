@@ -183,7 +183,7 @@ import VehicleForm from '@/Components/templates/forms/VehicleForm.vue'
 import DeleteConfirmation from '@/Components/ui/DeleteConfirmation.vue'
 import FilterDropdown, { type FilterOptions, type FilterState } from '@/Components/ui/FilterDropdown.vue'
 import { useModalStore } from '@/stores/ModalStore'
-import { STATUS_ACTIVE, STATUS_INACTIVE, STATUS_MAINTENANCE } from '@/utils/constants'
+import { STATUS_ACTIVE, STATUS_INACTIVE, STATUS_MAINTENANCE, COLLECTION_PATHS } from '@/utils/constants'
 import { compareValues } from '@/utils/utils'
 
 import { parseVehicleDoc } from '@/utils/firestoreParsers'
@@ -194,7 +194,7 @@ const modalStore = useModalStore()
 const { getStatusColor, daysToExpire } = useCompliance()
 
 // Fetch Data
-const { items: vehiclesItems, loading } = useRealtimeCollection<Vehicle>('vehicles', {
+const { items: vehiclesItems, loading } = useRealtimeCollection<Vehicle>(COLLECTION_PATHS.vehicles, {
   map: parseVehicleDoc,
 })
 

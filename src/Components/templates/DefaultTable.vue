@@ -1,15 +1,16 @@
 <!-- src/Components/templates/DefaultTable.vue -->
 <template>
-  <div class="bg-white rounded-lg shadow overflow-hidden border border-slate-200 w-full">
+  <div class="bg-white rounded-lg shadow overflow-hidden border border-slate-200 w-full transition-all duration-300">
     <div class="overflow-x-auto w-full">
-      <table class="w-full text-sm text-left border-collapse">
+      <table :class="['w-full text-left border-collapse', props.compact ? 'text-xs' : 'text-sm']">
         <thead class="bg-slate-50 text-slate-700 font-semibold border-b">
           <tr>
             <th
               v-for="col in props.columns"
               :key="col.key"
               :class="[
-                'p-4 whitespace-nowrap select-none transition-colors',
+                props.compact ? 'p-2' : 'p-4',
+                'whitespace-nowrap select-none transition-colors',
                 col.align === 'center'
                   ? 'text-center'
                   : col.align === 'right'
@@ -40,7 +41,7 @@
           <!-- Skeleton State -->
           <template v-if="props.loading">
             <tr v-for="i in 5" :key="i">
-              <td v-for="col in props.columns" :key="col.key" class="p-4">
+              <td v-for="col in props.columns" :key="col.key" :class="props.compact ? 'p-2' : 'p-4'">
                 <div
                   :class="[
                     'h-4 skeleton rounded',
@@ -60,13 +61,15 @@
               v-for="(item, index) in props.items"
               :key="item.id || index"
               class="hover:bg-slate-50 transition-colors cursor-pointer select-none"
+              @click="emit('row-click', item)"
               @dblclick="emit('row-dblclick', item)"
             >
               <td
                 v-for="col in props.columns"
                 :key="col.key"
                 :class="[
-                  'p-4 whitespace-nowrap',
+                  props.compact ? 'p-2' : 'p-4',
+                  'whitespace-nowrap',
                   col.align === 'center'
                     ? 'text-center'
                     : col.align === 'right'
@@ -81,8 +84,10 @@
             </tr>
 
             <tr v-if="props.items.length === 0">
-              <td :colspan="props.columns.length" class="p-8 text-center text-slate-500">
-                <slot name="empty">No records found.</slot>
+              <td :colspan="props.columns.length" class="p-8 text-center text-slate-500 min-h-50">
+                <div class="py-20">
+                  <slot name="empty">No records found.</slot>
+                </div>
               </td>
             </tr>
           </template>
@@ -102,10 +107,12 @@ const props = defineProps<{
   readonly loading?: boolean
   readonly currentSortKey?: string
   readonly currentSortOrder?: SortOrder
+  readonly compact?: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'row-dblclick', item: T): void
+  (e: 'row-click', item: T): void
   (e: 'sort', payload: { key: string; order: SortOrder }): void
 }>()
 

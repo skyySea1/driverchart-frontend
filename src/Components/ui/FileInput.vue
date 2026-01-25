@@ -17,11 +17,13 @@
 <script setup lang="ts">
 import { Upload, CheckCircle } from 'lucide-vue-next'
 
-defineProps<{
+withDefaults(defineProps<{
   label?: string
-  fileName?: string|undefined
+  fileName?: string
   type?: 'button' | 'input'
-}>()
+}>(), {
+  type: 'button'
+})
 
 const emit = defineEmits<{
   (e: 'change', event: Event): void
@@ -33,7 +35,7 @@ function handleChange(event: Event) {
 
   const file = event.target.files?.[0]
   if (!file) return
-  
+
   emit('change', event)
   emit('update:fileName', file.name)
 }

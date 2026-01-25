@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <div class="flex justify-between ">
+    <div class="flex justify-between">
       <h2 class="text-lg font-bold text-slate-800">Driver Applications</h2>
       <p class="text-[10px] justify-en font-bold text-slate-400 uppercase tracking-widest">
         Check Applicant Profile for approval
@@ -31,10 +31,12 @@
               :to="{ name: 'applicant-profile', params: { id: item.id } }"
               class="font-medium text-slate-800 hover:text-blue-600 hover:underline"
             >
-              {{ capitalizeName(item.personalInfo.firstName) }} {{ capitalizeName(item.personalInfo.lastName) }}
+              {{ capitalizeName(item.personalInfo.firstName) }}
+              {{ capitalizeName(item.personalInfo.lastName) }}
             </router-link>
             <span v-else class="font-medium text-slate-800"
-              >{{ capitalizeName(item.personalInfo.firstName) }} {{ capitalizeName(item.personalInfo.lastName) }}</span
+              >{{ capitalizeName(item.personalInfo.firstName) }}
+              {{ capitalizeName(item.personalInfo.lastName) }}</span
             >
           </template>
 
@@ -43,7 +45,7 @@
             <div class="font-extralight text-xs text-slate-800">{{ item.personalInfo.email }}</div>
           </template>
 
-          <template #cell(cdlNumber)="{ item }">
+          <template #cell(licenseNumber)="{ item }">
             <div class="font-medium text-xs text-slate-800">{{ item.licenses[0]?.number }}</div>
           </template>
 
@@ -82,7 +84,6 @@ import DefaultTable from '@/Components/templates/DefaultTable.vue'
 import { ExternalLink } from 'lucide-vue-next'
 import { capitalizeName, compareValues } from '@/utils/utils'
 
-
 const applications = ref<Applications[]>([])
 const loading = ref(false)
 const currentSort = ref<{ key: string; order: 'asc' | 'desc' | null }>({ key: '', order: null })
@@ -91,9 +92,10 @@ const router = useRouter()
 const tableColumns: Column<Applications>[] = [
   { key: 'firstName', label: 'Name', align: 'center', sortable: true },
   { key: 'contact', label: 'Contact', align: 'center' },
-  { key: 'cdlNumber', label: 'Cdl', align: 'center' },
+  { key: 'licenseNumber', label: 'License', align: 'center' },
   { key: 'appliedDate', label: 'Applied Date', align: 'center', sortable: true },
-  { key: 'status', label: 'Status', align: 'center', sortable: true },]
+  { key: 'status', label: 'Status', align: 'center', sortable: true },
+]
 
 async function fetchApplications() {
   loading.value = true
@@ -127,8 +129,14 @@ const sortedApplications = computed<Applications[]>(() => {
 
       // Ensure values match comparedValues type (string | number | null | undefined)
       if (
-        (typeof valA === 'string' || typeof valA === 'number' || valA === null || valA === undefined) &&
-        (typeof valB === 'string' || typeof valB === 'number' || valB === null || valB === undefined)
+        (typeof valA === 'string' ||
+          typeof valA === 'number' ||
+          valA === null ||
+          valA === undefined) &&
+        (typeof valB === 'string' ||
+          typeof valB === 'number' ||
+          valB === null ||
+          valB === undefined)
       ) {
         return compareValues(valA, valB, order)
       }

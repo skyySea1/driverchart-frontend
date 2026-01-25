@@ -12,20 +12,34 @@
         label="Back to Drivers"
         :icon="ArrowLeft"
         :variant="'blue'"
-        @click="$router.back()"
+        @click="router.back()"
         class="text-sm font-medium shadow-sm"
       />
 
-      <!-- Header -->
       <div
         class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200"
       >
-        <div>
+        <div class="flex-1 w-full">
+          <!-- Flag Alert Banner -->
+          <div v-if="driver.isFlagged" class="mb-4 flex items-center justify-between bg-red-50 border border-red-200 rounded-lg py-2 px-3 shadow-sm border-l-4 border-l-red-600">
+            <div class="flex items-center gap-2 text-slate-800 text-sm">
+              <div class="bg-red-600 rounded-full p-1.5 shadow-sm">
+                <Flag class="w-3.5 h-3.5 text-white" fill="currentColor" />
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="font-black text-slate-900 border-r border-slate-200 pr-1.5 mr-0.5">{{ dayjs(driver.flagDate).format('MM/DD/YYYY') }}:</span>
+                <span class="text-slate-600 font-medium">{{ driver.flagReason }}</span>
+              </div>
+            </div>
+            <button @click="clearFlag" class="text-[11px] font-black text-slate-800 hover:text-red-700 underline underline-offset-2 transition-all cursor-pointer mr-2">
+              CLEAR FLAG
+            </button>
+          </div>
           <div class="flex items-center gap-4">
             <div
               class="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-600 border border-slate-200 uppercase"
             >
-              {{ driver.firstName[0] }}{{ driver.lastName[0] }}
+              {{ driver.firstName?.[0] }}{{ driver.lastName?.[0] }}
             </div>
             <div>
               <h1 class="text-2xl font-bold text-slate-900">
@@ -45,6 +59,21 @@
                 <span class="text-sm text-slate-500 flex items-center gap-1">
                   <Calendar class="w-3 h-3" /> Hired: {{ formatDate(driver.hireDate) }}
                 </span>
+              </div>
+
+              <!-- Quick Actions Row -->
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 pt-3 border-t border-slate-100 text-[13px] font-semibold">
+                <button v-cursor @click="handleAction('send_policy')" class="text-green-600 hover:text-green-700 transition-colors">Send Policy</button>
+                <span class="text-slate-300">•</span>
+                <button v-cursor @click="handleAction('send_memo')" class="text-green-600 hover:text-green-700 transition-colors">Send Memo</button>
+                <span class="text-slate-300">•</span>
+                <button v-cursor @click="handleAction('request_license')" class="text-green-600 hover:text-green-700 transition-colors">Request License Upload</button>
+                <span class="text-slate-300">•</span>
+                <button v-cursor @click="handleAction('request_medical')" class="text-green-600 hover:text-green-700 transition-colors">Request Med Card Upload</button>
+                <span class="text-slate-300">•</span>
+                <button v-cursor @click="handleAction('request_fcra')" class="text-green-600 hover:text-green-700 transition-colors">Request FCRA Signature</button>
+                <span class="text-slate-300">•</span>
+                <button v-cursor @click="handleAction('flag_driver')" class="text-red-600 hover:text-red-700 transition-colors">Flag Driver</button>
               </div>
             </div>
           </div>
@@ -116,7 +145,7 @@
               <History class="w-5 h-5 text-slate-400" /> Activity Timeline
             </h2>
             <div
-              class="relative pl-6 space-y-6 before:absolute before:inset-y-0 before:left-2.75 before:w-0.5 before:bg-slate-100"
+              class="relative pl-6 space-y-6 before:absolute before:inset-y-0 before:left-2.75 before:w-0.5 before:bg-slate-100 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar"
             >
               <div v-for="(event, idx) in timelineEvents" :key="idx" class="relative">
                 <div
@@ -128,6 +157,7 @@
                   <div v-if="event.description" class="text-xs text-slate-500 mt-0.5">
                     {{ event.description }}
                   </div>
+                  <div class="text-[12px] text-slate-400 font-bold mt-1 italic">by {{ event.user || 'Unknown' }}</div>
                 </div>
               </div>
             </div>
@@ -145,7 +175,7 @@
               <div
                 v-for="(item, idx) in complianceItems"
                 :key="idx"
-                class="p-4 rounded-lg border flex items-start justify-between"
+                class="p-4 rounded-lg border flex items-start justify-between transition-all hover:shadow-md"
                 :class="getStatusColor(getStatus(item.date))"
               >
                 <div>
@@ -162,98 +192,171 @@
             </div>
           </div>
 
-          <!-- Document Wallet -->
+          <!-- Document Wallet (New Implementation) -->
           <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
             <div class="flex items-center justify-between mb-4">
               <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
                 <FileText class="w-5 h-5 text-slate-400" /> Document Wallet
               </h2>
-              <div class="text-xs text-slate-400">Showing all registered files</div>
+              <div class="text-xs text-slate-400">Manage active documents</div>
             </div>
 
-            <div
-              v-if="documents.length === 0"
-              class="text-center py-12 text-slate-500 text-sm bg-slate-50 rounded-lg border border-dashed border-slate-200"
-            >
-              <FileText class="w-8 h-8 text-slate-300 mx-auto mb-3" />
-              No documents found for this driver.
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div
+                v-for="docType in ['license', 'medical', 'mvr', 'drugAlcohol', 'roadTest']"
+                :key="docType"
+                class="p-4 rounded-xl bg-slate-100 flex flex-col justify-between h-full"
+              >
+                <div class="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 class="font-bold text-slate-700 text-sm uppercase tracking-wide">
+                      {{ getDocLabel(docType) }}
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">
+                      Expires:
+                      <span :class="getStatusTextColor(getDriverDocument(docType).expiryDate)">
+                        {{ formatDate(getDriverDocument(docType).expiryDate) }}
+                      </span>
+                    </p>
+                  </div>
+                  <div
+                    v-if="getDriverDocument(docType).file"
+                    class="bg-green-100 text-green-700 p-1.5 rounded-full"
+                  >
+                    <CheckCircle class="w-4 h-4" />
+                  </div>
+                  <div v-else class="bg-slate-200 text-slate-400 p-1.5 rounded-full">
+                    <AlertTriangle class="w-4 h-4" />
+                  </div>
+                </div>
 
-            <div v-else class="overflow-hidden rounded-lg border border-slate-200">
+                <div class="flex gap-2 mt-auto">
+                  <button
+                    v-if="getDriverDocument(docType).file"
+                    @click="openPdfViewer(docType)"
+                    class="flex-1 text-center py-2 text-xs font-medium bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors flex items-center justify-center gap-1"
+                  >
+                    <FileText class="w-3 h-3" /> View
+                  </button>
+
+                  <button
+                    v-if="can(PERMISSIONS.DRIVERS_EDIT)"
+                    @click="editProfile(driver)"
+                    class="px-3 py-2 text-xs font-medium bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors flex items-center justify-center"
+                    title="Edit Details"
+                  >
+                    <Edit class="w-3 h-3" />
+                  </button>
+
+                  <button
+                    v-if="can(PERMISSIONS.DOCUMENTS_UPLOAD)"
+                    v-cursor
+                    @click="openUploadModal(docType)"
+                    class="flex-1 text-center py-2 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-1"
+                  >
+                    <Upload class="w-3 h-3" />
+                    Upload
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document History (Logs) -->
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2 mb-4">
+              <History class="w-5 h-5 text-slate-400" /> Document History
+            </h2>
+            <div v-if="documents.length === 0" class="text-center py-8 text-slate-500 text-sm">
+              No audit logs found.
+            </div>
+            <div v-else class="overflow-x-auto overflow-y-auto max-h-[350px] rounded-lg border border-slate-200 custom-scrollbar">
               <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                   <tr>
-                    <th
-                      class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
-                    >
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
                       Date
                     </th>
-                    <th
-                      class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
-                    >
-                      Document Name
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                      Action
                     </th>
-                    <th
-                      class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
-                    >
-                      Type
-                    </th>
-                    <th
-                      class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
-                    >
+                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
                       User
                     </th>
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
-                  <tr
-                    v-for="doc in documents"
-                    :key="doc.id"
-                    class="hover:bg-slate-50 transition-colors"
-                  >
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-600">
-                      {{ formatDate(doc.date) }}
+                  <tr v-for="doc in documents" :key="doc.id" class="hover:bg-slate-50">
+                    <td class="px-4 py-3 text-sm text-slate-600">{{ formatDate(doc.date) }}</td>
+                    <td class="px-4 py-3 text-sm font-medium text-slate-900">
+                      Uploaded {{ doc.type }} ({{
+                        doc.fileName ? cleanFileName(doc.fileName) : 'Unknown File'
+                      }})
                     </td>
-                    <td
-                      class="px-4 py-3 whitespace-nowrap text-sm font-medium text-slate-900 flex items-center gap-2"
-                    >
-                      <FileText class="w-4 h-4 text-slate-400" /> {{ doc.fileName }}
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-600">
-                      <span
-                        class="px-2 py-0.5 rounded-full bg-slate-100 text-[10px] font-medium text-slate-600"
-                        >{{ doc.type }}</span
-                      >
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-500">
-                      {{ doc.user }}
-                    </td>
+                    <td class="px-4 py-3 text-sm text-slate-500">{{ doc.user }}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-
-            <!-- Global Driver Modal Integrated with Store -->
-            <DriverFormModal
-              v-if="modalStore.activeModal === 'driver'"
-              :driver="modalStore.data as Driver"
-              @close="closeModal"
-              @saved="onDriverUpdated"
-            />
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Modals -->
+    <div v-if="driver">
+      <DriverFormModal
+        v-if="modalStore.activeModal === 'driver'"
+        :driver="modalStore.data as Driver"
+        @close="closeModal"
+        @saved="onDriverUpdated"
+      />
+
+      <DocumentUploadModal
+        v-if="isUploadModalOpen"
+        :isOpen="isUploadModalOpen"
+        :driverId="driver.id"
+        :driverName="driverName"
+        :documentType="selectedDocType"
+        :currentExpiry="currentDocExpiry"
+        @close="isUploadModalOpen = false"
+        @success="onDriverUpdated"
+      />
+
+      <PdfViewerModal
+        v-if="isPdfModalOpen"
+        :isOpen="isPdfModalOpen"
+        :pdfUrl="viewingPdfUrl"
+        :title="viewingPdfTitle"
+        @close="isPdfModalOpen = false"
+      />
+
+      <DriverActionModal
+        v-if="actionModal.isOpen"
+        :isOpen="actionModal.isOpen"
+        :mode="actionModal.mode"
+        :driver="driver"
+        @close="actionModal.isOpen = false"
+        @success="handleActionSuccess"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { dataService } from '@/services/dataService'
 import { useModalStore } from '@/stores/ModalStore'
+import { usePermissions } from '@/Composables/usePermissions'
+import { PERMISSIONS } from '@/utils/permissions'
 import DriverFormModal from '@/Components/templates/forms/DriverFormModal.vue'
-import type { Driver, DocumentLog } from '@/types'
+import DocumentUploadModal from '@/Components/templates/forms/DocumentUploadModal.vue'
+import PdfViewerModal from '@/Components/ui/PdfViewerModal.vue'
+import DriverActionModal from '@/Components/templates/forms/DriverActionModal.vue'
+import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
+import BaseLoading from '@/Components/ui/BaseLoading.vue'
+import type { Driver, DocumentLog, AuditLog } from '@/types'
 import {
   User,
   Phone,
@@ -267,14 +370,41 @@ import {
   History,
   ArrowLeft,
   Mail,
+  Upload,
+  Edit,
+  Flag,
 } from 'lucide-vue-next'
 import dayjs from 'dayjs'
 import { capitalizeName } from '@/utils/utils'
-import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
-import BaseLoading from '@/Components/ui/BaseLoading.vue'
-
+import { useComplianceReport } from '@/Composables/useComplianceReport'
+const router = useRouter()
 const route = useRoute()
 const modalStore = useModalStore()
+const { can } = usePermissions()
+
+const { generateComplianceReport: generatePDFReport } = useComplianceReport()
+
+const driver = ref<Driver | null>(null)
+const documents = ref<DocumentLog[]>([])
+const auditLogs = ref<AuditLog[]>([])
+const isLoading = ref(true)
+const error = ref<string | null>(null)
+
+// Upload Modal State
+const isUploadModalOpen = ref(false)
+const selectedDocType = ref('')
+const currentDocExpiry = ref('')
+
+// PDF Viewer State
+const isPdfModalOpen = ref(false)
+const viewingPdfUrl = ref('')
+const viewingPdfTitle = ref('')
+
+// Action Modal State
+const actionModal = ref({
+  isOpen: false,
+  mode: ''
+})
 
 const driverId = computed(() => {
   const id = route.params.id
@@ -296,11 +426,6 @@ const formattedAddress = computed(() => {
   ].filter(Boolean)
   return parts.length > 0 ? parts.join(', ') : 'N/A'
 })
-
-const driver = ref<Driver | null>(null)
-const documents = ref<DocumentLog[]>([])
-const isLoading = ref(true)
-const error = ref<string | null>(null)
 
 // Compliance Status Helper
 const getStatus = (expiryDate?: string) => {
@@ -325,6 +450,13 @@ const getStatusColor = (status: string) => {
     default:
       return 'bg-gray-100 text-gray-800 border-gray-200'
   }
+}
+
+const getStatusTextColor = (date?: string) => {
+  const s = getStatus(date)
+  if (s === 'expired') return 'text-red-600 font-bold'
+  if (s === 'warning') return 'text-yellow-600 font-bold'
+  return 'text-slate-700'
 }
 
 const getStatusIcon = (status: string) => {
@@ -355,9 +487,13 @@ const fetchDriverData = async () => {
     if (data) {
       driver.value = data
       // Fetch documents based on driver name
-      const driverName = `${data.firstName} ${data.lastName}`
-      const docs = await dataService.getDocumentLogsByEntity(driverName)
+      const driverFullName = `${data.firstName} ${data.lastName}`
+      const [docs, audits] = await Promise.all([
+        dataService.getDocumentLogsByEntity(driverFullName),
+        dataService.getAuditLogsByEntity(driverId.value),
+      ])
       documents.value = docs
+      auditLogs.value = audits
     } else {
       error.value = 'Driver not found'
     }
@@ -373,9 +509,9 @@ const complianceItems = computed(() => {
   if (!driver.value) return []
   return [
     {
-      label: 'Cdl License',
-      date: driver.value.cdl?.expiryDate,
-      doc: driver.value.cdl?.documentNumber,
+      label: 'License',
+      date: driver.value.license?.expiryDate,
+      doc: driver.value.license?.documentNumber,
     },
     {
       label: 'Medical Card',
@@ -387,22 +523,44 @@ const complianceItems = computed(() => {
   ]
 })
 
-const timelineEvents = computed(() => {
-  const events: { date: string; title: string; description?: string }[] = []
+function cleanFileName(name: string) {
+  try {
+    // Decode URL entities like %2F
+    const decoded = decodeURIComponent(name)
+    // Take the last part after /
+    const parts = decoded.split('/')
+    const fileName = parts[parts.length - 1]
+    // Remove query params if any
+    return fileName ? fileName.split('?')[0] : ''
+  } catch {
+    return name
+  }
+}
 
-  if (driver.value?.hireDate) {
+const timelineEvents = computed(() => {
+  const events: { date: string; title: string; description?: string; user?: string }[] = []
+
+  // Add system creation if not in audit logs (fallback for legacy)
+  const hasCreation = auditLogs.value.some(l => l.type === 'creation')
+  if (!hasCreation && driver.value?.hireDate) {
     events.push({
       date: driver.value.hireDate,
-      title: 'Hired / Driver Onboarded',
-      description: 'Official start date in the fleet',
+      title: 'Profile Created',
+      description: 'System initialization / Migration',
+      user: 'System'
     })
   }
 
-  documents.value.forEach((doc) => {
+  auditLogs.value.forEach((log) => {
+    let title = 'Profile Update'
+    if (log.type === 'status_change') title = 'Status Changed'
+    if (log.type === 'creation') title = 'Profile Created'
+
     events.push({
-      date: doc.date,
-      title: `Document Uploaded: ${doc.type}`,
-      description: `${doc.fileName} by ${doc.user}`,
+      date: log.date,
+      title,
+      description: log.description,
+      user: log.user
     })
   })
 
@@ -425,31 +583,88 @@ async function onDriverUpdated() {
   await fetchDriverData() // Recarrega os dados atualizados
 }
 
+function getDocLabel(type: string) {
+  const labels: Record<string, string> = {
+    license: 'License',
+    medical: 'Medical Certificate',
+    mvr: 'MVR Report',
+    drugAlcohol: 'Drug & Alcohol',
+    roadTest: 'Road Test',
+  }
+  return labels[type] || type
+}
+
+function getDriverDocument(type: string): { file?: string; expiryDate?: string } {
+  if (!driver.value) return {}
+  const doc = driver.value[type]
+  return doc || {}
+}
+
+function openUploadModal(type: string) {
+  if (!driver.value) return
+  selectedDocType.value = type
+  currentDocExpiry.value = getDriverDocument(type).expiryDate || ''
+  isUploadModalOpen.value = true
+}
+
+function openPdfViewer(type: string) {
+  const doc = getDriverDocument(type)
+  if (doc.file) {
+    viewingPdfUrl.value = doc.file
+    viewingPdfTitle.value = getDocLabel(type)
+    isPdfModalOpen.value = true
+  }
+}
+
 const generateComplianceReport = () => {
   if (!driver.value) return
 
-  // Simulated report generation
-  const reportContent = `
-    COMPLIANCE REPORT: ${driverName.value}
-    Date: ${dayjs().format('MM/DD/YYYY HH:mm')}
-    --------------------------------------------------
-    Cdl Status: ${getStatus(driver.value.cdl?.expiryDate).toUpperCase()} (Exp: ${formatDate(driver.value.cdl?.expiryDate)})
-    Medical Status: ${getStatus(driver.value.medical?.expiryDate).toUpperCase()} (Exp: ${formatDate(driver.value.medical?.expiryDate)})
-    MVR Status: ${getStatus(driver.value.mvr?.expiryDate).toUpperCase()} (Exp: ${formatDate(driver.value.mvr?.expiryDate)})
-    Drug & Alcohol: ${getStatus(driver.value.drugAlcohol?.expiryDate).toUpperCase()} (Exp: ${formatDate(driver.value.drugAlcohol?.expiryDate)})
-    --------------------------------------------------
-    Audit Rating: 98% Compliance
-  `
-  // Simple "download" simulation
-  const blob = new Blob([reportContent], { type: 'text/plain' })
-  const url = window.URL.createObjectURL(blob)
-  const a = window.document.createElement('a')
-  a.href = url
-  a.download = `Compliance_Report_${driver.value.lastName}_${dayjs().format('YYYYMMDD')}.txt`
-  a.click()
-  window.URL.revokeObjectURL(url)
+  generatePDFReport(driver.value, documents.value)
+}
 
-  alert('Compliance report generated and downloaded.')
+function handleAction(mode: string) {
+  actionModal.value.mode = mode
+  actionModal.value.isOpen = true
+}
+
+async function handleActionSuccess({ mode, data }: { mode: string; data: Record<string, unknown> }) {
+  if (!driver.value?.id) return
+
+  if (mode === 'flag_driver') {
+    try {
+      await dataService.updateDriver({
+        ...driver.value,
+        id: driver.value.id,
+        isFlagged: true,
+        flagReason: data.reason as string,
+        flagDate: dayjs().toISOString()
+      })
+      await fetchDriverData()
+    } catch (err) {
+      console.error('Failed to flag driver:', err)
+    }
+  } else {
+    // Show success for other informational actions
+    alert(`Action "${mode}" simulated for ${driver.value.firstName}`)
+  }
+}
+
+async function clearFlag() {
+  if (!driver.value?.id) return
+  if (!confirm('Are you sure you want to CLEAR this flag?')) return
+
+  try {
+    await dataService.updateDriver({
+      ...driver.value,
+      id: driver.value.id,
+      isFlagged: false,
+      flagReason: '',
+      flagDate: ''
+    })
+    await fetchDriverData()
+  } catch (err) {
+    console.error('Failed to clear flag:', err)
+  }
 }
 
 onMounted(() => {
