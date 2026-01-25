@@ -6,11 +6,17 @@ import type {
   Vehicle,
   Alert,
   DocumentLog,
+  AuditLog,
   Applications,
   DriverApplicationForm,
   DashboardStats,
 } from '@/types'
 import { getApp } from 'firebase/app'
+import { doc, getDoc, collection, getDocs, deleteDoc } from 'firebase/firestore'
+import { db } from './firebaseService'
+import { COLLECTION_PATHS } from '@/utils/constants'
+import { parseDriverDoc } from '@/utils/firestoreParsers'
+
 
 // migrate for enitty based service and document handling
 export const dataService = {
@@ -18,33 +24,62 @@ export const dataService = {
   getDrivers: async (): Promise<
     (Driver & {
       contact: string
-      cdlExp?: string
+      licenseExp?: string
       medicalExp?: string
       mvrDate?: string
       clearinghouseDate?: string
     })[]
   > => {
-    const response = await apiClient.get<Driver[]>('/drivers')
-    return response.data.map((d) => ({
-      ...d,
-      hireStatus: d.hireStatus || 'unknown',
-      contact: d.phone,
-      cdlNumber: d.cdl?.documentNumber,
-      cdlExp: d.cdl?.expiryDate,
-      medicalExp: d.medical?.expiryDate,
-
-      mvrDate: d.mvr?.expiryDate,
-      clearinghouseDate: d.drugAlcohol?.expiryDate,
-    }))
+    // Fallback to API if needed, or implement Firestore fetch here too
+    // For consistency with Profile, let's use Firestore
+    try {
+      const snapshot = await getDocs(collection(db, COLLECTION_PATHS.drivers))
+      return snapshot.docs.map((doc) => {
+        const d = parseDriverDoc({ id: doc.id, ...doc.data() })
+        return {
+          ...d,
+          contact: d.phone,
+          licenseNumber: d.license?.documentNumber,
+          licenseExp: d.license?.expiryDate,
+          medicalExp: d.medical?.expiryDate,
+          mvrDate: d.mvr?.expiryDate,
+          clearinghouseDate: d.drugAlcohol?.expiryDate,
+        }
+      })
+    } catch (error) {
+      console.warn('Failed to fetch drivers from Firestore, falling back to API', error)
+      const response = await apiClient.get<Driver[]>('/drivers')
+      return response.data.map((d) => ({
+        ...d,
+        hireStatus: d.hireStatus || 'unknown',
+        contact: d.phone,
+        licenseNumber: d.license?.documentNumber,
+        licenseExp: d.license?.expiryDate,
+        medicalExp: d.medical?.expiryDate,
+        mvrDate: d.mvr?.expiryDate,
+        clearinghouseDate: d.drugAlcohol?.expiryDate,
+      }))
+    }
   },
 
   getDriverById: async (id: string): Promise<Driver | null> => {
     try {
-      const response = await apiClient.get<Driver>(`/drivers/${id}`)
-      return response.data
-    } catch (error) {
-      console.warn(`Failed to fetch driver with id ${id}`, error)
+      const docRef = doc(db, COLLECTION_PATHS.drivers, id)
+      const docSnap = await getDoc(docRef)
+
+      if (docSnap.exists()) {
+        return parseDriverDoc({ id: docSnap.id, ...docSnap.data() })
+      }
       return null
+    } catch (error) {
+      console.warn(`Failed to fetch driver with id ${id} from Firestore`, error)
+      // Fallback to API?
+      try {
+        const response = await apiClient.get<Driver>(`/drivers/${id}`)
+        return response.data
+      } catch {
+        return null
+      }
     }
   },
 
@@ -63,29 +98,48 @@ export const dataService = {
   },
 
   deleteDriver: async (id: string): Promise<void> => {
-    await apiClient.delete(`/drivers/${id}`)
+    try {
+      const docRef = doc(db, COLLECTION_PATHS.drivers, id)
+      await deleteDoc(docRef)
+    } catch (error) {
+      console.warn('Failed to delete driver via Firestore, falling back to API', error)
+      await apiClient.delete(`/drivers/${id}`)
+    }
   },
 
   // review ahtat kinda of file is sended
   uploadDocument: async (
-    id: string,
+    id: string | null, // APPLICANT DOESNT HAVE ID, JUST DRIVER PROMOTION
     type: string,
     file: File,
     uploadDate: string,
     entityName: string,
-  ) => {
+    expiryDate?: string,
+    applicantName?: string,
+  ): Promise<{ url: string; filename: string }> => {
     const data = new FormData()
-    data.append('driverId', id)
+    if (id) data.append('driverId', id)
+    if (applicantName) data.append('applicantName', applicantName)
+
     data.append('entityName', entityName)
     data.append('uploadDate', uploadDate)
     data.append('file', file)
     data.append('documentType', type)
 
-    await apiClient.post('/drivers/documents', data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
+    if (expiryDate) {
+      data.append('expiryDate', expiryDate)
+    }
+
+    const response = await apiClient.post<{ url: string; filename: string }>(
+      '/documents/upload',
+      data,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       },
-    })
+    )
+    return response.data
   },
 
   // --- Vehicles ---
@@ -141,6 +195,45 @@ export const dataService = {
       console.warn(`Failed to fetch logs for entity ${entityName}`, error)
       return []
     }
+  },
+
+  getAuditLogsByEntity: async (entityId: string): Promise<AuditLog[]> => {
+    try {
+      // Assuming a new endpoint /documents/audit/:id
+      const response = await apiClient.get<AuditLog[]>(`/documents/audit/${entityId}`)
+      return response.data
+    } catch (error) {
+      console.warn(`Failed to fetch audit logs for entity ${entityId}`, error)
+      return []
+    }
+  },
+
+  sendUploadRequest: async (data: { email: string; driverName: string; requestType: string; magicLink: string }) => {
+    return await apiClient.post('/documents/request-upload', data)
+  },
+
+  sendMemos: async (data: { email: string; driverName: string; memoTitle: string; memoLinks: string[] }) => {
+    return await apiClient.post('/documents/send-memos', data)
+  },
+
+  getMemos: async (): Promise<unknown[]> => {
+    try {
+      const resp = await apiClient.get('/documents/memos')
+      return resp.data
+    } catch {
+      return []
+    }
+  },
+
+  uploadMemo: async (file: File, title: string, type: 'memo' | 'policy') => {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('title', title)
+    formData.append('type', type)
+    const resp = await apiClient.post('/documents/memos/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    return resp.data
   },
 
   // reviewed: get the Firebase Applications Instance ID
@@ -211,12 +304,12 @@ export const dataService = {
 
     const {
       expiringMedCardsDrivers,
-      expiringCDLDrivers,
+      expiringLicenseDrivers,
       expiringClearinghouseDrivers,
       expiredMvrDrivers,
     } = drivers.reduce<{
       expiringMedCardsDrivers: Driver[]
-      expiringCDLDrivers: Driver[]
+      expiringLicenseDrivers: Driver[]
       expiringClearinghouseDrivers: Driver[]
       expiredMvrDrivers: Driver[]
     }>(
@@ -224,8 +317,8 @@ export const dataService = {
         if (isExpiringSoon(d.medical?.expiryDate)) {
           acc.expiringMedCardsDrivers.push(d)
         }
-        if (isExpiringSoon(d.cdl?.expiryDate)) {
-          acc.expiringCDLDrivers.push(d)
+        if (isExpiringSoon(d.license?.expiryDate)) {
+          acc.expiringLicenseDrivers.push(d)
         }
         if (isExpiringSoon(d.drugAlcohol?.expiryDate)) {
           acc.expiringClearinghouseDrivers.push(d)
@@ -237,7 +330,7 @@ export const dataService = {
       },
       {
         expiringMedCardsDrivers: [],
-        expiringCDLDrivers: [],
+        expiringLicenseDrivers: [],
         expiringClearinghouseDrivers: [],
         expiredMvrDrivers: [],
       },
@@ -249,12 +342,29 @@ export const dataService = {
       alertsCount: alerts.length,
       alerts: alerts,
       expiringMedCards: expiringMedCardsDrivers.length,
-      expiringCDL: expiringCDLDrivers.length,
+      expiringLicense: expiringLicenseDrivers.length,
       expiringClearinghouse: expiringClearinghouseDrivers.length,
       auditScore: '94%',
       newApplications: pendingApplicationsCount,
       annualRecordReview: expiredMvrDrivers.length,
     }
     return stats
+  },
+
+  sendNotifications: async (
+    notifications: {
+      driverId: string
+      driverName: string
+      email: string
+      documentType: string
+      dueDate: string
+      daysLeft: number
+    }[],
+  ): Promise<{ success: boolean; sentCount: number }> => {
+    const response = await apiClient.post<{ success: boolean; sentCount: number }>(
+      '/expiration/send-notifications',
+      { notifications },
+    )
+    return response.data
   },
 }

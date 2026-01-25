@@ -70,9 +70,6 @@
                 class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500" :disabled="isLoading" />
               <span class="ml-2 text-slate-600">Remember me</span>
             </label>
-            <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">
-              Forgot password?
-            </a>
           </div>
 
           <!-- Login Button -->

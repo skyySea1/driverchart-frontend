@@ -10,9 +10,8 @@ const Applications = () => import('@/Views/ApplicationsView.vue')
 const PublicApplicationForm = () => import('@/Views/ApplyFormView.vue')
 const Drivers = () => import('@/Views/DriversView.vue')
 const Vehicles = () => import('@/Views/VehiclesView.vue')
-const MainReports = () => import('@/Views/MainReports.vue')
-const AuditReports = () => import('@/Views/AuditReportsView.vue')
 const Settings = () => import('@/Views/SettingsView.vue')
+const UserManagement = () => import('@/Views/UserManagementView.vue')
 const DriverProfile = () => import('@/Views/DriverProfileView.vue')
 const ApplicantProfile = () => import('@/Views/ApplicantProfileView.vue')
 const Notfound = () => import('@/Views/NotFound.vue')
@@ -74,17 +73,6 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'audit',
-        name: 'audit',
-        component: AuditReports,
-        meta: {
-          title: 'Management & Audit Reports',
-          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-        },
-      },
-
-
-      {
         path: 'applications',
         name: 'applications',
         component: Applications,
@@ -102,16 +90,6 @@ const routes: RouteRecordRaw[] = [
           subtitle: 'Application Details',
         },
       },
-
-      {
-        path: 'reports',
-        name: 'reports',
-        component: MainReports,
-        meta: {
-          title: ' Main Reports',
-          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-        },
-      },
       {
         path: 'settings',
         name: 'settings',
@@ -119,6 +97,16 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'System Settings',
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
+        },
+      },
+      {
+        path: 'settings/users',
+        name: 'user-management',
+        component: UserManagement,
+        meta: {
+          title: 'User Management',
+          subtitle: 'Manage System Access & Roles',
+          requiresAdmin: true
         },
       },
     ],
@@ -149,6 +137,9 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
   } else if (to.path === '/login' && isAuthenticated) {
+    next('/dashboard')
+  } else if (to.meta.requiresAdmin && authStore.user?.role !== 'Admin') {
+   
     next('/dashboard')
   } else {
     next()

@@ -12,7 +12,7 @@
     <!-- User Info -->
     <div v-show="showInfo" class="flex-1 min-w-0 transition-opacity duration-200">
       <div class="text-sm font-medium text-white truncate">
-        {{ authStore.userDisplayName }}
+        {{ authStore.user?.displayName }}
       </div>
       <div class="text-xs text-slate-400 truncate">{{ authStore.userRole }}</div>
     </div>

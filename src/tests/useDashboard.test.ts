@@ -30,7 +30,7 @@ describe('useDashboard', () => {
       alertsCount: 2,
       alerts: [],
       expiringMedCards: 1,
-      expiringCDL: 0,
+      expiringLicense: 0,
       expiringClearinghouse: 0,
       auditScore: '95%',
       newApplications: 3,

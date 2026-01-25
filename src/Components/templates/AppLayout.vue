@@ -43,6 +43,15 @@
     ]" title="Toggle Sidebar">
       <ChevronLeft :class="['w-4 h-4 transition-transform duration-300', sidebarCollapsed ? 'rotate-180' : '']" />
     </button>
+
+    <FloatingAiAssistant />
+
+    <!-- Global Notification Modal -->
+    <NotificationPreviewModal
+      :is-open="modalStore.activeModal === 'notification'"
+      :notifications="expiringNotifications"
+      @close="modalStore.closeModal()"
+    />
   </div>
 </template>
 
@@ -52,10 +61,17 @@ import { useRouter, useRoute } from 'vue-router'
 import { ChevronLeft } from 'lucide-vue-next'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
+import FloatingAiAssistant from '@/Components/templates/FloatingAiAssistant.vue'
+import NotificationPreviewModal from '@/Components/templates/modals/NotificationPreviewModal.vue'
+import { useModalStore } from '@/stores/ModalStore'
+import { useNotifications } from '@/Composables/useNotifications'
 import { MOBILE_BREAKPOINT } from '@/utils/constants'
 
 const router = useRouter()
 const route = useRoute()
+const modalStore = useModalStore()
+const { expiringNotifications } = useNotifications()
+
 const currentRouteName = computed(() => String(route.name ?? 'dashboard'))
 const title = computed(() => String(route.meta.title ?? 'Dashboard'))
 const subtitle = computed(() => String(route.meta.subtitle ?? ''))

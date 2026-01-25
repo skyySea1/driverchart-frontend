@@ -242,7 +242,7 @@
                   Driver's License Information
                 </h3>
                 <p class="text-xs text-slate-500">
-                  List all licenses/CDLs with numbers, classes, and restrictions
+                  List all licenses with numbers, classes, and restrictions
                 </p>
               </div>
 
@@ -849,7 +849,7 @@
                     <label class="flex items-center gap-1 text-xs">
                       <input
                         type="checkbox"
-                        v-model="job.wasCDL"
+                        v-model="job.wasCdl"
                         class="rounded border-slate-300"
                       />
                       <span class="text-indigo-600 font-semibold">CDL Position</span>
@@ -1551,6 +1551,10 @@ const currentStep = ref(1)
 const totalSteps = 13
 const errors = ref<Record<string, string>>({})
 
+const licenseFrontUrl = ref('')
+const licenseBackUrl = ref('')
+const medicalCardUrl = ref('')
+
 const licenseFrontName = ref('')
 const licenseBackName = ref('')
 const medicalCardName = ref('')
@@ -1623,34 +1627,94 @@ const form = ref<DriverApplicationForm>({
   fairCreditReportingDate: '',
 })
 
-function handleLicenseFrontUpload(event: Event) {
+async function handleLicenseFrontUpload(event: Event) {
   const target = event.target
   if (target instanceof HTMLInputElement) {
     const file = target.files?.[0]
     if (file) {
       form.value.licenseFront = file
+      licenseFrontName.value = file.name
+      try {
+        const applicantName =
+          `${form.value.personalInfo.firstName} ${form.value.personalInfo.lastName}`.trim() ||
+          'Unknown Applicant'
+        const { url } = await dataService.uploadDocument(
+          null,
+          'licenseFront',
+          file,
+          new Date().toISOString(),
+          'Application Upload',
+          undefined,
+          applicantName,
+        )
+        licenseFrontUrl.value = url
+        form.value.licenseFront = url
+      } catch (err) {
+        console.error('Failed to upload license front', err)
+        alert('Failed to upload file. Please try again.')
+      }
     }
     return
   }
 }
 
-function handleLicenseBackUpload(event: Event) {
+async function handleLicenseBackUpload(event: Event) {
   const target = event.target
   if (target instanceof HTMLInputElement) {
     const file = target.files?.[0]
     if (file) {
       form.value.licenseBack = file
+      licenseBackName.value = file.name
+      try {
+        const applicantName =
+          `${form.value.personalInfo.firstName} ${form.value.personalInfo.lastName}`.trim() ||
+          'Unknown Applicant'
+        const { url } = await dataService.uploadDocument(
+          null,
+          'licenseBack',
+          file,
+          new Date().toISOString(),
+          'Application Upload',
+          undefined,
+          applicantName,
+        )
+        licenseBackUrl.value = url
+        form.value.licenseBack = url
+      } catch (err) {
+        console.error('Failed to upload license back', err)
+        alert('Failed to upload file. Please try again.')
+      }
     }
     return
   }
 }
 
-function handleMedicalCardUpload(event: Event) {
+async function handleMedicalCardUpload(event: Event) {
   const target = event.target
   if (target instanceof HTMLInputElement) {
     const file = target.files?.[0]
     if (file) {
       form.value.medicalCard = file
+      medicalCardName.value = file.name
+      try {
+        const applicantName =
+          `${form.value.personalInfo.firstName} ${form.value.personalInfo.lastName}`.trim() ||
+          'Unknown Applicant'
+        const { url } = await dataService.uploadDocument(
+          null,
+          'medicalCard',
+          file,
+          new Date().toISOString(),
+          'Application Upload',
+          undefined,
+          applicantName,
+        )
+        medicalCardUrl.value = url
+        form.value.medicalCard = url
+      } catch (err) {
+        console.error('Failed to upload medical card', err)
+        alert('Failed to upload file. Please try again.')
+      }
     }
     return
   }
@@ -1966,10 +2030,22 @@ async function submit() {
   loading.value = true
 
   try {
-    await dataService.submitApplication({
-      ...form.value,
-      experienceYears: form.value.experienceYears || 0,
-    })
+    // Inject Uploaded URLs into the payload
+    // Note: The form.value.licenseFront is a File object, which can't be JSON serialized properly.
+    // We override it with the URL string if available.
+
+    // We create a copy to avoid mutating the reactive form state with mixed types if we want to keep File there
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const payload: Record<string, any> = { ...form.value }
+
+    if (licenseFrontUrl.value) payload.licenseFront = licenseFrontUrl.value
+    if (licenseBackUrl.value) payload.licenseBack = licenseBackUrl.value
+    if (medicalCardUrl.value) payload.medicalCard = medicalCardUrl.value
+
+    // Ensure experienceYears is number
+    payload.experienceYears = form.value.experienceYears || 0
+
+    await dataService.submitApplication(payload)
 
     submitted.value = true
     localStorage.removeItem(STORAGE_KEY)
@@ -2121,7 +2197,7 @@ function addEmployment() {
     fromDate: '',
     toDate: '',
     reasonForLeaving: '',
-    wasCDL: false,
+    wasCdl: false,
   })
 }
 

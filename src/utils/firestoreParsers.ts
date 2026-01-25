@@ -38,7 +38,7 @@ function asVehicleStatus(value: unknown): Vehicle['vehicleStatus'] {
 }
 
 export function parseDriverDoc(doc: FirestoreDoc): Driver {
-  const cdl = getProp(doc, 'cdl')
+  const license = getProp(doc, 'license')
   const medical = getProp(doc, 'medical')
   const mvr = getProp(doc, 'mvr')
   const drugAlcohol = getProp(doc, 'drugAlcohol')
@@ -76,12 +76,12 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
     ssnDocFile: undefined,
     ssnDocPreviewUrl: asOptionalString(getProp(doc, 'ssnDocPreviewUrl')),
 
-    cdl: {
-      documentNumber: asString(getProp(cdl, 'documentNumber')),
-      expiryDate: asOptionalString(getProp(cdl, 'expiryDate')),
-      file: asOptionalString(getProp(cdl, 'file')),
-      state: asString(getProp(cdl, 'state')),
-      value: asOptionalString(getProp(cdl, 'value')),
+    license: {
+      documentNumber: asString(getProp(license, 'documentNumber')),
+      expiryDate: asOptionalString(getProp(license, 'expiryDate')),
+      file: asOptionalString(getProp(license, 'file')),
+      state: asString(getProp(license, 'state')),
+      value: asOptionalString(getProp(license, 'value')),
     },
 
     medical: {
@@ -116,6 +116,11 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
       phone: asString(getProp(emergencyContact, 'phone')),
       relationship: asString(getProp(emergencyContact, 'relationship')),
     },
+    
+    // Flagging
+    isFlagged: asBoolean(getProp(doc, 'isFlagged')),
+    flagReason: asString(getProp(doc, 'flagReason')),
+    flagDate: asString(getProp(doc, 'flagDate')),
   }
 }
 

@@ -87,7 +87,7 @@ const config = computed(() => {
       badgeText: 'Within 30d',
       badgeVariant: 'destructive',
     },
-    CDL: {
+    license: {
       icon: AlertOctagon,
       bgClass: 'bg-red-50',
       iconClass: 'text-red-600',
