@@ -79,6 +79,13 @@
           </div>
         </div>
         <div class="flex gap-3">
+          <BaseButton
+            v-if="driver.hireStatus === 'Pending'"
+            label="Hire Driver"
+            :icon="UserCheck"
+            @click="hireDriver"
+            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm"
+          />
           <button
             @click="generateComplianceReport"
             class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium shadow-sm"
@@ -373,6 +380,7 @@ import {
   Upload,
   Edit,
   Flag,
+  UserCheck,
 } from 'lucide-vue-next'
 import dayjs from 'dayjs'
 import { capitalizeName } from '@/utils/utils'
@@ -474,7 +482,7 @@ const getStatusIcon = (status: string) => {
 
 const formatDate = (date?: string) => {
   if (!date) return 'N/A'
-  return dayjs(date).format('MM/DD/YYYY')
+  return dayjs(date).format('MM/DD/YYYY - HH:mm:ss')
 }
 
 const fetchDriverData = async () => {
@@ -598,6 +606,26 @@ function getDriverDocument(type: string): { file?: string; expiryDate?: string }
   if (!driver.value) return {}
   const doc = driver.value[type]
   return doc || {}
+}
+
+async function hireDriver() {
+  if (!driver.value || !confirm(`Are you sure you want to officially HIRE ${driverName.value}?`)) return
+
+  try {
+    // Update to Active
+    await dataService.updateDriver({
+      ...driver.value,
+      id: driver.value.id,
+      hireStatus: 'Active',
+      hireDate: dayjs().format('YYYY-MM-DD')
+    })
+    await fetchDriverData()
+    // Optional: Show success
+    alert(`${driverName.value} is now HIRED and Active!`)
+  } catch (e) {
+    console.error('Failed to hire driver', e)
+    alert('Failed to update driver status.')
+  }
 }
 
 function openUploadModal(type: string) {

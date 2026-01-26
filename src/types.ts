@@ -341,11 +341,15 @@ export interface Applications extends FirestoreDoc {
   licenses: License[]
   vehicleExperience: VehicleExperience[]
   notes?: string
+  isFlagged?: boolean
+  flagReason?: string
+  flagDate?: string
 }
 
 export interface DriverApplicationForm extends FirestoreDoc {
   // Personal Info
   personalInfo: PersonalInfo
+
 
   // Address History (last 3 years)
   addresses: Address[]
