@@ -50,6 +50,7 @@
     <NotificationPreviewModal
       :is-open="modalStore.activeModal === 'notification'"
       :notifications="expiringNotifications"
+      :loading-data="notificationsLoading"
       @close="modalStore.closeModal()"
     />
   </div>
@@ -70,7 +71,7 @@ import { MOBILE_BREAKPOINT } from '@/utils/constants'
 const router = useRouter()
 const route = useRoute()
 const modalStore = useModalStore()
-const { expiringNotifications } = useNotifications()
+const { expiringNotifications, loading: notificationsLoading } = useNotifications()
 
 const currentRouteName = computed(() => String(route.name ?? 'dashboard'))
 const title = computed(() => String(route.meta.title ?? 'Dashboard'))

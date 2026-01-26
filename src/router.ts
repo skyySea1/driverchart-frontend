@@ -14,9 +14,9 @@ const Settings = () => import('@/Views/SettingsView.vue')
 const UserManagement = () => import('@/Views/UserManagementView.vue')
 const DriverProfile = () => import('@/Views/DriverProfileView.vue')
 const ApplicantProfile = () => import('@/Views/ApplicantProfileView.vue')
+const PublicUploadView = () => import('@/Views/PublicUploadView.vue')
 const Notfound = () => import('@/Views/NotFound.vue')
 
-// todo add navigation guards for auth using meta.requiresAuth(meta fields) on routes that need auth
 const routes: RouteRecordRaw[] = [
   {
     path: '/login',
@@ -29,6 +29,12 @@ const routes: RouteRecordRaw[] = [
     name: 'apply',
     component: PublicApplicationForm,
     meta: { requiresAuth: false, title: 'Apply Now' },
+  },
+  {
+    path: '/driver/upload',
+    name: 'driver-upload',
+    component: PublicUploadView,
+    meta: { requiresAuth: false, title: 'Secure Document Upload' },
   },
   {
     path: '/',
@@ -135,12 +141,14 @@ router.beforeEach(async (to, from, next) => {
   const isAuthenticated = authStore.isAuthenticated
 
   if (to.meta.requiresAuth && !isAuthenticated) {
+    console.log('[Router] Unauthorized access to', to.path)
     next('/login')
   } else if (to.path === '/login' && isAuthenticated) {
+    console.log('[Router] Already authenticated, redirecting to dashboard')
     next('/dashboard')
   } else if (to.meta.requiresAdmin && authStore.user?.role !== 'Admin') {
-   
-    next('/dashboard')
+    // Redirect to 403 error page using the improved NotFound view logic
+    next({ name: 'NotFound', query: { code: 403 } })
   } else {
     next()
   }
