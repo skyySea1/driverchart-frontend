@@ -3,14 +3,16 @@ import { z } from 'zod'
 import { DriverSchema, ComplianceItemSchema } from '@/shared/schemas/DriverSchema'
 
 export type AlertType = 'error' | 'success' | 'warning' | 'info'
-export type HireStatusType = 'Active' | 'Terminated' | 'Rehired' | 'Pending'
-export type ApplicationStatusType = 'Pending' | 'Approved' | 'Rejected'
+export type HireStatusType = 'Pending' |'Active' | 'Terminated' | 'Rehired'
+export type ApplicationStatusType = 'New' | 'Pending' | 'Hired' | 'Rejected'
 export type ComplianceItem = z.infer<typeof ComplianceItemSchema>
 export type DriverBase = z.infer<typeof DriverSchema> & {
   isFlagged?: boolean
   flagReason?: string
   flagDate?: string
 }
+
+export const EntityTypes = ['Driver', 'Vehicle', 'Application', 'User']
 
 // entity can be used for searching by name or type
 export interface Alert {
@@ -30,6 +32,7 @@ export interface DocumentLog {
   type: string
   entityName: string
   user: string
+  fileUrl?: string
 }
 
 export interface AuditLog {
@@ -131,15 +134,14 @@ export type CardType =
   | 'reviews'
   | 'fleet'
   | 'active_fleet'
+
 export type ViewState =
   | 'dashboard'
-  | 'drivers'
   | 'vehicles'
-  | 'auditreports'
-  | 'documentregistry'
   | 'applications'
   | 'login'
   | 'settings'
+
 export type USState =
   | 'AL'
   | 'AK'
@@ -193,6 +195,7 @@ export type USState =
   | 'WY'
   | 'DC'
   | ''
+
 export type UserRole = 'Admin' | 'Manager' | 'Dispatcher' | 'Auditor' | 'Viewer'
 export type VehicleTypes =
   | 'Passenger Bus'
@@ -332,7 +335,7 @@ export interface VehicleExperience {
 
 export type ConsentOption = 'Yes' | 'No'
 
-// Table view - simplified application data
+// Table view - simplified application data just for listing
 export interface Applications extends FirestoreDoc {
   personalInfo: PersonalInfo
   status: ApplicationStatusType
@@ -349,7 +352,6 @@ export interface Applications extends FirestoreDoc {
 export interface DriverApplicationForm extends FirestoreDoc {
   // Personal Info
   personalInfo: PersonalInfo
-
 
   // Address History (last 3 years)
   addresses: Address[]
@@ -369,8 +371,6 @@ export interface DriverApplicationForm extends FirestoreDoc {
   denialSuspensionExplanation?: string
 
   employmentHistory: Employment[]
-
-  notes?: string
 
   // Uploads
   licenseFront?: string | File | null
@@ -406,4 +406,7 @@ export interface DriverApplicationForm extends FirestoreDoc {
   // Fair Credit Reporting Authorization
   fairCreditReportingSignature: string
   fairCreditReportingDate: string
+
+  notes?: string
 }
+
