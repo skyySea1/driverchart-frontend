@@ -30,16 +30,15 @@ export function useCompliance(today = dayjs().startOf('day')) {
    * Returns a Tailwind class for the status badge color based on expiration.
    * @param dateStr ISO date string
    */
-  // todo review why string cause error
-  function getStatusColor(dateStr: unknown): string {
-    if (typeof dateStr !== 'string' || !dateStr) return 'text-slate-500' // Unknown/Missing
+  function getStatusColor(dateStr: string | null | undefined): string {
+    if (!dateStr) return 'text-slate-500' // Unknown/Missing
     if (isExpired(dateStr)) return 'bg-red-100 text-red-800'
     if (isExpiringSoon(dateStr)) return 'bg-amber-100 text-amber-800'
     return 'bg-green-100 text-green-800'
   }
 
-  function daysToExpire(dateStr: string): number | string {
-    if (typeof dateStr !== 'string' || !dateStr) return '-'
+  function daysToExpire(dateStr: string | null | undefined): number | string {
+    if (!dateStr) return '-'
     const today = dayjs().startOf('day')
     const exp = dayjs(dateStr)
     const diff = exp.diff(today, 'day')

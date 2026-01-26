@@ -11,7 +11,7 @@ export function useComplianceReport() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(pdfMake as any).vfs = (pdfFonts as any).pdfMake.vfs
   }
-  function calculateAuditScore(complianceItems: any[]): string { // eslint-disable-line @typescript-eslint/no-explicit-any
+  function calculateAuditScore(complianceItems: { date?: string }[]): string {
     if (!complianceItems.length) return 'N/A'
 
     const validItems = complianceItems.filter(item => getStatus(item.date) === 'valid').length
