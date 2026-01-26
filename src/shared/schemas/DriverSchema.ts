@@ -71,6 +71,48 @@ export const DriverSchema = z.object({
       .pipe(usPhoneNumber('Phone Number must be in format (XXX) XXX-XXXX or XXX-XXX-XXXX')),
     relationship: z.string().default(''),
   }),
+
+  // Qualification Checklist (Permanent Tracking)
+  qualificationChecklist: z
+    .object({
+      dotApplication: z.boolean().default(false),
+      drivingRecordInquiry: z.boolean().default(false),
+      goodFaithEffort: z.boolean().default(false),
+      roadTest: z.boolean().default(false),
+      medicalCertificate: z.boolean().default(false),
+      medicalRegistryVerification: z.boolean().default(false),
+      annualDrivingReview: z.boolean().default(false),
+      cdlisReport: z.boolean().default(false),
+      drugAlcoholClearinghouse: z.boolean().default(false),
+      preEmploymentDrugTest: z.boolean().default(false),
+      randomProgramPlacement: z.boolean().default(false),
+      companyTestingPolicyReceipt: z.boolean().default(false),
+      drugAlcoholStatement: z.boolean().default(false),
+      // Completion timestamps
+      completedAt: z.record(z.string(), z.string()).optional(),
+    })
+    .optional(),
+  
+  // Application Reference
+  applicationId: z.string().optional(),
+  appliedDate: z.string().optional(),
+  applicationFile: z.string().optional(),
+
+  // Application Signatures (preserved during migration)
+  drugTestSignature: z.string().optional().default(''),
+  drugTestDate: z.string().optional().default(''),
+  authReleaseSignature: z.string().optional().default(''),
+  authReleaseDate: z.string().optional().default(''),
+  pspDisclosureSignature: z.string().optional().default(''),
+  pspDisclosureDate: z.string().optional().default(''),
+  fmcsaConsentSignature: z.string().optional().default(''),
+  fmcsaConsentDate: z.string().optional().default(''),
+  alcoholDrugPolicySignature: z.string().optional().default(''),
+  alcoholDrugPolicyDate: z.string().optional().default(''),
+  generalWorkPolicySignature: z.string().optional().default(''),
+  generalWorkPolicyDate: z.string().optional().default(''),
+  fairCreditReportingSignature: z.string().optional().default(''),
+  fairCreditReportingDate: z.string().optional().default(''),
 })
 
 export type Driver = z.infer<typeof DriverSchema>

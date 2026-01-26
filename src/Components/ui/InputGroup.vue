@@ -38,10 +38,11 @@
       :required="required"
       :disabled="disabled || (enableCheck && !isEnabled)"
       class="input-base disabled:opacity-60 disabled:bg-slate-100 disabled:cursor-not-allowed transition-colors duration-200"
-     :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-200': error }"
+      :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-200': error }"
       :placeholder="placeholder"
       :value="modelValue"
-      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+      :maxlength="maxlength"
+      @input="handleInput"
     />
     <p v-if="error" class="text-[10px] text-red-500 font-semibold mt-1 animate-pulse">{{ error }}</p>
   </div>
@@ -49,22 +50,9 @@
 
 <script setup lang="ts">
 import type { InputTypeHTMLAttribute } from 'vue'
-import { HelpCircle } from 'lucide-vue-next'
+import { formatSSN } from '@/utils/utils'
 
-const {
-  type = 'text',
-  required = false,
-  placeholder = '',
-  disabled = false,
-  tooltip = '',
-  enableCheck = false,
-  isEnabled = false,
-  checkboxValue = false,
-  toggleTitle = 'Enable/disable field',
-  checkboxTitle = 'Present?',
-  labelClass = '', // avoid undefined
-  error = '',
-} = defineProps<{
+const props = defineProps<{
   label: string
   modelValue: string | number | undefined
   placeholder?: string
@@ -79,11 +67,45 @@ const {
   checkboxTitle?: string
   labelClass?: string
   error?: string
+  maxlength?: string | number
+  isSSN?: boolean
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'update:modelValue', value: string | number): void
   (e: 'update:isEnabled', value: boolean): void
   (e: 'update:checkboxValue', value: boolean): void
 }>()
+
+const handleInput = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  let value = input.value
+
+  if (props.type === 'tel') {
+    // Format Phone: (XXX) XXX-XXXX
+    let numbers = value.replace(/\D/g, '')
+    if (numbers.length > 10) numbers = numbers.slice(0, 10)
+
+    // As the user types, progressively apply the final format:
+    // - > 6 digits: (XXX) XXX-XXXX
+    // - 4–6 digits: (XXX) XXX
+    // - 1–3 digits: (XXX  (opening parenthesis with partial area code)
+    // - 0 digits : ''   (no formatting)
+    if (numbers.length > 6) {
+      value = `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6)}`
+    } else if (numbers.length > 3) {
+      value = `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`
+    } else if (numbers.length > 0) {
+      value = `(${numbers}`
+    } else {
+      value = numbers
+    }
+  }
+
+  if (props.isSSN) {
+    value = formatSSN(value)
+  }
+
+  emit('update:modelValue', value)
+}
 </script>

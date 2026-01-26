@@ -58,18 +58,14 @@
             >
             <input id="dobInput" v-model="form.dob" type="date" class="input-base" />
           </div>
-          <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700"
-              >Phone Number <span class="text-red-500">*</span></label
-            >
-            <input
-              id="phoneInput"
-              v-model.trim="form.phone"
-              type="tel"
-              class="input-base"
-              placeholder="(123) 456-7890"
-            />
-          </div>
+          <InputGroup
+            id="phoneInput"
+            v-model="form.phone"
+            label="Phone Number"
+            type="tel"
+            required
+            placeholder="(123) 456-7890"
+          />
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
               >Email Address <span class="text-red-500">*</span>
@@ -148,15 +144,12 @@
               class="input-base"
             />
           </div>
-          <div class="space-y-1">
-            <label class="block text-xs font-bold text-slate-700">Phone Number</label>
-            <input
-              v-model.trim="form.emergencyContact.phone"
-              type="tel"
-              class="input-base"
-              placeholder="(123) 456-7890"
-            />
-          </div>
+          <InputGroup
+            v-model="form.emergencyContact.phone"
+            label="Phone Number"
+            type="tel"
+            placeholder="(123) 456-7890"
+          />
         </div>
       </div>
 
@@ -262,8 +255,10 @@
             <InputGroup
               label="Social Security Number (SSN)"
               placeholder="XXX-XX-XXXX"
-              v-model.trim="form.ssnNumber"
+              v-model="form.ssnNumber"
               required
+              maxlength="11"
+              isSSN
             />
             <FileInput
               label="Upload SSN Card"
@@ -687,6 +682,42 @@ const form = ref<DriverForm>({
   ssnDocFile: null,
   ssnDocPreviewUrl: '',
   id: '',
+  qualificationChecklist: {
+    dotApplication: false,
+    drivingRecordInquiry: false,
+    goodFaithEffort: false,
+    roadTest: false,
+    medicalCertificate: false,
+    medicalRegistryVerification: false,
+    annualDrivingReview: false,
+    cdlisReport: false,
+    drugAlcoholClearinghouse: false,
+    preEmploymentDrugTest: false,
+    randomProgramPlacement: false,
+    companyTestingPolicyReceipt: false,
+    drugAlcoholStatement: false,
+    completedAt: {}
+  },
+  // Application Reference
+  applicationId: '',
+  appliedDate: '',
+  applicationFile: '',
+
+  // Application Signatures (preserved during migration)
+  drugTestSignature: '',
+  drugTestDate: '',
+  authReleaseSignature: '',
+  authReleaseDate: '',
+  pspDisclosureSignature: '',
+  pspDisclosureDate: '',
+  fmcsaConsentSignature: '',
+  fmcsaConsentDate: '',
+  alcoholDrugPolicySignature: '',
+  alcoholDrugPolicyDate: '',
+  generalWorkPolicySignature: '',
+  generalWorkPolicyDate: '',
+  fairCreditReportingSignature: '',
+  fairCreditReportingDate: '',
 })
 
 onMounted(() => {
