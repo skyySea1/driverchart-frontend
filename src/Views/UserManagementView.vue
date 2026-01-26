@@ -239,9 +239,21 @@ async function saveUser() {
     }
     await fetchUsers()
     closeModal()
-  } catch (e: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+  } catch (e: unknown) {
     console.error(e)
-    error.value = e.response?.data?.message || e.message || 'Failed to save user.'
+    if (e instanceof Error) {
+      // Assuming e could be an AxiosError which has a 'response' property
+      // This check is a common pattern for handling API errors with Axios
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (typeof (e as any).response?.data?.message === 'string') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        error.value = (e as any).response.data.message
+      } else {
+        error.value = e.message || 'Failed to save user.'
+      }
+    } else {
+      error.value = 'An unknown error occurred while saving the user.'
+    }
   } finally {
     isSaving.value = false
   }

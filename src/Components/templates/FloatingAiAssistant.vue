@@ -104,6 +104,7 @@
 import { ref, nextTick, watch } from 'vue'
 import { Bot, Send, X } from 'lucide-vue-next'
 import { askRegulatoryAssistant } from '@/services/geminiService'
+import DOMPurify from 'dompurify'
 
 const isOpen = ref(false)
 const chatInput = ref('')
@@ -126,9 +127,11 @@ function toggleOpen() {
 
 function formatMessage(content: string) {
   // Simple formatting for line breaks and basic markdown-like structures
-  return content
+  const formatted = content
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\n/g, '<br>')
+  
+  return DOMPurify.sanitize(formatted)
 }
 
 function scrollToBottom() {

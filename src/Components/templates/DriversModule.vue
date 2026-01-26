@@ -7,12 +7,14 @@
         <h1 class="text-xl font-bold text-slate-900">Drivers List</h1>
         <p class="text-sm text-slate-500">Manage all drivers</p>
       </div>
+
+      <!-- Driver Actions -->
       <div class="flex gap-2">
         <BaseButton
           @click="generateDriverListReport(driversData)"
           label="Export List"
           :icon="FileText"
-          
+
         />
         <BaseButton
           @click="openNew"
@@ -163,7 +165,7 @@
             :class="[
               'rounded inline-block font-bold',
               props.compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs',
-              getStatusColor(value),
+              getStatusColor(value as string),
             ]"
           >
             <span
@@ -186,7 +188,7 @@
             :class="[
               'rounded inline-block font-bold',
               props.compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs',
-              getStatusColor(value),
+              getStatusColor(value as string),
             ]"
           >
             <span
@@ -209,7 +211,7 @@
             :class="[
               'rounded inline-block font-bold',
               props.compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs',
-              getStatusColor(value),
+              getStatusColor(value as string),
             ]"
           >
             <span

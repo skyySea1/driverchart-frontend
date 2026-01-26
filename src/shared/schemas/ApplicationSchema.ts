@@ -68,7 +68,7 @@ export const EmploymentSchema = z.object({
   fromDate: dateRequired('From Date'),
   toDate: z.string().optional(),
   reasonForLeaving: z.string().optional(),
-  wasCDL: z.boolean(),
+  wasCdl: z.boolean(),
   present: z.boolean().optional(),
 }).refine((data) => {
   if (data.present) return true;

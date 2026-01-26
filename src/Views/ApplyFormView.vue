@@ -6,7 +6,7 @@
     <div
       class="app-card bg-white rounded-2xl shadow-2xl w-full overflow-hidden z-10 flex flex-col transition-all duration-500 ease-in-out"
       :class="
-        currentStep === 7 || currentStep === 8 || currentStep === 10 || currentStep === 11
+        currentStep === 6 || currentStep === 7 || currentStep === 8 || currentStep === 10 || currentStep === 11
           ? 'max-w-3xl'
           : 'max-w-md'
       "
@@ -112,6 +112,8 @@
                 label="Social Security Number"
                 placeholder="123-45-6789"
                 required
+                maxlength="11"
+                isSSN
                 :error="errors['personalInfo.ssnNumber']"
               />
 
@@ -209,6 +211,7 @@
                     :checkboxValue="address.present || false"
                     @update:checkboxValue="address.present = $event"
                     :isEnabled="!address.present"
+                    checkboxTitle="Present"
                     enableCheck
                     toggleTitle="Mark if this is your current address"
                     label="To"
@@ -327,7 +330,7 @@
               <button
                 @click="addLicense"
                 type="button"
-                class="w-full py-2 border-2 border-dashed border-slate-300 rounded-lg text-slate-600 hover:border-indigo-400 hover:text-indigo-600 transition-colors text-sm font-semibold"
+                class="w-full py-2 border-2 cursor-pointer border-dashed border-slate-300 rounded-lg text-slate-600 hover:border-indigo-400 hover:text-indigo-600 transition-colors text-sm font-semibold"
               >
                 + Add Another License
               </button>
@@ -858,7 +861,7 @@
                   <button
                     @click="removeEmployment(index)"
                     type="button"
-                    class="text-red-500 text-xs hover:text-red-700"
+                    class="text-red-500 text-xs cursor-pointer hover:text-red-700"
                   >
                     Remove
                   </button>
@@ -939,11 +942,12 @@
                   />
                   <InputGroup
                     v-model="job.toDate"
-                    :checkboxValue="job.present || false"
+                    :checkboxValue="job.present"
                     @update:checkboxValue="job.present = $event"
                     :isEnabled="!job.present"
                     enableCheck
                     toggleTitle="Check if this is your current job"
+                    checkboxTitle="Present"
                     label="To Date"
                     type="date"
                     placeholder="Current"
@@ -1542,7 +1546,7 @@ import FileInput from '@/Components/ui/FileInput.vue'
 import { VEHICLE_TYPES } from '@/utils/constants'
 import type { DriverApplicationForm, VehicleTypes } from '@/types'
 import { capitalizeName } from '../utils/utils'
-import { ApplicationSchema } from '@/shared/schemas/ApplicationSchema'
+import { ApplicationSchema, EmploymentSchema } from '@/shared/schemas/ApplicationSchema'
 import { z } from 'zod'
 
 const loading = ref(false)
@@ -1895,8 +1899,12 @@ async function validateStep() {
       }
       break
     case 6: // Employment History
-      stepSchema = ApplicationSchema.shape.employmentHistory
-      dataToValidate = form.value.employmentHistory
+      stepSchema = z.object({
+        employmentHistory: z
+          .array(EmploymentSchema)
+          .min(1, 'At least one employment record is required'),
+      })
+      dataToValidate = { employmentHistory: form.value.employmentHistory }
       break
     case 7: // PSP
       stepSchema = z.object({
@@ -1908,7 +1916,7 @@ async function validateStep() {
         pspDisclosureDate: form.value.pspDisclosureDate,
       }
       break
-    case 8: // FMCSA
+    case 8: // FMCSA Clearinghouse
       stepSchema = z.object({
         fmcsaConsentSignature: ApplicationSchema.shape.fmcsaConsentSignature,
         fmcsaConsentDate: ApplicationSchema.shape.fmcsaConsentDate,
@@ -1987,8 +1995,6 @@ async function validateStep() {
           key = `addresses.${key}`
         } else if (currentStep.value === 3) {
           key = `licenses.${key}`
-        } else if (currentStep.value === 6) {
-          key = `employmentHistory.${key}`
         } else if (currentStep.value === 1) {
           // Personal info is nested in form, but we validated the object directly.
           // In template: form.personalInfo.firstName.

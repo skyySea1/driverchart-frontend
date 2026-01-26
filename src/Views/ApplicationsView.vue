@@ -93,7 +93,7 @@
             <span
               :class="[
                 'px-2 py-1 rounded-full text-xs font-semibold',
-                value === 'Approved'
+                value === 'Hired'
                   ? 'bg-green-100 text-green-800'
                   : value === 'Rejected'
                     ? 'bg-red-100 text-red-800'
@@ -140,9 +140,9 @@ const statusPills = computed(() => [
     count: applications.value.filter((a) => a.status === 'Pending').length,
   },
   {
-    label: 'Approved',
-    value: 'Approved',
-    count: applications.value.filter((a) => a.status === 'Approved').length,
+    label: 'Hired',
+    value: 'Hired',
+    count: applications.value.filter((a) => a.status === 'Hired').length,
   },
   {
     label: 'Rejected',
