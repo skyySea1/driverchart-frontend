@@ -22,8 +22,9 @@ function asBoolean(value: unknown, fallback = false): boolean {
 }
 
 function asHireStatus(value: unknown): Driver['hireStatus'] {
-  if (value === 'Terminated') return 'Terminated'
-  if (value === 'Rehired') return 'Rehired'
+  if (value === 'Terminated' || value === 'Rehired' || value === 'Pending' || value === 'Active') {
+    return value
+  }
   return 'Active'
 }
 
@@ -121,6 +122,30 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
     isFlagged: asBoolean(getProp(doc, 'isFlagged')),
     flagReason: asString(getProp(doc, 'flagReason')),
     flagDate: asString(getProp(doc, 'flagDate')),
+
+    // Application Reference
+    applicationId: asOptionalString(getProp(doc, 'applicationId')),
+    appliedDate: asOptionalString(getProp(doc, 'appliedDate')),
+    applicationFile: asOptionalString(getProp(doc, 'applicationFile')),
+
+    // Signatures
+    drugTestSignature: asString(getProp(doc, 'drugTestSignature')),
+    drugTestDate: asString(getProp(doc, 'drugTestDate')),
+    authReleaseSignature: asString(getProp(doc, 'authReleaseSignature')),
+    authReleaseDate: asString(getProp(doc, 'authReleaseDate')),
+    pspDisclosureSignature: asString(getProp(doc, 'pspDisclosureSignature')),
+    pspDisclosureDate: asString(getProp(doc, 'pspDisclosureDate')),
+    fmcsaConsentSignature: asString(getProp(doc, 'fmcsaConsentSignature')),
+    fmcsaConsentDate: asString(getProp(doc, 'fmcsaConsentDate')),
+    alcoholDrugPolicySignature: asString(getProp(doc, 'alcoholDrugPolicySignature')),
+    alcoholDrugPolicyDate: asString(getProp(doc, 'alcoholDrugPolicyDate')),
+    generalWorkPolicySignature: asString(getProp(doc, 'generalWorkPolicySignature')),
+    generalWorkPolicyDate: asString(getProp(doc, 'generalWorkPolicyDate')),
+    fairCreditReportingSignature: asString(getProp(doc, 'fairCreditReportingSignature')),
+    fairCreditReportingDate: asString(getProp(doc, 'fairCreditReportingDate')),
+
+    // Qualification Checklist
+    qualificationChecklist: getProp(doc, 'qualificationChecklist') as Driver['qualificationChecklist']
   }
 }
 
