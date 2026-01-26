@@ -2,7 +2,6 @@ import type { comparedValues } from '@/types'
 import { z } from 'zod'
 import dayjs from 'dayjs'
 
-
 export const getDaysDiff = (dateStr: string | null | undefined): number => {
   if (!dateStr) return 0
   const today = new Date()
@@ -36,7 +35,7 @@ export const getStatusText = (days: number): string => {
 export const formatDate = (
   timestamp: Date | string | number | { toDate: () => Date } | null | undefined,
 ): string => {
-  if (!timestamp) return 'Just now'
+  if (!timestamp) return 'N/A'
   let date: Date
   if ((timestamp as { toDate?: () => Date })?.toDate) {
     date = (timestamp as { toDate: () => Date }).toDate()
@@ -47,11 +46,7 @@ export const formatDate = (
   }
 
   if (isNaN(date.getTime())) return 'Invalid Date'
-  return (
-    date.toLocaleDateString() +
-    ' ' +
-    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  )
+  return date.toLocaleDateString()
 }
 
 /**
@@ -114,19 +109,30 @@ export function compareValues(a: comparedValues, b: comparedValues, order: 'asc'
   return 0
 }
 
-export const futureIsoDate = (message = "Date must be in the future") =>
-  z.string()
+export const futureIsoDate = (message = 'Date must be in the future') =>
+  z
+    .string()
     .min(1, { message })
     .pipe(z.iso.date())
-    .refine((dateStr) => dayjs(dateStr).isAfter(dayjs()), { message });
+    .refine((dateStr) => dayjs(dateStr).isAfter(dayjs()), { message })
 
-export const pastIsoDate = (message = "Date must be in the past") =>
-  z.string()
+export const pastIsoDate = (message = 'Date must be in the past') =>
+  z
+    .string()
     .min(1, { message })
     .pipe(z.iso.date())
-    .refine((dateStr) => dayjs(dateStr).isBefore(dayjs()), { message });
+    .refine((dateStr) => dayjs(dateStr).isBefore(dayjs()), { message })
 
-export const usPhoneNumber = (
-  message = "Phone must be in format (XXX) XXX-XXXX or XXX-XXX-XXXX"
-) => z.string().regex(/^(\(\d{3}\)\s?\d{3}-\d{4}|\d{3}-\d{3}-\d{4})$/, message);
+export const usPhoneNumber = (message = 'Phone must be in format (XXX) XXX-XXXX or XXX-XXX-XXXX') =>
+  z.string().regex(/^(\(\d{3}\)\s?\d{3}-\d{4}|\d{3}-\d{3}-\d{4})$/, message)
 
+export const formatSSN = (value: string | undefined | null): string => {
+  if (!value) return ''
+  // Remove all non-digits
+  const digits = value.replace(/\D/g, '')
+
+  // Format as AAA-GG-SSSS
+  if (digits.length <= 3) return digits
+  if (digits.length <= 5) return `${digits.slice(0, 3)}-${digits.slice(3)}`
+  return `${digits.slice(0, 3)}-${digits.slice(3, 5)}-${digits.slice(5, 9)}`
+}
