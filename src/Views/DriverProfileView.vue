@@ -71,8 +71,6 @@
                 <span class="text-slate-300">•</span>
                 <button v-cursor @click="handleAction('request_medical')" class="text-green-600 hover:text-green-700 transition-colors">Request Med Card Upload</button>
                 <span class="text-slate-300">•</span>
-                <button v-cursor @click="handleAction('request_fcra')" class="text-green-600 hover:text-green-700 transition-colors">Request FCRA Signature</button>
-                <span class="text-slate-300">•</span>
                 <button v-cursor @click="handleAction('flag_driver')" class="text-red-600 hover:text-red-700 transition-colors">Flag Driver</button>
               </div>
             </div>
@@ -88,7 +86,7 @@
           />
           <button
             @click="generateComplianceReport"
-            class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium shadow-sm"
+            class="flex items-center gap-2 px-4 py-2 cursor-pointer bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium shadow-sm"
           >
             <Download class="w-4 h-4" />
             Compliance Report
@@ -103,7 +101,26 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Tabs -->
+      <div class="border-b border-slate-200">
+        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+          <button
+            v-for="tab in tabs"
+            :key="tab.id"
+            @click="activeTab = tab.id"
+            :class="[
+              activeTab === tab.id
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300',
+              'whitespace-nowrap py-4 px-1 border-b-2 font-black text-sm transition-all duration-300 cursor-pointer uppercase tracking-widest',
+            ]"
+          >
+            {{ tab.name }}
+          </button>
+        </nav>
+      </div>
+
+      <div v-if="activeTab === 'overview'" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Identity & Contact Card -->
         <div class="space-y-6">
           <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4 h-fit">
@@ -338,6 +355,29 @@
         @close="isPdfModalOpen = false"
       />
 
+      <div v-if="activeTab === 'checklist'">
+        <DriverChecklistData
+          :driver="driver"
+          @update-item="handleChecklistItemUpdate"
+          @request-action="openQualificationModal"
+          @view-file="handleViewChecklistFile"
+        />
+      </div>
+
+      <div v-if="activeTab === 'documents'">
+        <ComplianceDocuments
+          :title="'All Driver Related Documents'"
+          v-if="driver"
+          :driver="driver"
+          :logs="documents"
+          @view="handleViewDocument"
+          @upload="openUploadModal"
+          @view-log="handleViewLog"
+          @view-application="generatePDFReport(driver, documents)"
+          @view-signature="handleViewSignature"
+        />
+      </div>
+
       <DriverActionModal
         v-if="actionModal.isOpen"
         :isOpen="actionModal.isOpen"
@@ -345,6 +385,31 @@
         :driver="driver"
         @close="actionModal.isOpen = false"
         @success="handleActionSuccess"
+      />
+
+      <QualificationActionModal
+        v-if="qualificationModal.isOpen"
+        :isOpen="qualificationModal.isOpen"
+        :item="qualificationModal.item"
+        :driver="driver"
+        :user="user"
+        @close="qualificationModal.isOpen = false"
+        @complete="handleQualificationComplete"
+      />
+
+      <DriverPromotionModal
+        v-if="isPromotionModalOpen"
+        :isOpen="isPromotionModalOpen"
+        :driver="driver"
+        @close="isPromotionModalOpen = false"
+        @confirm="confirmHire"
+      />
+
+      <SignatureProofModal
+        v-if="signatureProof.isOpen"
+        :isOpen="signatureProof.isOpen"
+        :doc="signatureProof.doc"
+        @close="signatureProof.isOpen = false"
       />
     </div>
   </div>
@@ -360,7 +425,12 @@ import { PERMISSIONS } from '@/utils/permissions'
 import DriverFormModal from '@/Components/templates/forms/DriverFormModal.vue'
 import DocumentUploadModal from '@/Components/templates/forms/DocumentUploadModal.vue'
 import PdfViewerModal from '@/Components/ui/PdfViewerModal.vue'
+import SignatureProofModal from '@/Components/ui/SignatureProofModal.vue'
 import DriverActionModal from '@/Components/templates/forms/DriverActionModal.vue'
+import DriverPromotionModal from '@/Components/templates/forms/DriverPromotionModal.vue'
+import DriverChecklistData from '@/Components/templates/DriverChecklistData.vue'
+import QualificationActionModal from '@/Components/templates/forms/QualificationActionModal.vue'
+import ComplianceDocuments from '@/Components/templates/ComplianceDocuments.vue'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import BaseLoading from '@/Components/ui/BaseLoading.vue'
 import type { Driver, DocumentLog, AuditLog } from '@/types'
@@ -385,6 +455,7 @@ import {
 import dayjs from 'dayjs'
 import { capitalizeName } from '@/utils/utils'
 import { useComplianceReport } from '@/Composables/useComplianceReport'
+import { useAuthStore } from '@/stores/AuthStore'
 const router = useRouter()
 const route = useRoute()
 const modalStore = useModalStore()
@@ -392,11 +463,28 @@ const { can } = usePermissions()
 
 const { generateComplianceReport: generatePDFReport } = useComplianceReport()
 
+const authStore = useAuthStore()
+
 const driver = ref<Driver | null>(null)
+const user = computed(() => authStore.user || { name: 'System' } as any)
 const documents = ref<DocumentLog[]>([])
 const auditLogs = ref<AuditLog[]>([])
 const isLoading = ref(true)
 const error = ref<string | null>(null)
+const isPromotionModalOpen = ref(false)
+const activeTab = ref('overview')
+const tabs = [
+  { id: 'overview', name: 'Overview' },
+  { id: 'checklist', name: 'Checklist' },
+  { id: 'documents', name: 'Documents' },
+]
+
+// Qualification Modal State
+const qualificationModal = ref({
+  isOpen: false,
+  item: { key: '', label: '', cfr: '' }
+})
+
 
 // Upload Modal State
 const isUploadModalOpen = ref(false)
@@ -407,6 +495,11 @@ const currentDocExpiry = ref('')
 const isPdfModalOpen = ref(false)
 const viewingPdfUrl = ref('')
 const viewingPdfTitle = ref('')
+
+const signatureProof = ref({
+  isOpen: false,
+  doc: null as any
+})
 
 // Action Modal State
 const actionModal = ref({
@@ -421,7 +514,12 @@ const driverId = computed(() => {
 
 const driverName = computed(() => {
   if (!driver.value) return ''
-  return `${capitalizeName(driver.value.firstName)} ${capitalizeName(driver.value.middleName)} ${capitalizeName(driver.value.lastName)}`
+  const parts = [
+    driver.value.firstName,
+    driver.value.middleName,
+    driver.value.lastName
+  ].filter(Boolean)
+  return parts.map(capitalizeName).join(' ')
 })
 
 const formattedAddress = computed(() => {
@@ -494,10 +592,10 @@ const fetchDriverData = async () => {
     const data = await dataService.getDriverById(driverId.value)
     if (data) {
       driver.value = data
-      // Fetch documents based on driver name
-      const driverFullName = `${data.firstName} ${data.lastName}`
+      // Fetch documents based on standardized name (must match name used during upload)
+      const lookupName = driverName.value
       const [docs, audits] = await Promise.all([
-        dataService.getDocumentLogsByEntity(driverFullName),
+        dataService.getDocumentLogsByEntity(lookupName),
         dataService.getAuditLogsByEntity(driverId.value),
       ])
       documents.value = docs
@@ -528,8 +626,9 @@ const complianceItems = computed(() => {
     },
     { label: 'MVR Check', date: driver.value.mvr?.expiryDate, doc: 'Annual Review' },
     { label: 'Drug & Alcohol', date: driver.value.drugAlcohol?.expiryDate, doc: 'Clearinghouse' },
+    { label: 'Signed Application', date: (driver.value.appliedDate || driver.value.createdAt) as string | undefined, doc: 'Part 391.21' },
   ]
-})
+}) as any
 
 function cleanFileName(name: string) {
   try {
@@ -609,16 +708,28 @@ function getDriverDocument(type: string): { file?: string; expiryDate?: string }
 }
 
 async function hireDriver() {
-  if (!driver.value || !confirm(`Are you sure you want to officially HIRE ${driverName.value}?`)) return
+  if (!driver.value) return
+  isPromotionModalOpen.value = true
+}
+
+async function confirmHire(data: { notes: string; checklist: Record<string, boolean> }) {
+  if (!driver.value) return
 
   try {
+    const updatedNotes = driver.value.notes && data.notes
+       ? `${driver.value.notes}\n\n[HIRE PROMOTION]: ${data.notes}`
+       : data.notes ? `[HIRE PROMOTION]: ${data.notes}` : driver.value.notes
+
     // Update to Active
     await dataService.updateDriver({
       ...driver.value,
       id: driver.value.id,
       hireStatus: 'Active',
-      hireDate: dayjs().format('YYYY-MM-DD')
+      hireDate: dayjs().format('YYYY-MM-DD'),
+      notes: updatedNotes // Append notes if any
     })
+
+    isPromotionModalOpen.value = false
     await fetchDriverData()
     // Optional: Show success
     alert(`${driverName.value} is now HIRED and Active!`)
@@ -626,6 +737,94 @@ async function hireDriver() {
     console.error('Failed to hire driver', e)
     alert('Failed to update driver status.')
   }
+}
+
+async function handleChecklistItemUpdate({ key, value }: { key: string; value: boolean }) {
+  if (!driver.value) return
+
+  const currentChecklist = {
+    dotApplication: false,
+    drivingRecordInquiry: false,
+    goodFaithEffort: false,
+    roadTest: false,
+    medicalCertificate: false,
+    medicalRegistryVerification: false,
+    annualDrivingReview: false,
+    cdlisReport: false,
+    drugAlcoholClearinghouse: false,
+    preEmploymentDrugTest: false,
+    randomProgramPlacement: false,
+    companyTestingPolicyReceipt: false,
+    drugAlcoholStatement: false,
+    ...(driver.value.qualificationChecklist || {})
+  }
+
+  const completedAt = { ...(currentChecklist.completedAt || {}) }
+
+  if (value) {
+    completedAt[key] = dayjs().toISOString()
+  } else {
+    delete completedAt[key]
+  }
+
+  try {
+    const updatedDriver = {
+      ...driver.value,
+      qualificationChecklist: {
+        ...currentChecklist,
+        [key]: value,
+        completedAt
+      }
+    }
+
+    await dataService.updateDriver(updatedDriver)
+    await fetchDriverData()
+  } catch (err) {
+    console.error('Failed to update checklist item:', err)
+    alert('Failed to update checklist item.')
+  }
+}
+
+function openQualificationModal(item: any) {
+  qualificationModal.value.item = item
+  qualificationModal.value.isOpen = true
+}
+
+async function handleQualificationComplete({ key, value, file, notes }: any) {
+  if (file && driver.value) {
+    try {
+      // Standardize document types for the Wallet cards based on checklist keys
+      const typeMapping: Record<string, string> = {
+        drivingRecordInquiry: 'mvr',
+        annualDrivingReview: 'mvr',
+        medicalCertificate: 'medical',
+        medicalRegistryVerification: 'medical',
+        roadTest: 'roadTest',
+        dotApplication: 'application',
+        goodFaithEffort: 'goodFaithEffort',
+        drugAlcoholClearinghouse: 'drugAlcohol',
+        preEmploymentDrugTest: 'drugAlcohol',
+        companyTestingPolicyReceipt: 'drugAlcohol',
+        drugAlcoholStatement: 'drugAlcohol'
+      }
+
+      const docType = typeMapping[key] || key
+
+      await dataService.uploadDocument(
+        driver.value.id,
+        docType,
+        file,
+        dayjs().toISOString(),
+        driverName.value
+      )
+    } catch (err) {
+      console.error('Failed to upload qualification document:', err)
+      alert('Checklist updated, but the document upload encountered an error.')
+    }
+  }
+
+  await handleChecklistItemUpdate({ key, value })
+  qualificationModal.value.isOpen = false
 }
 
 function openUploadModal(type: string) {
@@ -642,6 +841,80 @@ function openPdfViewer(type: string) {
     viewingPdfTitle.value = getDocLabel(type)
     isPdfModalOpen.value = true
   }
+}
+
+function handleViewDocument(doc: any) {
+  if (doc?.file && doc.file !== 'APP_EXISTS') {
+    viewingPdfUrl.value = doc.file
+    viewingPdfTitle.value = doc.label
+    isPdfModalOpen.value = true
+  } else if (doc.file === 'APP_EXISTS' && driver.value) {
+    generatePDFReport(driver.value, documents.value)
+  } else {
+    console.warn('Document file URL is missing:', doc)
+    alert('This document does not have an attached file.')
+  }
+}
+
+function handleViewLog(log: DocumentLog) {
+  if (log.fileUrl) {
+    viewingPdfUrl.value = log.fileUrl
+    viewingPdfTitle.value = log.type
+    isPdfModalOpen.value = true
+  } else {
+    console.warn('Log file URL is missing:', log)
+    alert('This log entry does not have an associated file link.')
+  }
+}
+
+function handleViewChecklistFile(key: string) {
+  if (!driver.value) return
+  
+  // Map checklist keys to driver document fields (same as typeMapping)
+  const fileMap: Record<string, { field: string; label: string }> = {
+    dotApplication: { field: 'applicationFile', label: 'DOT Application' },
+    drivingRecordInquiry: { field: 'mvr', label: 'MVR Report - Driving Record Inquiry' },
+    annualDrivingReview: { field: 'mvr', label: 'MVR Report - Annual Review' },
+    goodFaithEffort: { field: 'goodFaithEffort', label: 'Good Faith Effort Document' },
+    roadTest: { field: 'roadTest', label: 'Road Test Certificate' },
+    medicalCertificate: { field: 'medical', label: 'Medical Certificate' },
+    medicalRegistryVerification: { field: 'medical', label: 'Medical Registry Verification' },
+    cdlisReport: { field: 'cdlisReport', label: 'CDLIS Report' },
+    drugAlcoholClearinghouse: { field: 'drugAlcohol', label: 'Clearinghouse Report' },
+    preEmploymentDrugTest: { field: 'drugAlcohol', label: 'Pre-Employment Drug Test' },
+    companyTestingPolicyReceipt: { field: 'drugAlcohol', label: 'Testing Policy Receipt' },
+    drugAlcoholStatement: { field: 'drugAlcohol', label: 'Drug & Alcohol Statement' },
+  }
+  
+  const mapping = fileMap[key]
+  if (!mapping) {
+    console.warn('No file mapping found for checklist key:', key)
+    return
+  }
+  
+  const value = (driver.value as any)[mapping.field]
+  let fileUrl: string | null = null
+  
+  // Handle both string URLs and object with file property
+  if (typeof value === 'string') {
+    fileUrl = value
+  } else if (typeof value === 'object' && value?.file) {
+    fileUrl = value.file
+  }
+  
+  if (fileUrl) {
+    viewingPdfUrl.value = fileUrl
+    viewingPdfTitle.value = mapping.label
+    isPdfModalOpen.value = true
+  } else {
+    alert('No file has been uploaded for this checklist item yet.')
+  }
+}
+
+
+function handleViewSignature(doc: any) {
+  signatureProof.value.doc = doc
+  signatureProof.value.isOpen = true
 }
 
 const generateComplianceReport = () => {

@@ -155,6 +155,7 @@ const qualificationItems = [
   { key: 'medicalRegistryVerification', label: "Medical Examiner's National Registry Verification", cfr: 'FMCSA 49 CFR Part 391.23 & 391.51' },
   { key: 'annualDrivingReview', label: 'Annual Review of Driving Record (Preceding 12 months)', cfr: 'FMCSA 49 CFR Part 391.25' },
   { key: 'cdlisReport', label: "Commercial Driver's License Information System (CDLIS) Report", cfr: 'Standard Requirement' },
+  { key: 'hoursOfService', label: 'Preceding 7 Days Time on Duty (maintain for 6 months)', cfr: 'FMCSA 49 CFR Part 395.8' },
 ]
 
 const alcoholItems = [
@@ -185,14 +186,20 @@ function completeNow(item: any) {
 }
 
 function hasUploadedFile(key: string): boolean {
-  // Map checklist keys to driver document fields
+  // Map checklist keys to driver document fields (same as typeMapping in DriverProfileView)
   const fileMap: Record<string, string> = {
     dotApplication: 'applicationFile',
     drivingRecordInquiry: 'mvr',
+    annualDrivingReview: 'mvr',
+    goodFaithEffort: 'goodFaithEffort',
     roadTest: 'roadTest',
     medicalCertificate: 'medical',
+    medicalRegistryVerification: 'medical',
     drugAlcoholClearinghouse: 'drugAlcohol',
     preEmploymentDrugTest: 'drugAlcohol',
+    companyTestingPolicyReceipt: 'drugAlcohol',
+    drugAlcoholStatement: 'drugAlcohol',
+    cdlisReport: 'cdlisReport',
   }
   
   const field = fileMap[key]

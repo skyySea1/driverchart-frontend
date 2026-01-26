@@ -5,10 +5,10 @@
     >
       <div class="flex flex-col gap-6">
         <div class="text-6xl md:text-7xl font-black tracking-tight text-indigo-300 leading-none">
-          404
+          {{ errorCode }}
         </div>
-        <h1 class="text-2xl md:text-3xl font-bold text-white">{{ erroritems[404].title }}</h1>
-        <p class="text-slate-300 leading-relaxed">{{ erroritems[404].message }}</p>
+        <h1 class="text-2xl md:text-3xl font-bold text-white">{{ errorInfo.title }}</h1>
+        <p class="text-slate-300 leading-relaxed">{{ errorInfo.message }}</p>
 
         <div class="bg-slate-800 rounded-lg p-4 border-l-4 border-indigo-500">
           <div class="text-sm text-slate-200">
@@ -68,8 +68,21 @@ import AnimatedBody from '@/Components/ui/AnimatedBody.vue'
 
 const router = useRouter()
 const route = useRoute()
-// todo conclude error handling for other error codes
+const props = defineProps<{
+  code?: number
+}>()
+
 const currentRoute = computed(() => route.fullPath)
+
+const errorCode = computed(() => {
+  if (props.code) return props.code
+  if (route.query.code) return Number(route.query.code)
+  return 404
+})
+
+const errorInfo = computed(() => {
+  return erroritems[errorCode.value as keyof typeof erroritems] || erroritems[404]
+})
 
 // create personalized image or animation for each error code
 const erroritems = {
@@ -78,27 +91,31 @@ const erroritems = {
     message: 'Bad Request',
   },
   401: {
-    title: 'Unauthorized Access: you do not have permission to view this page.',
-    message: 'Unauthorized',
+    title: 'Unauthorized Access',
+    message: 'You do not have permission to view this page.',
   },
   403: {
-    title: 'Access Denied: you do not have permission to view this page.',
-    message: 'Forbidden',
+    title: 'Access Denied',
+    message: 'You do not have permission to view this page.',
   },
   404: {
     title: 'Page Not Found',
     message: 'Sorry, the page you are looking for does not exist or has been removed.',
   },
   500: {
-    message: 'Internal Server Error',
+    title: 'Server Error',
+    message: 'Internal Server Error. Please try again later.',
   },
   502: {
+    title: 'Connection Error',
     message: 'Bad Gateway',
   },
   503: {
+    title: 'Unavailable',
     message: 'Service Unavailable',
   },
   504: {
+    title: 'Timeout',
     message: 'Gateway Timeout',
   },
 }

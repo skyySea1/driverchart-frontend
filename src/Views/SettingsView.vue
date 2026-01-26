@@ -64,7 +64,6 @@
                   :modelValue="authStore.user?.email || ''"
                   disabled
                 />
-                <!-- TODO add nested user role to user object-->
               </div>
               <div class="space-y-1">
                 <InputGroup
@@ -132,7 +131,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { User, Bell, Globe, Check } from 'lucide-vue-next'
+import { User, Globe, Check } from 'lucide-vue-next'
 import InputGroup from '@/Components/ui/InputGroup.vue'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import { ORGANIZATION } from '@/utils/constants'
@@ -151,7 +150,7 @@ const formProfile = ref({
 
 const menuOptions = [
   { id: 'profile', label: 'User Profile', icon: User },
-  { id: 'notifications', label: 'Notifications', icon: Bell },
+  // temporary disabled { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'company', label: 'Organization', icon: Globe },
 ]
 
