@@ -71,6 +71,7 @@ const props = defineProps<{
   driverName: string
   documentType: string
   currentExpiry?: string
+  isApplicant?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -128,6 +129,7 @@ async function handleUpload() {
       new Date().toISOString(),
       props.driverName,
       form.expiryDate,
+      props.isApplicant ? props.driverName : undefined
     )
 
     emit('success')

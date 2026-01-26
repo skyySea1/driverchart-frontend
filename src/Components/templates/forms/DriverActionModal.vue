@@ -28,6 +28,7 @@
                 <span class="text-[10px] text-slate-400 mt-1 block">Separate multiples with a comma.</span>
               </div>
             </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
               <label class="text-sm font-medium text-slate-700">Link To Send</label>
               <div class="md:col-span-2">
@@ -37,6 +38,16 @@
                   class="w-full p-3 bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-500 cursor-not-allowed"
                 />
               </div>
+            </div>
+
+            <div class="space-y-2">
+               <label class="text-sm font-medium text-slate-700">Custom Email Message (Optional)</label>
+               <textarea
+                 v-model="form.customMessage"
+                 rows="3"
+                 class="w-full p-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-400 focus:border-slate-400 outline-none transition-all text-sm"
+                 placeholder="Enter a custom note to appear in the email body..."
+               ></textarea>
             </div>
           </div>
         </div>
@@ -64,7 +75,18 @@
                     <td class="p-3">
                       <input type="checkbox" v-model="form.selectedFiles" :value="file.fileUrl" />
                     </td>
-                    <td class="p-3 text-slate-700">{{ file.title }}</td>
+                    <td class="p-3">
+                      <div class="flex items-center justify-between">
+                         <span class="text-slate-700">{{ file.title }}</span>
+                         <button
+                           @click.stop="handleDeleteMemo(file.id)"
+                           class="text-slate-400 cursor-pointer hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50"
+                           title="Delete File"
+                         >
+                           <Trash2 class="w-4 h-4" />
+                         </button>
+                      </div>
+                    </td>
                   </tr>
                   <tr v-if="filteredMemos.length === 0">
                     <td colspan="2" class="p-8 text-center text-slate-400 text-xs italic">No entries found. Upload one to start.</td>
@@ -124,7 +146,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import { Upload } from 'lucide-vue-next'
+import { Upload, Trash2 } from 'lucide-vue-next'
 import { dataService } from '@/services/dataService'
 import type { Driver } from '@/types'
 import BaseModal from '@/Components/ui/BaseModal.vue'
@@ -149,7 +171,8 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const form = ref({
   reason: '',
   email: props.driver?.email || '',
-  selectedFiles: [] as string[]
+  selectedFiles: [] as string[],
+  customMessage: ''
 })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -158,6 +181,7 @@ const isLoadingMemos = ref(false)
 const isUploadingMemo = ref(false)
 const isSendingMemos = ref(false)
 const isSubmitting = ref(false)
+const isDeletingMemo = ref<string | null>(null)
 const uploadStatus = ref<{ type: 'success' | 'error', message: string } | null>(null)
 
 const fetchMemos = async () => {
@@ -202,6 +226,29 @@ async function handleMemoUpload(event: Event) {
   }
 }
 
+async function handleDeleteMemo(id: string) {
+  if (!confirm('Are you sure you want to delete this file? This action cannot be undone.')) return
+
+  isDeletingMemo.value = id
+  try {
+    await dataService.deleteMemo(id)
+    await fetchMemos()
+    // Remove from selection if it was selected
+    form.value.selectedFiles = form.value.selectedFiles.filter(() => {
+       // Since we refreshed memos, the deleted one is gone.
+       // We just reset selection for safety as we don't track which ID matches which URL easily here without extra logic.
+       return true
+    })
+    // Better logic:
+    form.value.selectedFiles = [] // Simplest safety measure
+  } catch {
+    alert('Failed to delete file')
+  } finally {
+    isDeletingMemo.value = null
+  }
+}
+
+
 async function sendSelected() {
   if (!props.driver || form.value.selectedFiles.length === 0) return
   isSendingMemos.value = true
@@ -229,7 +276,6 @@ const title = computed(() => {
     case 'flag_driver': return 'Flag Driver'
     case 'request_license': return 'Send Driver\'s License Upload Request'
     case 'request_medical': return 'Send Medical Card Upload Request'
-    case 'request_fcra': return 'Send FCRA Signature Request'
     case 'send_memo': return 'Memo Center'
     case 'send_policy': return 'Safety Policy Center'
     default: return 'Action'
@@ -239,7 +285,12 @@ const title = computed(() => {
 const requestTypeLabel = computed(() => {
   if (props.mode === 'request_license') return 'driver\'s license'
   if (props.mode === 'request_medical') return 'medical card'
-  if (props.mode === 'request_fcra') return 'FCRA'
+  return ''
+})
+
+const docTypeKey = computed(() => {
+  if (props.mode === 'request_license') return 'license'
+  if (props.mode === 'request_medical') return 'medical'
   return ''
 })
 
@@ -253,7 +304,6 @@ const magicLink = computed(() => {
   const baseUrl = window.location.origin
   let typeId = '5' // license
   if (props.mode === 'request_medical') typeId = '6'
-  if (props.mode === 'request_fcra') typeId = '7'
   return `${baseUrl}/driver/upload/?did=${props.driver.id}&cid=${typeId}`
 })
 
@@ -261,6 +311,7 @@ watch(() => props.isOpen, (val) => {
   if (val && props.driver) {
     form.value.email = props.driver.email
     form.value.reason = ''
+    form.value.customMessage = ''
   }
 })
 
@@ -273,7 +324,10 @@ async function submit() {
         email: form.value.email,
         driverName: `${props.driver.firstName} ${props.driver.lastName}`,
         requestType: requestTypeLabel.value,
-        magicLink: magicLink.value
+        magicLink: magicLink.value,
+        customMessage: form.value.customMessage,
+        driverId: props.driver.id,
+        docType: docTypeKey.value
       })
       alert(`Upload request sent to ${form.value.email}`)
     } else if (props.mode === 'flag_driver') {
