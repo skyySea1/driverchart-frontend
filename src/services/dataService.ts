@@ -118,7 +118,16 @@ export const dataService = {
     applicantName?: string,
   ): Promise<{ url: string; filename: string }> => {
     const data = new FormData()
-    if (id) data.append('driverId', id)
+    // Logic to distinguish driver vs applicant ID
+    if (id) {
+       // Heuristic: If applicantName is provided, assume ID is applicationId
+       if (applicantName) {
+         data.append('applicationId', id)
+       } else {
+         data.append('driverId', id)
+       }
+    }
+
     if (applicantName) data.append('applicantName', applicantName)
 
     data.append('entityName', entityName)
@@ -208,8 +217,34 @@ export const dataService = {
     }
   },
 
-  sendUploadRequest: async (data: { email: string; driverName: string; requestType: string; magicLink: string }) => {
-    return await apiClient.post('/documents/request-upload', data)
+  sendUploadRequest: async (payload: {
+    email: string
+    driverName: string
+    requestType: string
+    magicLink: string
+    customMessage?: string
+    driverId?: string
+    docType?: string
+  }) => {
+    const resp = await apiClient.post('/documents/request-upload', payload)
+    return resp.data
+  },
+
+  validateUploadToken: async (token: string) => {
+    const resp = await apiClient.get<any>(`/documents/upload-context/${token}`)
+    return resp.data
+  },
+
+  uploadWithToken: async (token: string, file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('token', token)
+    
+    // We target a new public endpoint that doesn't require session auth, but validates token
+    const resp = await apiClient.post('/documents/public-upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    return resp.data
   },
 
   sendMemos: async (data: { email: string; driverName: string; memoTitle: string; memoLinks: string[] }) => {
@@ -234,6 +269,10 @@ export const dataService = {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
     return resp.data
+  },
+
+  deleteMemo: async (id: string) => {
+    await apiClient.delete(`/documents/memos/${id}`)
   },
 
   // reviewed: get the Firebase Applications Instance ID
@@ -261,13 +300,23 @@ export const dataService = {
   submitApplication: async (application: Omit<DriverApplicationForm, 'id'>): Promise<void> => {
     await apiClient.post('/applications', {
       ...application,
-      status: 'Pending',
+      status: 'New',
       appliedDate: dayjs().format('YYYY-MM-DD'),
     })
   },
 
-  updateApplicationStatus: async (id: string, status: 'Approved' | 'Rejected'): Promise<void> => {
+  updateApplication: async (application: Applications): Promise<void> => {
+    if (!application.id) throw new Error('Application ID missing')
+    await apiClient.put(`/applications/${application.id}`, application)
+  },
+// todo this meethod must be used or improved for hiring process too
+  updateApplicationStatus: async (id: string, status: 'Pending' | 'Rejected' | 'Hired'): Promise<void> => {
     await apiClient.put(`/applications/${id}`, { status })
+  },
+
+  migrateApplicantToDriver: async (applicationId: string): Promise<string> => {
+    const response = await apiClient.post<{ driverId: string }>(`/applications/${applicationId}/promote`)
+    return response.data.driverId
   },
 
   // --- Dashboard Stats ---
