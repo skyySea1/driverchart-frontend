@@ -38,14 +38,49 @@
             >Select All ({{ notifications.length }})</span
           >
         </label>
-        <BaseBadge variant="secondary" class="bg-slate-100 text-slate-700 px-3 py-1 border-0">
-          {{ selectedIds.length }} selected
-        </BaseBadge>
+        <div class="flex items-center gap-2">
+           <button
+            @click="showPreview = !showPreview"
+            class="text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:underline px-2 py-1"
+           >
+             {{ showPreview ? 'Hide Email Preview' : 'Show Email Preview' }}
+           </button>
+           <BaseBadge variant="secondary" class="bg-slate-100 text-slate-700 px-3 py-1 border-0">
+             {{ selectedIds.length }} selected
+           </BaseBadge>
+        </div>
+      </div>
+
+      <!-- Email Template Preview -->
+      <div v-if="showPreview" class="p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 space-y-2 mb-4">
+        <h4 class="font-bold text-slate-900 border-b border-slate-200 pb-2 mb-2">Email Template Preview</h4>
+        <div class="font-mono text-xs bg-white p-3 rounded border border-slate-100">
+          <p class="mb-2"><strong>Subject:</strong> Attention: Your [Document Type] is expiring soon / expired</p>
+          <hr class="border-slate-100 my-2"/>
+          <p>Hello <strong>[Driver Name]</strong>,</p>
+          <p>This is an automated notification regarding your <strong>[Document Type]</strong>.</p>
+          <p>Status: <span class="font-bold text-amber-600">Expiring in [X] days / Expired [X] days ago</span></p>
+          <p>Expiration Date: <strong>[Date]</strong></p>
+          <p>Please update your document as soon as possible to maintain compliance.</p>
+          <p class="text-xs text-slate-400 mt-2">This is an automated message from CharterSafe Compliance System.</p>
+        </div>
       </div>
 
       <!-- Notifications List -->
       <div class="space-y-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+        <div v-if="loadingData" class="py-12 text-center text-slate-500 flex flex-col items-center gap-2">
+           <div class="w-6 h-6 border-2 border-slate-300 border-t-indigo-600 rounded-full animate-spin"></div>
+           <span class="text-xs">Loading notifications...</span>
+        </div>
+
+        <div v-else-if="notifications.length === 0" class="py-12 text-center text-slate-400 flex flex-col items-center gap-2">
+           <CheckCircle2 class="w-8 h-8 text-slate-300" />
+           <span class="text-sm font-bold">All Good!</span>
+           <span class="text-xs">No documents are expiring within the next 30 days.</span>
+        </div>
+
         <div
+          v-else
           v-for="notification in notifications"
           :key="`${notification.driverId}-${notification.documentType}`"
           class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex gap-4 items-start hover:border-slate-300 transition-colors"
@@ -108,12 +143,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import BaseModal from '@/Components/ui/BaseModal.vue'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import BaseBadge from '@/Components/ui/BaseBadge.vue'
 import BaseAlert from '@/Components/ui/BaseAlert.vue'
-import { Check, User, AlertCircle, Send } from 'lucide-vue-next'
+import { Check, User, AlertCircle, Send, CheckCircle2 } from 'lucide-vue-next'
 import { dataService } from '@/services/dataService'
 import type { AlertType } from '@/types'
 
@@ -129,11 +164,13 @@ interface NotificationItem {
 const props = defineProps<{
   isOpen: boolean
   notifications: NotificationItem[]
+  loadingData?: boolean
 }>()
 
 const emit = defineEmits(['close', 'sent'])
 
 const loading = ref(false)
+const showPreview = ref(false)
 const selectedKeys = ref<Set<string>>(new Set())
 const alertState = ref<{ type: AlertType; message: string } | null>(null)
 
@@ -217,12 +254,13 @@ async function handleSend() {
   }
 }
 
-import { watch } from 'vue'
 watch(
   () => props.isOpen,
   (open) => {
     if (!open) {
       selectedKeys.value.clear()
+      showPreview.value = false
+      alertState.value = null
     }
   },
 )
