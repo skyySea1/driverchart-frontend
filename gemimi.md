@@ -9,7 +9,7 @@ you must add comment ahead if introduce block changes
 
 - **Charter_Bus_System**: The complete SPA application for compliance management
 - **Driver_Qualification_File**: Digital record containing all required documentation for a commercial driver per FMCSA regulations
-- **CDL**: Commercial Driver's License required for operating commercial vehicles
+- **license**: Commercial Driver's License required for operating commercial vehicles
 - **MEC**: Medical Examiner's Certificate required for commercial drivers
 - **MVR**: Motor Vehicle Record showing driving history
 - **Clearinghouse**: FMCSA Drug and Alcohol Clearinghouse database
@@ -38,7 +38,7 @@ you must add comment ahead if introduce block changes
 
 **User Story:** As a compliance officer, I want to view key performance indicators on a dashboard, so that I can quickly assess fleet compliance status.
 
-#### Acceptance Criteria
+ Acceptance Criteria
 
 1. THE Charter_Bus_System SHALL display KPI cards showing Total Drivers, Total Vehicles, Compliance Alerts, and Audit Score
 2. THE Charter_Bus_System SHALL show automatic alerts for items expiring within 30 days
@@ -50,19 +50,19 @@ you must add comment ahead if introduce block changes
 
 **User Story:** As a fleet manager, I want to manage driver qualification files, so that I can maintain FMCSA compliance for all drivers.
 
-#### Acceptance Criteria
+ Acceptance Criteria
 
-1. THE Charter_Bus_System SHALL display a driver table with columns for Name, Status, Contact, CDL Exp, Medical Exp, Annual Review, Clearinghouse Review, and Actions
+1. THE Charter_Bus_System SHALL display a driver table with columns for Name, Status, Contact, license Exp, Medical Exp, Annual Review, Clearinghouse Review, and Actions
 2. WHEN creating or editing a driver, THE Charter_Bus_System SHALL provide fields for personal data, employment information, and compliance documentation
 3. THE Charter_Bus_System SHALL concatenate First Name, Middle Name, and Last Name for search functionality
-4. THE Charter_Bus_System SHALL provide standardized upload functionality for CDL, Medical Certificate, MVR, Drug & Alcohol records, and Road Test certificates
+4. THE Charter_Bus_System SHALL provide standardized upload functionality for license, Medical Certificate, MVR, Drug & Alcohol records, and Road Test certificates
 5. WHEN a document is uploaded, THE Charter_Bus_System SHALL change the upload button icon to green to indicate file presence
 
 ### Requirement 4
 
 **User Story:** As a compliance officer, I want to generate and print Road Test certificates, so that I can provide official DOT documentation.
 
-#### Acceptance Criteria
+ Acceptance Criteria
 
 1. THE Charter_Bus_System SHALL provide printer and download icons in the Road Test section
 2. WHEN the printer icon is clicked, THE Charter_Bus_System SHALL open a modal with a pre-filled DOT 49 CFR 391.31 certificate template
@@ -74,7 +74,7 @@ you must add comment ahead if introduce block changes
 
 **User Story:** As a fleet manager, I want to delete driver records safely, so that I can maintain data integrity while removing outdated information.
 
-#### Acceptance Criteria
+ Acceptance Criteria
 
 1. WHEN the delete button is clicked, THE Charter_Bus_System SHALL display a double confirmation modal
 2. THE Charter_Bus_System SHALL use red alert styling for the confirmation dialog
@@ -86,7 +86,7 @@ you must add comment ahead if introduce block changes
 
 **User Story:** As a maintenance supervisor, I want to track fleet vehicle compliance, so that I can ensure all buses meet DOT inspection requirements.
 
-#### Acceptance Criteria
+ Acceptance Criteria
 
 1. THE Charter_Bus_System SHALL display a fleet table with Bus Number, VIN, Status, Last Annual Inspection, Next Inspection, and Mileage
 2. THE Charter_Bus_System SHALL automatically calculate next inspection date as last inspection date plus one year
@@ -98,7 +98,7 @@ you must add comment ahead if introduce block changes
 
 **User Story:** As an auditor, I want a centralized document registry, so that I can track all document changes and uploads for compliance auditing.
 
-#### Acceptance Criteria
+ Acceptance Criteria
 
 1. THE Charter_Bus_System SHALL maintain a Document Registry with sub-tabs for General History, Driver Docs, and Fleet Docs
 2. THE Charter_Bus_System SHALL provide search filters specific to each tab (by driver name or bus number)
@@ -110,7 +110,7 @@ you must add comment ahead if introduce block changes
 
 **User Story:** As a compliance manager, I want comprehensive reporting capabilities, so that I can generate audit reports and track compliance trends.
 
-#### Acceptance Criteria
+ Acceptance Criteria
 
 1. THE Charter_Bus_System SHALL provide a Compliance Matrix showing all regulatory requirements status by driver
 2. THE Charter_Bus_System SHALL generate an Expiration Forecast for items expiring within 90 days
@@ -122,7 +122,7 @@ you must add comment ahead if introduce block changes
 
 **User Story:** As a system user, I want secure and reliable data access, so that I can trust the system with sensitive compliance information.
 
-#### Acceptance Criteria
+ Acceptance Criteria
 
 1. THE Charter_Bus_System SHALL initialize Firebase authentication before any database calls
 2. THE Charter_Bus_System SHALL use anonymous authentication or custom tokens for access
@@ -134,7 +134,7 @@ you must add comment ahead if introduce block changes
 
 **User Story:** As a fleet manager, I want AI-powered compliance assistance, so that I can get instant guidance on regulatory requirements and risk assessment.
 
-#### Acceptance Criteria
+ Acceptance Criteria
 
 1. THE Charter_Bus_System SHALL provide a DOT Regulation Assistant widget that answers regulatory questions
 2. WHEN a user asks about FMCSA regulations, THE Charter_Bus_System SHALL provide accurate responses based on current DOT standards

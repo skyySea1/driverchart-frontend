@@ -39,6 +39,7 @@
       <!-- Notifications Dropdown -->
       <div class="relative" v-if="props.showNotifications">
         <button
+          v-if="false"
           class="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 shadow-sm transition-all hover:scale-105 active:scale-95 duration-200 hover:bg-indigo-50/30 group relative"
           @click="toggleMenu('notifications')"
           aria-label="Notifications"
@@ -46,8 +47,8 @@
         >
           <Bell class="w-5 h-5" />
           <span
-            v-if="notifications.length > 0"
-            class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"
+            v-if="unreadCount > 0"
+            class="absolute top-2.5 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white shadow-[0_0_8px_rgba(244,63,94,0.6)]"
           ></span>
         </button>
 
@@ -59,41 +60,75 @@
             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter"
               >Compliance Notifications</span
             >
-            <span class="text-[10px] font-bold text-indigo-600 cursor-pointer hover:underline"
+            <span
+              v-if="unreadCount > 0"
+              @click="handleMarkAllRead"
+              class="text-[10px] font-bold text-indigo-600 cursor-pointer hover:underline"
               >Mark all read</span
             >
           </div>
-          <div class="max-h-80 overflow-y-auto">
+          <div class="max-h-80 overflow-y-auto custom-scrollbar">
             <div
               v-for="n in notifications"
               :key="n.id"
-              class="p-3 hover:bg-slate-50 rounded-xl transition-all border border-transparent hover:border-slate-100 flex gap-3 group"
+              @click="handleNotificationClick(n)"
+              class="p-3 hover:bg-slate-50 rounded-xl transition-all border border-transparent hover:border-slate-100 flex gap-3 group cursor-pointer"
             >
               <div
                 :class="[
-                  'w-2 h-2 rounded-full mt-1.5 shrink-0',
-                  n.read ? 'bg-slate-200' : 'bg-indigo-500 animate-pulse',
+                  'w-2 h-2 rounded-full mt-1.5 shrink-0 transition-all duration-500',
+                  n.read ? 'bg-slate-200' : 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]',
                 ]"
               ></div>
               <div class="flex-1 min-w-0">
                 <p
-                  class="text-sm font-bold text-slate-800 leading-tight group-hover:text-indigo-700 transition-colors"
+                  :class="[
+                    'text-sm leading-tight group-hover:text-indigo-700 transition-colors',
+                    n.read ? 'text-slate-500 font-medium' : 'text-slate-800 font-bold',
+                  ]"
                 >
-                  {{ n.title }}
+                  {{ n.entityName || n.entity || 'System Update' }}
                 </p>
-                <p class="text-xs text-slate-500 truncate">{{ n.desc }}</p>
-                <p class="text-[9px] font-medium text-slate-400 mt-1">{{ n.time }}</p>
+                <p class="text-xs text-slate-500 truncate mt-0.5">{{ n.message }}</p>
+                <p
+                  class="text-[9px] font-black text-slate-400 mt-1.5 uppercase tracking-widest flex items-center gap-1.5"
+                >
+                  <span class="bg-slate-100 px-1.5 py-0.5 rounded">{{
+                    dayjs(n.dueDate).format('MMM DD')
+                  }}</span>
+                  <span v-if="!n.read" class="text-indigo-600 flex items-center gap-1">
+                    <span class="w-1 h-1 bg-indigo-600 rounded-full animate-pulse"></span>
+                    New
+                  </span>
+                </p>
               </div>
             </div>
-          </div>
-          <div class="p-2 border-t border-slate-50 mt-1">
-            <button
-              class="w-full py-2 text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors"
-            >
-              View All Activities
-            </button>
+
+            <!-- Empty State -->
+            <div v-if="notifications.length === 0" class="py-12 px-4 text-center">
+              <div
+                class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3"
+              >
+                <CheckCircle2 class="w-6 h-6 text-slate-300" />
+              </div>
+              <p class="text-[11px] font-black text-slate-400 tracking-widest uppercase">
+                All cleared!
+              </p>
+              <p class="text-[10px] text-slate-400 mt-1">No compliance alerts at this moment.</p>
+            </div>
           </div>
         </div>
+      </div>
+
+      <div class="relative" v-if="props.showNotifications">
+        <button
+          class="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 shadow-sm transition-all hover:scale-105 active:scale-95 duration-200 hover:bg-indigo-50/30 group relative"
+          @click="modalStore.openModal('notification')"
+          aria-label="Send Notifications"
+          v-cursor
+        >
+          <Send class="w-5 h-5" />
+        </button>
       </div>
 
       <!-- Dropdown -->
@@ -194,7 +229,20 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useModalStore } from '@/stores/ModalStore'
 import { useAuthStore } from '@/stores/AuthStore'
-import { Bell, Plus, Menu, Bus, UserPlus, Settings, LogOut, ChevronDown } from 'lucide-vue-next'
+import { useNotificationStore } from '@/stores/NotificationStore'
+import {
+  Bell,
+  Plus,
+  Menu,
+  Bus,
+  UserPlus,
+  Settings,
+  LogOut,
+  ChevronDown,
+  Send,
+  CheckCircle2,
+} from 'lucide-vue-next'
+import dayjs from 'dayjs'
 
 const props = withDefaults(
   defineProps<{
@@ -217,6 +265,7 @@ const emit = defineEmits<{
 const router = useRouter()
 const modalStore = useModalStore()
 const authStore = useAuthStore()
+const notificationStore = useNotificationStore()
 const activeDropdown = ref<'add' | 'profile' | 'notifications' | null>(null)
 
 // Compute user display name/initial
@@ -232,33 +281,37 @@ const userName = computed(() => {
   return authStore.user?.displayName || authStore.user?.email?.split('@')[0] || 'User'
 })
 
-// Mock notifications data
-const notifications = ref([
-  {
-    id: 1,
-    title: 'Medical Expiring',
-    desc: 'John Doe card expires in 5 days',
-    time: '2h ago',
-    read: false,
-  },
-  {
-    id: 2,
-    title: 'New Application',
-    desc: 'New driver applied for Florida route',
-    time: '5h ago',
-    read: false,
-  },
-  {
-    id: 3,
-    title: 'Fleet Inspection',
-    desc: 'Bus #104 inspection successfully logged',
-    time: 'Yesterday',
-    read: true,
-  },
-])
+// Real notifications from store
+const notifications = computed(() => notificationStore.notifications)
+const unreadCount = computed(() => notificationStore.unreadCount)
 
 function toggleMenu(type: 'add' | 'profile' | 'notifications') {
   activeDropdown.value = activeDropdown.value === type ? null : type
+  if (type === 'notifications' && activeDropdown.value === 'notifications') {
+    notificationStore.fetchNotifications()
+  }
+}
+
+function handleMarkAllRead() {
+  notificationStore.markAllAsRead()
+}
+
+interface HeaderNotification {
+  id: string
+  entityId?: string
+  entityName?: string
+  read?: boolean
+  message?: string
+  dueDate?: string
+  entity?: string
+}
+
+function handleNotificationClick(n: HeaderNotification) {
+  notificationStore.markAsRead(n.id)
+  if (n.entityId) {
+    router.push({ name: 'drivers', query: { search: n.entityName } })
+  }
+  activeDropdown.value = null
 }
 
 async function handleAddDriver() {
@@ -285,13 +338,17 @@ async function handleLogout() {
 
 // Close dropdowns when clicking outside
 function handleClickOutside(e: MouseEvent) {
-  if (!(e.target as HTMLElement).closest('.header-menu')) {
+  const target = e.target
+  if (!(target instanceof HTMLElement)) return
+
+  if (!target.closest('.header-menu')) {
     activeDropdown.value = null
   }
 }
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  notificationStore.fetchNotifications() // Initial fetch
 })
 
 onBeforeUnmount(() => {

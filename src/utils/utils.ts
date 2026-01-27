@@ -1,5 +1,7 @@
-import type { HireStatusType } from '../types';
-
+import type { comparedValues } from '@/types'
+import { z } from 'zod'
+import dayjs from 'dayjs'
+import isEqual from 'fast-deep-equal'
 
 export const getDaysDiff = (dateStr: string | null | undefined): number => {
   if (!dateStr) return 0
@@ -33,8 +35,9 @@ export const getStatusText = (days: number): string => {
 
 export const formatDate = (
   timestamp: Date | string | number | { toDate: () => Date } | null | undefined,
+  withTime: boolean = false,
 ): string => {
-  if (!timestamp) return 'Just now'
+  if (!timestamp) return 'N/A'
   let date: Date
   if ((timestamp as { toDate?: () => Date })?.toDate) {
     date = (timestamp as { toDate: () => Date }).toDate()
@@ -45,11 +48,14 @@ export const formatDate = (
   }
 
   if (isNaN(date.getTime())) return 'Invalid Date'
-  return (
-    date.toLocaleDateString() +
-    ' ' +
-    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  )
+  if (withTime) {
+    return (
+      date.toLocaleDateString() +
+      ' ' +
+      date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    )
+  }
+  return date.toLocaleDateString()
 }
 
 /**
@@ -73,24 +79,136 @@ export const capitalizeName = (str: string): string => {
   return str
     .toLowerCase()
     .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 }
 
-
-
-export function getHireStatusColor(status: HireStatusType) {
-  switch (status) {
+export function getHireStatusColor(status: unknown) {
+  const s = typeof status === 'string' ? status : ''
+  switch (s) {
     case 'Active':
       return 'bg-green-100 border-green-500 text-green-800'
     case 'Terminated':
       return 'bg-red-100 border-red-500 text-red-800'
     case 'Rehired':
       return 'bg-blue-100 border-blue-500 text-blue-500'
-    case 'On Leave':
-      return 'bg-purple-100 border-purple-500 text-purple-500'
+    case 'Pending':
+      return 'bg-amber-100 border-amber-500 text-amber-600'
     default:
       return 'bg-slate-50 border-slate-300 text-slate-500'
   }
 }
 
+/**
+ * Generic comparison for sorting.
+ * Handles strings (localeCompare) and numbers.
+ * Treats null/undefined as empty strings/lowest value.
+ */
+export function compareValues(a: comparedValues, b: comparedValues, order: 'asc' | 'desc'): number {
+  const aVal = a ?? ''
+  const bVal = b ?? ''
+
+  if (typeof aVal === 'string' && typeof bVal === 'string') {
+    return order === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal)
+  }
+
+  // Cast for generic comparison since we handled strings/nulls
+  if (aVal < bVal) return order === 'asc' ? -1 : 1
+  if (aVal > bVal) return order === 'asc' ? 1 : -1
+  return 0
+}
+
+export const cleanFileName = (name: string) => {
+  try {
+    // Decode URL entities like %2F
+    const decoded = decodeURIComponent(name)
+    // Take the last part after /
+    const parts = decoded.split('/')
+    const fileName = parts[parts.length - 1]
+    // Remove query params if any
+    return fileName ? fileName.split('?')[0] : ''
+  } catch {
+    return name
+  }
+}
+
+export const futureIsoDate = (message = 'Date must be in the future') =>
+  z
+    .string()
+    .min(1, { message })
+    .pipe(z.iso.date())
+    .refine((dateStr) => dayjs(dateStr).isAfter(dayjs()), { message })
+
+export const pastIsoDate = (message = 'Date must be in the past') =>
+  z
+    .string()
+    .min(1, { message })
+    .pipe(z.iso.date())
+    .refine((dateStr) => dayjs(dateStr).isBefore(dayjs()), { message })
+
+export const usPhoneNumber = (message = 'Phone must be in format (XXX) XXX-XXXX or XXX-XXX-XXXX') =>
+  z.string().regex(/^(\(\d{3}\)\s?\d{3}-\d{4}|\d{3}-\d{3}-\d{4})$/, message)
+
+export const formatSSN = (value: string | undefined | null): string => {
+  if (!value) return ''
+  // Remove all non-digits
+  const digits = value.replace(/\D/g, '')
+
+  // Format as AAA-GG-SSSS
+  if (digits.length <= 3) return digits
+  if (digits.length <= 5) return `${digits.slice(0, 3)}-${digits.slice(3)}`
+  return `${digits.slice(0, 3)}-${digits.slice(3, 5)}-${digits.slice(5, 9)}`
+}
+
+/**
+ * Deeply compares two objects and returns a partial object containing only the changed fields.
+ * Treats null, undefined, and empty string as equivalent "empty" values.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getChangedFields = (original: any, current: any): any => {
+  // 1. Primitive comparison
+  if (original === current) return undefined
+
+  // 2. Handle "Empty" equivalence (null == undefined == "")
+  const isEmpty = (v: unknown) => v === null || v === undefined || v === ''
+  if (isEmpty(original) && isEmpty(current)) return undefined
+
+  // 3. Date handling (compare values)
+  if (original instanceof Date && current instanceof Date) {
+    return original.getTime() === current.getTime() ? undefined : current
+  }
+
+  // 4. Object handling (recursive)
+  if (
+    typeof original === 'object' &&
+    typeof current === 'object' &&
+    original !== null &&
+    current !== null
+  ) {
+    // Array handling
+    if (Array.isArray(original) || Array.isArray(current)) {
+      // For arrays, simplistic approach: if strictly different JSON, return current
+      return isEqual(original, current) ? undefined : current
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const diff: any = {}
+    let hasChanges = false
+
+    // Check keys in current
+    for (const key in current) {
+      if (Object.prototype.hasOwnProperty.call(current, key)) {
+        const change = getChangedFields(original[key], current[key])
+        if (change !== undefined) {
+          diff[key] = change
+          hasChanges = true
+        }
+      }
+    }
+
+    return hasChanges ? diff : undefined
+  }
+
+  // 5. Value mismatch
+  return current
+}

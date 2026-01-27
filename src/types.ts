@@ -1,26 +1,28 @@
-import type { Component } from "vue/dist/vue.js"
+import type { Component } from 'vue/dist/vue.js'
+import { z } from 'zod'
+import { DriverSchema, ComplianceItemSchema } from '@/shared/schemas/DriverSchema'
 
 export type AlertType = 'error' | 'success' | 'warning' | 'info'
+export type HireStatusType = 'Pending' | 'Active' | 'Terminated' | 'Rehired'
+export type ApplicationStatusType = 'New' | 'Pending' | 'Hired' | 'Rejected'
+export type ComplianceItem = z.infer<typeof ComplianceItemSchema>
+export type DriverBase = z.infer<typeof DriverSchema> & {
+  isFlagged?: boolean
+  flagReason?: string
+  flagDate?: string
+}
+
+export const EntityTypes = ['Driver', 'Vehicle', 'Application', 'User']
+
+// entity can be used for searching by name or type
 export interface Alert {
   id: string
   type: 'critical' | 'warning' | 'info'
   message: string
   entity?: string
+  entityId?: string
   entityName?: string
   dueDate: string
-}
-
-export type HireStatusType =
-  | 'Active'
-  | 'Terminated'
-  | 'Rehired'
-  | 'On Leave'
-
-export interface ComplianceItem {
-  documentNumber: string
-  expiryDate?: string // ISO string YYYY-MM-DD
-  file?: string // Filename
-  [key: string]: unknown
 }
 
 export interface DocumentLog {
@@ -28,8 +30,19 @@ export interface DocumentLog {
   date: string
   fileName: string
   type: string
-  entityName: string // Driver Name or Bus Number
+  entityName: string
   user: string
+  fileUrl?: string
+}
+
+export interface AuditLog {
+  id: string
+  entityId: string
+  entityName: string
+  type: 'profile_update' | 'status_change' | 'creation'
+  date: string
+  user: string
+  description: string
 }
 
 export interface FirestoreDoc {
@@ -37,44 +50,17 @@ export interface FirestoreDoc {
   [key: string]: unknown
 }
 
-export interface Driver extends FirestoreDoc {
-  firstName: string
-  middleName: string
-  lastName: string
-  dob: string
-  ssn: string
-  phone: string
-  email: string
-  address: string
-  city: string
-  state: string
-  zip: string
-  hireDate: string
-  terminationDate?: string
-  hireStatus: 'Active' | 'Inactive' | 'Terminated' | 'Rehired' | 'On Leave'
-  bankName?: string
-  routingNumber?: string
-  accountNumber?: string
-  w9Signed?: boolean
-  businessName?: string
-  taxClassification?: string
-  i9EmployerSignature?: string
-  ssnDoc?: string
-  ssnDocName?: string
-  ssnDocFile?: File | null
-  ssnDocPreviewUrl?: string
+export interface Driver extends Omit<DriverBase, 'id'>, FirestoreDoc {
+  // Legacy / Optional fields (to be deprecated)
+  licenseFront?: string
+  licenseBack?: string
+  medicalCard?: string
+  applicationFile?: string
 
-  // Compliance
-  cdl: ComplianceItem & { state: string; value?: string }
-  medical: ComplianceItem & { registry?: string }
-  mvr: ComplianceItem
-  drugAlcohol: ComplianceItem
-  roadTest: ComplianceItem & { examiner: string; date?: string }
-
-  emergencyContact: {
-    name: string
-    phone: string
-    relationship: string
+  // Flattened legacy personal info
+  personalInfo?: {
+    licenseExpirationDate?: string
+    medicalExpirationDate?: string
   }
 }
 
@@ -82,65 +68,21 @@ export interface DriverRow extends Driver {
   firstName: string
   middleName: string
   lastName: string
-  contact?: string
-  cdlExp?: string
-  medicalExp?: string
-  mvrDate?: string
-  clearinghouseDate?: string
-}
-
-export interface Application extends FirestoreDoc {
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  status: 'Pending' | 'Approved' | 'Rejected'
-  appliedDate: string
-  experienceYears?: number
-  cdlNumber?: string
-  notes?: string
-}
-
-export type DriverForm = {
-  firstName: string
-  middleName: string
-  lastName: string
-  dob: string
-  email: string
-  phone: string
-  ssn: string
-  address: string
-  city: string
-  state: string
-  zip: string
-  hireStatus: 'Active' | 'Inactive' | 'Terminated' | 'Rehired' | 'On Leave'
-  hireDate: string
-  termDate: string
-  rehireDate: string
-  emergencyName: string
-  emergencyPhone: string
-  emergencyRelationship: string
-  cdlNumber: string
-  cdlState: string
-  cdlExp: string
-  medRegistry: string
-  medExp: string
+  contact: string
+  // Flat fields for Table Display (Added by DataService)
+  licenseNumber?: string
+  licenseExp: string
+  medicalExp: string
   mvrDate: string
-  lastDrugTest: string
-  roadTestDate: string
-  roadTestExaminer: string
-  bankName: string
-  routingNumber: string
-  accountNumber: string
-  w9Signed: boolean
-  businessName: string
-  taxClassification: string
-  i9EmployerSignature: string
-  ssnDocName: string
-  ssnDocFile: File | null
-  ssnDocPreviewUrl: string
+  clearinghouseDate: string
+  actions?: string
 }
 
+export type DriverForm = Driver
+
+export type SortOrder = 'asc' | 'desc' | null
+
+export type comparedValues = string | number | null | undefined
 export type BadgeVariant =
   | 'default'
   | 'secondary'
@@ -149,10 +91,11 @@ export type BadgeVariant =
   | 'success'
   | 'warning'
   | 'purple'
+  | 'blue'
   | 'green'
 
-export interface Column {
-  key: string
+export interface Column<T = unknown> {
+  key: keyof T | string
   label: string
   align?: 'left' | 'center' | 'right'
   sortable?: boolean
@@ -173,17 +116,24 @@ export interface DashboardStats {
   alertsCount: number
   alerts: Alert[]
   expiringMedCards: number
-  expiringLicenses: number
+  expiringLicense: number
   expiringClearinghouse: number
   auditScore: string
   newApplications: number
   annualRecordReview: number
 }
 
-// CardType expansion to support multiple views
+export interface StatConfig {
+  icon: Component
+  bgClass: string
+  iconClass: string
+  badgeText: string | null
+  badgeVariant: BadgeVariant
+}
+
 export type CardType =
   | 'inspections'
-  | 'licenses'
+  | 'license'
   | 'clearinghouse'
   | 'drivers'
   | 'medical'
@@ -194,29 +144,123 @@ export type CardType =
   | 'fleet'
   | 'active_fleet'
 
-export interface StatConfig {
-  icon: Component
-  bgClass: string
-  iconClass: string
-  badgeText: string | null
-  badgeVariant: BadgeVariant
+export type ViewState = 'dashboard' | 'vehicles' | 'applications' | 'login' | 'settings'
+
+export type USState =
+  | 'AL'
+  | 'AK'
+  | 'AZ'
+  | 'AR'
+  | 'CA'
+  | 'CO'
+  | 'CT'
+  | 'DE'
+  | 'FL'
+  | 'GA'
+  | 'HI'
+  | 'ID'
+  | 'IL'
+  | 'IN'
+  | 'IA'
+  | 'KS'
+  | 'KY'
+  | 'LA'
+  | 'ME'
+  | 'MD'
+  | 'MA'
+  | 'MI'
+  | 'MN'
+  | 'MS'
+  | 'MO'
+  | 'MT'
+  | 'NE'
+  | 'NV'
+  | 'NH'
+  | 'NJ'
+  | 'NM'
+  | 'NY'
+  | 'NC'
+  | 'ND'
+  | 'OH'
+  | 'OK'
+  | 'OR'
+  | 'PA'
+  | 'RI'
+  | 'SC'
+  | 'SD'
+  | 'TN'
+  | 'TX'
+  | 'UT'
+  | 'VT'
+  | 'VA'
+  | 'WA'
+  | 'WV'
+  | 'WI'
+  | 'WY'
+  | 'DC'
+  | ''
+
+export type UserRole = 'Admin' | 'Manager' | 'Dispatcher' | 'Auditor' | 'Viewer'
+export type VehicleTypes =
+  | 'Passenger Bus'
+  | 'School Bus'
+  | 'Charter Bus'
+  | 'Straight Truck'
+  | 'Semi-Truck/Trailer'
+  | 'Van/Doubles'
+  | 'Tractor'
+  | ''
+export type LoginStatus =
+  | 'idle'
+  | 'loading'
+  | 'success'
+  | 'failed'
+  | 'unauthorized'
+  | 'session_expired'
+  | 'mfa_required'
+  | 'mfa_pending'
+
+// User Interface with Login Info
+export interface User extends FirestoreDoc {
+  email: string
+  firstName: string
+  lastName: string
+  role: UserRole
+  isActive: boolean
+  lastLogin?: string
+  createdAt: string
+  updatedAt: string
+  avatar?: string
+  displayName?: string
+  name?: string
 }
 
-export type ViewState =
-  | 'dashboard'
-  | 'drivers'
-  | 'vehicles'
-  | 'auditreports '
-  | 'documentregistry'
-  | 'applications'
-  | 'login'
-  | 'settings'
+// Login Request/Response Types
+export interface LoginCredentials {
+  email: string
+  password: string
+  rememberMe?: boolean
+}
+
+export interface LoginResponse {
+  user: User
+  token: string
+  refreshToken?: string
+  expiresIn: number
+}
+
+export interface AuthState {
+  user: User | null
+  isAuthenticated: boolean
+  loginStatus: LoginStatus
+  error?: string
+}
 
 export type I9FormData = Partial<Driver> & {
   w9Address?: string
   w9CityStateZip?: string
   dob?: string
-  ssn?: string
+  ssnNumber?: string
   phone?: string
   i9DocTitle?: string
   i9IssuingAuth?: string
@@ -225,4 +269,172 @@ export type I9FormData = Partial<Driver> & {
   i9EmployerSignature?: string
   i9Date?: string
   i9EmployerTitle?: string
+}
+
+// Application Form Data Type
+
+export interface Address {
+  street: string
+  city: string
+  state: USState
+  zip: string
+  fromDate: string
+  toDate?: string
+  present?: boolean
+}
+
+// Personal Info
+export interface PersonalInfo {
+  firstName: string
+  middleName: string
+  lastName: string
+  dob: string
+  email: string
+  phone: string
+  ssnNumber: string
+  medicalExpirationDate?: string
+}
+export interface License {
+  number: string
+  state: USState
+  class: string
+  endorsements: string
+  restrictions: string
+  emissionDate: string
+  expirationDate: string
+}
+export interface Accident {
+  date: string
+  location: string
+  description: string
+  injuries: boolean
+  fatalities: boolean
+}
+export interface Violation {
+  date: string
+  violation: string
+  location: string
+  penalty: string
+}
+export interface Employment {
+  companyName: string
+  address: string
+  city: string
+  state: USState
+  zip: string
+  phone: string
+  position: string
+  description?: string
+  fromDate: string
+  toDate: string
+  reasonForLeaving: string
+  licenseNumber?: string
+  wasCdl: boolean
+  present?: boolean
+}
+
+export interface VehicleExperience {
+  type: VehicleTypes
+}
+
+export type ConsentOption = 'Yes' | 'No'
+
+// Table view - simplified application data just for listing
+export interface Applications extends FirestoreDoc {
+  personalInfo: PersonalInfo
+  status: ApplicationStatusType
+  appliedDate: string
+  addresses: Address[]
+  licenses: License[]
+  vehicleExperience: VehicleExperience[]
+  notes?: string
+  isFlagged?: boolean
+  flagReason?: string
+  flagDate?: string
+}
+
+export interface DriverApplicationForm extends FirestoreDoc {
+  // Personal Info
+  personalInfo: PersonalInfo
+
+  // Address History (last 3 years)
+  addresses: Address[]
+
+  // License Data
+  licenses: License[]
+
+  // Driving Experience
+  vehicleExperience: VehicleExperience[]
+
+  // Accident & Violation History (last 3 years)
+  accidents: Accident[]
+  violations: Violation[]
+  forfeitures?: string
+  deniedLicense: boolean
+  suspendedLicense: boolean
+  denialSuspensionExplanation?: string
+
+  employmentHistory: Employment[]
+
+  // Uploads
+  licenseFront?: string | File | null
+  licenseBack?: string | File | null
+  medicalCard?: string | File | null
+
+  // Drug & Alcohol Statement
+  drugTestPositiveOrRefusal: boolean
+  drugTestDocumentation: 'Yes' | 'No' | 'N/A'
+  drugTestSignature: string
+  drugTestDate: string
+
+  // Authorization & Release
+  authReleaseSignature: string
+  authReleaseDate: string
+
+  // PSP Disclosure
+  pspDisclosureSignature: string
+  pspDisclosureDate: string
+
+  // FMCSA Clearinghouse Consent
+  fmcsaConsentSignature: string
+  fmcsaConsentDate: string
+
+  // Alcohol & Drug Policy
+  alcoholDrugPolicySignature: string
+  alcoholDrugPolicyDate: string
+
+  // General Work Policy
+  generalWorkPolicySignature: string
+  generalWorkPolicyDate: string
+
+  // Fair Credit Reporting Authorization
+  fairCreditReportingSignature: string
+  fairCreditReportingDate: string
+
+  notes?: string
+}
+
+export interface QualificationActionItem {
+  key: string
+  label: string
+  cfr: string
+}
+
+export interface SignatureDoc {
+  label: string
+  signature: string
+  date: string
+}
+
+export interface UploadTokenContext {
+  driverName: string
+  documentType: string
+}
+
+export interface Memo {
+  id: string
+  title: string
+  fileUrl: string
+  date: string
+  type: 'memo' | 'policy'
 }

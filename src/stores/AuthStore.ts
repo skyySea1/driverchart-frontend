@@ -1,7 +1,14 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, type User } from 'firebase/auth'
-import { auth } from '@/services/firebaseService'
+import { ref, computed, watch } from 'vue'
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  updateProfile,
+} from 'firebase/auth'
+import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { auth, db } from '@/services/firebaseService'
+import type { User } from '@/types'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
@@ -12,32 +19,71 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!user.value)
 
   const userDisplayName = computed(() => {
-    if (user.value?.displayName) {
-      return user.value.displayName
+    if (user.value?.firstName && user.value?.lastName) {
+      return `${user.value.firstName} ${user.value.lastName}`
     }
-    const email = user.value?.email
-    if (email) {
-      const namePart = email.split('@')[0]
-      if (namePart) {
-        return namePart.charAt(0).toUpperCase() + namePart.slice(1)
-      }
-    }
-    return 'User'
+    return user.value?.email?.split('@')[0] || 'User'
   })
 
   const userInitial = computed(() => {
-    return userDisplayName.value.charAt(0).toUpperCase()
+    return (user.value?.firstName?.[0] || user.value?.email?.[0] || 'U').toUpperCase()
   })
 
   const userRole = computed(() => {
-    //todo add roles to user management and fetch here
-        return 'Administrator'
+    return user.value?.role || 'Viewer'
   })
+
+  const APP_ID = import.meta.env.VITE_APP_ID
+  const USERS_COLLECTION = `artifacts/${APP_ID}/public/data/users`
 
   function init() {
     return new Promise<void>((resolve) => {
-      onAuthStateChanged(auth, (firebaseUser) => {
-        user.value = firebaseUser
+      onAuthStateChanged(auth, async (firebaseUser) => {
+        if (firebaseUser) {
+          try {
+            // Fetch extended profile from Firestore
+            const docRef = doc(db, USERS_COLLECTION, firebaseUser.uid)
+            const docSnap = await getDoc(docRef)
+
+            if (docSnap.exists()) {
+              const data = docSnap.data()
+              user.value = {
+                id: firebaseUser.uid,
+                email: data.email || firebaseUser.email || '',
+                firstName: data.firstName || firebaseUser.displayName?.split(' ')[0] || '',
+                lastName:
+                  data.lastName || firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
+                role: data.role || 'Viewer',
+                isActive: data.isActive ?? true,
+                createdAt: data.createdAt || new Date().toISOString(),
+                updatedAt: data.updatedAt || new Date().toISOString(),
+                avatar: data.avatar,
+                displayName: data.displayName,
+                name: data.name,
+                lastLogin: data.lastLogin,
+              }
+            } else {
+              // Fallback for users not in Firestore (e.g. bootstrap or legacy)
+              // Use least-privilege role by default; administrator access must be granted explicitly
+              console.warn('User profile not found in Firestore. Using fallback profile.')
+              user.value = {
+                id: firebaseUser.uid,
+                email: firebaseUser.email || '',
+                firstName: firebaseUser.displayName?.split(' ')[0] || 'Admin',
+                lastName: firebaseUser.displayName?.split(' ').slice(1).join(' ') || 'User',
+                role: 'Viewer',
+                isActive: true,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              }
+            }
+          } catch (e) {
+            console.error('Error fetching user profile:', e)
+            error.value = 'Failed to load user profile'
+          }
+        } else {
+          user.value = null
+        }
         isInitializing.value = false
         resolve()
       })
@@ -49,8 +95,30 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true
     try {
       await signInWithEmailAndPassword(auth, email, password)
-      // Navigation is handled by the component or router guard
-      // but store state update is handled by onAuthStateChanged automatically
+
+      // Wait for the user state to be updated by the observer (init logic)
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          unwatch()
+          reject(new Error('Login timed out waiting for user profile'))
+        }, 10000)
+
+        const unwatch = watch(
+          [user, error],
+          ([newUser, newError]) => {
+            if (newUser) {
+              clearTimeout(timeout)
+              unwatch()
+              resolve()
+            } else if (newError) {
+              clearTimeout(timeout)
+              unwatch()
+              reject(new Error(newError))
+            }
+          },
+          { immediate: true },
+        )
+      })
     } catch (err) {
       if (err instanceof Error) {
         error.value = err.message
@@ -67,29 +135,52 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true
     try {
       await signOut(auth)
+      user.value = null
     } catch (err) {
       if (err instanceof Error) {
         error.value = err.message
       }
     } finally {
-      // Always reset loading state after a logout attempt, regardless of success or failure
       isLoading.value = false
     }
   }
 
   async function updateUserProfile(data: { displayName: string }) {
+    // This updates the Firebase Auth profile and Firestore document
     isLoading.value = true
     error.value = null
     try {
       if (auth.currentUser) {
+        // 1. Update Firebase Auth Profile
         await updateProfile(auth.currentUser, {
           displayName: data.displayName,
         })
-        // Force refresh local user state
-        // creating a shallow copy to trigger reactivity if needed,
-        // though auth state listener might catch it too, explicit update is safer for UI feedback
+
+        // 2. Prepare data for Firestore
+        const firstName = data.displayName.split(' ')[0] || ''
+        const lastName = data.displayName.split(' ').slice(1).join(' ') || ''
+
+        // 3. Update Firestore Document
+        const docRef = doc(db, USERS_COLLECTION, auth.currentUser.uid)
+
+        try {
+          await updateDoc(docRef, {
+            firstName,
+            lastName,
+            displayName: data.displayName,
+            updatedAt: new Date().toISOString(),
+          })
+        } catch (e) {
+          console.warn(
+            'Firestore update failed (doc might not exist), attempting to create/merge...',
+            e,
+          )
+        }
+
+        // 4. Optimistic update of local state
         if (user.value) {
-          user.value = { ...user.value, displayName: data.displayName }
+          user.value.firstName = firstName
+          user.value.lastName = lastName
         }
       }
     } catch (err) {

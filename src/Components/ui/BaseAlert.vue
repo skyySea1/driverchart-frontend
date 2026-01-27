@@ -37,7 +37,12 @@ import { ref, computed } from 'vue'
 import { AlertCircle, CheckCircle2, AlertTriangle, Info, X } from 'lucide-vue-next'
 import type { AlertType } from '@/types'
 
-const { type = 'info', title, message,  closeable = true } = defineProps<{
+const {
+  type = 'info',
+  title,
+  message,
+  closeable = true,
+} = defineProps<{
   type?: AlertType
   title?: string
   message: string

@@ -4,8 +4,12 @@
     class="h-screen overflow-auto bg-slate-100 font-sans text-slate-800 md:flex-row print:bg-white relative"
   >
     <!-- Mobile Overlay -->
-    <div v-if="!sidebarCollapsed" class="fixed inset-0 bg-black/50 z-30 md:hidden" @click="sidebarCollapsed = true"
-      v-cursor></div>
+    <div
+      v-if="!sidebarCollapsed"
+      class="fixed inset-0 bg-black/50 z-30 md:hidden"
+      @click="sidebarCollapsed = true"
+      v-cursor
+    ></div>
 
     <AppSidebar
       :collapsed="sidebarCollapsed"
@@ -37,12 +41,30 @@
     </div>
 
     <!-- Desktop Collapse Toggle Button -->
-    <button v-cursor @contextmenu.prevent="toggleSidebar" @click="toggleSidebar" :class="[
-      'hidden btn-up-hover-effect md:flex fixed top-1/2 z-40 bg-slate-800 shadow-md border border-indigo-600 rounded-full p-1.5 items-center justify-center text-white hover:text-indigo-600 hover:border-indigo-600 transition-all duration-300 ease-in-out',
-      sidebarCollapsed ? 'left-10' : 'left-60',
-    ]" title="Toggle Sidebar">
-      <ChevronLeft :class="['w-4 h-4 transition-transform duration-300', sidebarCollapsed ? 'rotate-180' : '']" />
+    <button
+      v-cursor
+      @contextmenu.prevent="toggleSidebar"
+      @click="toggleSidebar"
+      :class="[
+        'hidden btn-up-hover-effect md:flex fixed top-1/2 z-40 bg-slate-800 shadow-md border border-indigo-600 rounded-full p-1.5 items-center justify-center text-white hover:text-indigo-600 hover:border-indigo-600 transition-all duration-300 ease-in-out',
+        sidebarCollapsed ? 'left-10' : 'left-60',
+      ]"
+      title="Toggle Sidebar"
+    >
+      <ChevronLeft
+        :class="['w-4 h-4 transition-transform duration-300', sidebarCollapsed ? 'rotate-180' : '']"
+      />
     </button>
+
+    <FloatingAiAssistant />
+
+    <!-- Global Notification Modal -->
+    <NotificationPreviewModal
+      :is-open="modalStore.activeModal === 'notification'"
+      :notifications="expiringNotifications"
+      :loading-data="notificationsLoading"
+      @close="modalStore.closeModal()"
+    />
   </div>
 </template>
 
@@ -52,10 +74,17 @@ import { useRouter, useRoute } from 'vue-router'
 import { ChevronLeft } from 'lucide-vue-next'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
+import FloatingAiAssistant from '@/Components/templates/FloatingAiAssistant.vue'
+import NotificationPreviewModal from '@/Components/templates/modals/NotificationPreviewModal.vue'
+import { useModalStore } from '@/stores/ModalStore'
+import { useNotifications } from '@/Composables/useNotifications'
 import { MOBILE_BREAKPOINT } from '@/utils/constants'
 
 const router = useRouter()
 const route = useRoute()
+const modalStore = useModalStore()
+const { expiringNotifications, loading: notificationsLoading } = useNotifications()
+
 const currentRouteName = computed(() => String(route.name ?? 'dashboard'))
 const title = computed(() => String(route.meta.title ?? 'Dashboard'))
 const subtitle = computed(() => String(route.meta.subtitle ?? ''))
@@ -69,24 +98,24 @@ function isMobile() {
 
 function handleNavigate(routeName: string) {
   if (route.name === routeName) return
-    router.push({ name: routeName })
-    // Auto-close sidebar on mobile after navigation
-    if (isMobile()) {
-      sidebarCollapsed.value = true
-    }
+  router.push({ name: routeName })
+  // Auto-close sidebar on mobile after navigation
+  if (isMobile()) {
+    sidebarCollapsed.value = true
+  }
 }
 
-  // sidebar event handler
-  function toggleSidebar() {
-    sidebarCollapsed.value = !sidebarCollapsed.value
-  }
+// sidebar event handler
+function toggleSidebar() {
+  sidebarCollapsed.value = !sidebarCollapsed.value
+}
 
-  onMounted(() => {
-    window.addEventListener('resize', () => {
-      // Auto-open sidebar when resizing to desktop
-      if (!isMobile() && sidebarCollapsed.value) {
-        sidebarCollapsed.value = false
-      }
-    })
+onMounted(() => {
+  window.addEventListener('resize', () => {
+    // Auto-open sidebar when resizing to desktop
+    if (!isMobile() && sidebarCollapsed.value) {
+      sidebarCollapsed.value = false
+    }
   })
+})
 </script>

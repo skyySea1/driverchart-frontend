@@ -1,251 +1,125 @@
 <template>
-  <div
-    class="font-sans text-black p-8 border-2 border-slate-300 print:border-none max-w-4xl mx-auto"
-  >
-    <div class="flex justify-between items-start border-b-2 border-black pb-2 mb-4">
-      <div>
-        <h2 class="text-xl font-bold">Form W-9</h2>
-        <p class="text-xs">(Rev. October 2018)</p>
-      </div>
-      <div class="text-center">
-        <h1 class="text-2xl font-bold">
-          Request for Taxpayer<br />Identification Number and Certification
-        </h1>
-      </div>
-      <div>
-        <p class="text-xs font-bold">
-          Give Form to the<br />requester. Do not<br />send to the IRS.
-        </p>
-      </div>
+  <div class="space-y-4">
+    <!-- Loading State -->
+    <div v-if="loading" class="flex items-center justify-center h-96">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
     </div>
 
-    <div class="space-y-0 border border-black">
-      <!-- 1. Name -->
-      <div class="p-2 border-b border-black">
-        <label class="text-xs font-bold block"
-          >1 Name (as shown on your income tax return). Name is required on this line; do not leave
-          this line blank.</label
-        >
-        <input
-          type="text"
-          class="w-full font-mono text-lg uppercase bg-transparent border-none focus:ring-0"
-          :value="fullName"
-          readonly
+    <!-- Error State -->
+    <div v-else-if="error" class="bg-red-50 p-4 rounded-lg border border-red-200 text-red-700">
+      {{ error }}
+    </div>
+
+    <!-- PDF Viewer -->
+    <div v-else class="space-y-4">
+      <!-- Header with Download Button -->
+      <div
+        class="flex items-center justify-between bg-slate-50 p-4 rounded-lg border border-slate-200"
+      >
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900">Form W-9</h3>
+          <p class="text-sm text-slate-600">
+            Request for Taxpayer Identification Number and Certification
+          </p>
+        </div>
+        <BaseButton
+          label="Download W-9"
+          :icon="Download"
+          variant="blue"
+          @click="handleDownload"
+          class="px-4 py-2"
         />
       </div>
 
-      <!-- 2. Business name -->
-      <div class="p-2 border-b border-black">
-        <label class="text-xs font-bold block"
-          >2 Business name/disregarded entity name, if different from above</label
-        >
-        <input
-          type="text"
-          class="w-full font-mono bg-transparent focus:ring-0 border-b border-dotted border-slate-300"
-          :value="data.businessName || ''"
-          @input="onInput('businessName', ($event.target as HTMLInputElement).value)"
-          placeholder=""
-        />
+      <!-- PDF Display -->
+      <div class="border-2 border-slate-300 rounded-lg overflow-hidden bg-white">
+        <iframe v-if="pdfUrl" :src="pdfUrl" class="w-full h-[800px]" title="W-9 Form" />
       </div>
 
-      <!-- 3. Tax classification + 4. Exemptions -->
-      <div class="p-2 border-b border-black flex">
-        <div class="w-2/3 border-r border-black pr-2">
-          <label class="text-xs font-bold block mb-1"
-            >3 Check appropriate box for federal tax classification of the person whose name is
-            entered on line 1. Check only one of the following seven boxes.</label
-          >
-          <div class="flex flex-wrap gap-3 text-xs">
-            <label class="flex items-center gap-1">
-              <input
-                type="radio"
-                name="taxClass"
-                :checked="data.taxClassification === 'individual'"
-                @change="onInput('taxClassification', 'individual')"
-              />
-              Individual/sole proprietor
-            </label>
-            <label class="flex items-center gap-1">
-              <input
-                type="radio"
-                name="taxClass"
-                :checked="data.taxClassification === 'c_corp'"
-                @change="onInput('taxClassification', 'c_corp')"
-              />
-              C Corporation
-            </label>
-            <label class="flex items-center gap-1">
-              <input
-                type="radio"
-                name="taxClass"
-                :checked="data.taxClassification === 's_corp'"
-                @change="onInput('taxClassification', 's_corp')"
-              />
-              S Corporation
-            </label>
-            <label class="flex items-center gap-1">
-              <input
-                type="radio"
-                name="taxClass"
-                :checked="data.taxClassification === 'partnership'"
-                @change="onInput('taxClassification', 'partnership')"
-              />
-              Partnership
-            </label>
-            <label class="flex items-center gap-1">
-              <input
-                type="radio"
-                name="taxClass"
-                :checked="data.taxClassification === 'trust_estate'"
-                @change="onInput('taxClassification', 'trust_estate')"
-              />
-              Trust/estate
-            </label>
-            <label class="flex items-center gap-1">
-              <input
-                type="radio"
-                name="taxClass"
-                :checked="data.taxClassification === 'llc'"
-                @change="onInput('taxClassification', 'llc')"
-              />
-              LLC
-            </label>
-          </div>
-        </div>
-        <div class="w-1/3 pl-2">
-          <label class="text-xs font-bold block"
-            >4 Exemptions (codes apply only to certain entities, not individuals)</label
-          >
-        </div>
-      </div>
-
-      <!-- 5. Address -->
-      <div class="p-2 border-b border-black">
-        <label class="text-xs font-bold block">5 Address (number, street, and apt. no.)</label>
-        <input
-          type="text"
-          class="w-full font-mono bg-transparent border-none focus:ring-0"
-          :value="data.w9Address || ''"
-          @input="onInput('w9Address', ($event.target as HTMLInputElement).value)"
-          placeholder="Enter Address"
-        />
-      </div>
-
-      <!-- 6. City/State/ZIP + 7. Account numbers -->
-      <div class="flex border-b border-black">
-        <div class="w-2/3 p-2 border-r border-black">
-          <label class="text-xs font-bold block">6 City, state, and ZIP code</label>
-          <input
-            type="text"
-            class="w-full font-mono bg-transparent border-none focus:ring-0"
-            :value="data.w9CityStateZip || ''"
-            @input="onInput('w9CityStateZip', ($event.target as HTMLInputElement).value)"
-            placeholder="City, State, ZIP"
-          />
-        </div>
-        <div class="w-1/3 p-2">
-          <label class="text-xs font-bold block">7 List account number(s) here (optional)</label>
-          <input
-            type="text"
-            class="w-full font-mono bg-transparent border-b border-dotted border-slate-300 focus:ring-0"
-            :value="data.accountNumber || ''"
-            @input="onInput('accountNumber', ($event.target as HTMLInputElement).value)"
-            placeholder="Account number(s)"
-          />
-        </div>
-      </div>
-
-      <!-- Part I: TIN -->
-      <div class="p-4 border-b border-black">
-        <h3 class="font-bold text-sm mb-2">Part I - Taxpayer Identification Number (TIN)</h3>
-        <div class="flex items-center">
-          <div class="w-1/2 pr-4">
-            <label class="text-xs block mb-1">Social Security Number</label>
-            <div class="flex gap-2">
-              <div class="border border-black p-1 w-full text-center font-mono text-lg bg-slate-50">
-                {{ data.ssn || '   -  -    ' }}
-              </div>
-            </div>
-          </div>
-          <div class="text-xs w-1/2 italic text-slate-500">
-            Enter your SSN in the appropriate box. The TIN provided must match the name given on
-            line 1 to avoid backup withholding.
-          </div>
-        </div>
-      </div>
-
-      <!-- Part II: Certification -->
-      <div class="p-4 bg-slate-50">
-        <h3 class="font-bold text-sm mb-2">Part II - Certification</h3>
-        <p class="text-xs text-justify mb-4 leading-tight">
-          Under penalties of perjury, I certify that: <br />
-          1. The number shown on this form is my correct taxpayer identification number (or I am
-          waiting for a number to be issued to me); and <br />
-          2. I am not subject to backup withholding because: (a) I am exempt from backup
-          withholding, or (b) I have not been notified by the Internal Revenue Service (IRS) that I
-          am subject to backup withholding as a result of a failure to report all interest or
-          dividends, or (c) the IRS has notified me that I am no longer subject to backup
-          withholding; and <br />
-          3. I am a U.S. citizen or other U.S. person (defined below); and <br />
-          4. The FATCA code(s) entered on this form (if any) indicating that I am exempt from FATCA
-          reporting is correct.
+      <!-- Info Note -->
+      <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <p class="text-sm text-blue-800">
+          <strong>Note:</strong> This W-9 form has been automatically filled with the driver's
+          information. Review the document and download it if needed. The form is read-only and
+          cannot be edited here.
         </p>
-
-        <div class="mt-6 border-t border-dashed border-slate-400 pt-4">
-          <div class="flex items-center mb-2">
-            <input
-              type="checkbox"
-              class="w-5 h-5 text-blue-600 rounded mr-2"
-              :checked="data.w9Signed || false"
-              @change="onInput('w9Signed', ($event.target as HTMLInputElement).checked)"
-            />
-            <span class="text-sm font-bold text-blue-800"
-              >I Agree and Certify (Electronic Signature)</span
-            >
-          </div>
-
-          <div class="grid grid-cols-2 gap-8">
-            <div>
-              <label class="block text-xs font-bold mb-1">Signature of U.S. person</label>
-              <input
-                type="text"
-                placeholder="Type Full Name to Sign"
-                class="w-full border-b-2 border-black bg-transparent font-script text-2xl text-blue-900 focus:outline-none"
-                :value="data.w9Signature || ''"
-                @input="onInput('w9Signature', ($event.target as HTMLInputElement).value)"
-                :disabled="!data.w9Signed"
-              />
-            </div>
-            <div>
-              <label class="block text-xs font-bold mb-1">Date</label>
-              <input
-                type="date"
-                class="w-full border-b-2 border-black bg-transparent font-mono"
-                :value="data.w9Date || ''"
-                @input="onInput('w9Date', ($event.target as HTMLInputElement).value)"
-              />
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { Download } from 'lucide-vue-next'
+import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
+import { useW9PdfFiller } from '@/Composables/useW9PdfFiller'
+import type { Driver } from '@/types'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-const props = defineProps<{ data: any }>()
-const emit = defineEmits<{ 'update:data': [any] }>()
-/* eslint-enable @typescript-eslint/no-explicit-any */
+const props = defineProps<{
+  data: Driver
+}>()
 
-const fullName = computed(() =>
-  [props.data.firstName, props.data.middleName, props.data.lastName].filter(Boolean).join(' '),
+const { fillW9Pdf, downloadPdf, createPdfUrl } = useW9PdfFiller()
+
+const loading = ref(true)
+const error = ref<string | null>(null)
+const pdfUrl = ref<string | null>(null)
+const pdfBlob = ref<Blob | null>(null)
+
+async function generatePdf() {
+  loading.value = true
+  error.value = null
+
+  try {
+    // Generate filled PDF
+    const blob = await fillW9Pdf(props.data)
+    pdfBlob.value = blob
+
+    // Create URL for display
+    if (pdfUrl.value) {
+      URL.revokeObjectURL(pdfUrl.value)
+    }
+    pdfUrl.value = createPdfUrl(blob)
+  } catch (err) {
+    console.error('Failed to generate W-9 PDF:', err)
+    error.value = 'Failed to generate W-9 form. Please try again.'
+  } finally {
+    loading.value = false
+  }
+}
+
+function handleDownload() {
+  if (pdfBlob.value) {
+    const filename = `W9_${props.data.firstName}_${props.data.lastName}.pdf`
+    downloadPdf(pdfBlob.value, filename)
+  }
+}
+
+// Generate PDF on mount
+onMounted(() => {
+  generatePdf()
+})
+
+// Regenerate if driver data changes
+watch(
+  () => props.data,
+  () => {
+    generatePdf()
+  },
+  { deep: true },
 )
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function onInput(key: string, value: any) {
-  emit('update:data', { ...props.data, [key]: value })
+// Cleanup on unmount
+onBeforeUnmount(() => {
+  if (pdfUrl.value) {
+    URL.revokeObjectURL(pdfUrl.value)
+  }
+})
+</script>
+
+<script lang="ts">
+import { onBeforeUnmount } from 'vue'
+export default {
+  name: 'FormW9',
 }
 </script>
