@@ -13,10 +13,14 @@
     <!-- PDF Viewer -->
     <div v-else class="space-y-4">
       <!-- Header with Download Button -->
-      <div class="flex items-center justify-between bg-slate-50 p-4 rounded-lg border border-slate-200">
+      <div
+        class="flex items-center justify-between bg-slate-50 p-4 rounded-lg border border-slate-200"
+      >
         <div>
           <h3 class="text-lg font-semibold text-slate-900">Form W-9</h3>
-          <p class="text-sm text-slate-600">Request for Taxpayer Identification Number and Certification</p>
+          <p class="text-sm text-slate-600">
+            Request for Taxpayer Identification Number and Certification
+          </p>
         </div>
         <BaseButton
           label="Download W-9"
@@ -29,19 +33,15 @@
 
       <!-- PDF Display -->
       <div class="border-2 border-slate-300 rounded-lg overflow-hidden bg-white">
-        <iframe
-          v-if="pdfUrl"
-          :src="pdfUrl"
-          class="w-full h-[800px]"
-          title="W-9 Form"
-        />
+        <iframe v-if="pdfUrl" :src="pdfUrl" class="w-full h-[800px]" title="W-9 Form" />
       </div>
 
       <!-- Info Note -->
       <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
         <p class="text-sm text-blue-800">
-          <strong>Note:</strong> This W-9 form has been automatically filled with the driver's information.
-          Review the document and download it if needed. The form is read-only and cannot be edited here.
+          <strong>Note:</strong> This W-9 form has been automatically filled with the driver's
+          information. Review the document and download it if needed. The form is read-only and
+          cannot be edited here.
         </p>
       </div>
     </div>
@@ -69,18 +69,17 @@ const pdfBlob = ref<Blob | null>(null)
 async function generatePdf() {
   loading.value = true
   error.value = null
-  
+
   try {
     // Generate filled PDF
     const blob = await fillW9Pdf(props.data)
     pdfBlob.value = blob
-    
+
     // Create URL for display
     if (pdfUrl.value) {
       URL.revokeObjectURL(pdfUrl.value)
     }
     pdfUrl.value = createPdfUrl(blob)
-    
   } catch (err) {
     console.error('Failed to generate W-9 PDF:', err)
     error.value = 'Failed to generate W-9 form. Please try again.'
@@ -102,9 +101,13 @@ onMounted(() => {
 })
 
 // Regenerate if driver data changes
-watch(() => props.data, () => {
-  generatePdf()
-}, { deep: true })
+watch(
+  () => props.data,
+  () => {
+    generatePdf()
+  },
+  { deep: true },
+)
 
 // Cleanup on unmount
 onBeforeUnmount(() => {
@@ -117,6 +120,6 @@ onBeforeUnmount(() => {
 <script lang="ts">
 import { onBeforeUnmount } from 'vue'
 export default {
-  name: 'FormW9'
+  name: 'FormW9',
 }
 </script>

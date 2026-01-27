@@ -41,24 +41,42 @@
 
       <!-- Action Stepper (if needed) -->
       <div class="bg-white border-b border-slate-100 px-8 py-3 flex items-center gap-4 shrink-0">
-        <div :class="['flex items-center gap-2', step === 'selection' ? 'opacity-100' : 'opacity-40']">
+        <div
+          :class="['flex items-center gap-2', step === 'selection' ? 'opacity-100' : 'opacity-40']"
+        >
           <div
-            :class="['w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center transition-colors', step === 'selection' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-400']"
+            :class="[
+              'w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center transition-colors',
+              step === 'selection' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-400',
+            ]"
           >
             1
           </div>
-          <span :class="['text-xs font-bold uppercase tracking-wide transition-colors', step === 'selection' ? 'text-slate-900' : 'text-slate-600']"
+          <span
+            :class="[
+              'text-xs font-bold uppercase tracking-wide transition-colors',
+              step === 'selection' ? 'text-slate-900' : 'text-slate-600',
+            ]"
             >Review & Selection</span
           >
         </div>
         <div class="h-px w-8 bg-slate-200"></div>
-        <div :class="['flex items-center gap-2', step !== 'selection' ? 'opacity-100' : 'opacity-40']">
+        <div
+          :class="['flex items-center gap-2', step !== 'selection' ? 'opacity-100' : 'opacity-40']"
+        >
           <div
-            :class="['w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center transition-colors', step !== 'selection' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-400']"
+            :class="[
+              'w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center transition-colors',
+              step !== 'selection' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-400',
+            ]"
           >
             2
           </div>
-          <span :class="['text-xs font-bold uppercase tracking-wide transition-colors', step !== 'selection' ? 'text-slate-900' : 'text-slate-600']"
+          <span
+            :class="[
+              'text-xs font-bold uppercase tracking-wide transition-colors',
+              step !== 'selection' ? 'text-slate-900' : 'text-slate-600',
+            ]"
             >Data Entry / Upload</span
           >
         </div>
@@ -193,6 +211,7 @@
                   <BaseButton
                     label="Mark Completed"
                     variant="secondary"
+                    :loading="isLoading"
                     class="px-5 py-2 text-xs font-black rounded-xl uppercase tracking-tighter"
                     @click="handleComplete"
                   />
@@ -223,6 +242,7 @@
                   <BaseButton
                     label="Mark Completed"
                     variant="secondary"
+                    :loading="isLoading"
                     class="px-5 py-2 text-xs font-black rounded-xl uppercase tracking-tighter"
                     @click="handleComplete"
                   />
@@ -486,6 +506,7 @@
               <BaseButton
                 label="Save & Complete"
                 variant="primary"
+                :loading="isLoading"
                 class="px-8 font-black uppercase tracking-widest shadow-xl shadow-indigo-200"
                 @click="handleComplete"
               />
@@ -610,6 +631,7 @@
                 :disabled="!selectedFile"
                 label="Upload & Complete"
                 variant="primary"
+                :loading="isLoading"
                 class="px-8 font-black uppercase tracking-widest shadow-xl shadow-indigo-200"
                 @click="handleComplete"
               />
@@ -623,22 +645,15 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import {
-  X,
-  FileCheck,
-  Upload,
-  AlertCircle,
-  Plus,
-  CheckCircle2,
-  ChevronRight,
-} from 'lucide-vue-next'
+import { X, FileCheck, Upload, AlertCircle, CheckCircle2 } from 'lucide-vue-next'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import dayjs from 'dayjs'
-import type { Driver, User } from '@/types'
+import type { Driver, User, QualificationActionItem } from '@/types'
 
 const props = defineProps<{
   isOpen: boolean
-  item: { key: string; label: string; cfr: string }
+  isLoading?: boolean
+  item: QualificationActionItem
   driver: Driver
   user: User
 }>()
@@ -663,8 +678,9 @@ function handleFileChange(event: Event) {
 }
 
 const isAlreadyCompleted = computed(() => {
-  if (!props.driver.qualificationChecklist) return false
-  return (props.driver.qualificationChecklist as any)[props.item.key] === true
+  const checklist = props.driver.qualificationChecklist
+  if (!checklist) return false
+  return (checklist as unknown as Record<string, unknown>)[props.item.key] === true
 })
 
 const completionDate = computed(() => {
