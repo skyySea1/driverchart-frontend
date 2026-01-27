@@ -21,7 +21,7 @@ export const AddressSchema = z.object({
   street: z.string().min(1, 'Street is required'),
   city: z.string().min(1, 'City is required'),
   state: z.string().length(2, 'State must be 2 characters'),
-  zip: z.string().min(5, "ZIP code is required"), //.regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code'),
+  zip: z.string().min(5, 'ZIP code is required'), //.regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code'),
   fromDate: pastIsoDate('From date is required'),
   toDate: z.string().optional(), // Optional for current address
   present: z.boolean().optional(),
@@ -34,9 +34,7 @@ export const LicenseSchema = z.object({
   class: z.string().min(1, 'License class is required'),
   endorsements: z.string().default(''),
   restrictions: z.string().default(''),
-  expirationDate: z
-    .string()
-    .min(1, 'Expiration date is required'),
+  expirationDate: z.string().min(1, 'Expiration date is required'),
 })
 
 // Accident
@@ -62,7 +60,7 @@ export const EmploymentSchema = z.object({
   address: z.string().min(1, 'Address is required'),
   city: z.string().min(1, 'City is required'),
   state: z.string().length(2, 'State must be 2 characters'),
-  zip: z.string().min(5, "ZIP code is required"), //.regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code'),
+  zip: z.string().min(5, 'ZIP code is required'), //.regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code'),
   phone: usPhoneNumber('Phone must be in format (XXX) XXX-XXXX or XXX-XXX-XXXX'),
   position: z.string().min(1, 'Position is required'),
   description: z.string().optional().default(''),
@@ -75,15 +73,20 @@ export const EmploymentSchema = z.object({
 export const VehicleExperienceSchema = z.object({
   type: z.string(),
   experienceYears: z.number().min(0, 'Experience years cannot be negative').default(0),
-});
+})
 
 // Driver Application Form Schema
 export const DriverApplicationFormSchema = z.object({
   id: z.string().optional(),
   personalInfo: PersonalInfoSchema,
-  addresses: z.array(AddressSchema).min(1, 'At least one address is required').max(3, 'A maximum of three addresses is allowed'),
+  addresses: z
+    .array(AddressSchema)
+    .min(1, 'At least one address is required')
+    .max(3, 'A maximum of three addresses is allowed'),
   licenses: z.array(LicenseSchema).min(1, 'At least one license is required'),
-  vehicleExperience: z.array(VehicleExperienceSchema).min(1, 'At least one vehicle type is required'),
+  vehicleExperience: z
+    .array(VehicleExperienceSchema)
+    .min(1, 'At least one vehicle type is required'),
   experienceYears: z.number().min(0, 'Experience years cannot be negative').default(0),
   accidents: z.array(AccidentSchema).default([]),
   violations: z.array(ViolationSchema).default([]),

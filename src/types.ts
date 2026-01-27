@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { DriverSchema, ComplianceItemSchema } from '@/shared/schemas/DriverSchema'
 
 export type AlertType = 'error' | 'success' | 'warning' | 'info'
-export type HireStatusType = 'Pending' |'Active' | 'Terminated' | 'Rehired'
+export type HireStatusType = 'Pending' | 'Active' | 'Terminated' | 'Rehired'
 export type ApplicationStatusType = 'New' | 'Pending' | 'Hired' | 'Rejected'
 export type ComplianceItem = z.infer<typeof ComplianceItemSchema>
 export type DriverBase = z.infer<typeof DriverSchema> & {
@@ -51,8 +51,17 @@ export interface FirestoreDoc {
 }
 
 export interface Driver extends Omit<DriverBase, 'id'>, FirestoreDoc {
-  ssnDocFile?: File | null
-  ssnDocPreviewUrl?: string
+  // Legacy / Optional fields (to be deprecated)
+  licenseFront?: string
+  licenseBack?: string
+  medicalCard?: string
+  applicationFile?: string
+
+  // Flattened legacy personal info
+  personalInfo?: {
+    licenseExpirationDate?: string
+    medicalExpirationDate?: string
+  }
 }
 
 export interface DriverRow extends Driver {
@@ -135,12 +144,7 @@ export type CardType =
   | 'fleet'
   | 'active_fleet'
 
-export type ViewState =
-  | 'dashboard'
-  | 'vehicles'
-  | 'applications'
-  | 'login'
-  | 'settings'
+export type ViewState = 'dashboard' | 'vehicles' | 'applications' | 'login' | 'settings'
 
 export type USState =
   | 'AL'
@@ -410,3 +414,27 @@ export interface DriverApplicationForm extends FirestoreDoc {
   notes?: string
 }
 
+export interface QualificationActionItem {
+  key: string
+  label: string
+  cfr: string
+}
+
+export interface SignatureDoc {
+  label: string
+  signature: string
+  date: string
+}
+
+export interface UploadTokenContext {
+  driverName: string
+  documentType: string
+}
+
+export interface Memo {
+  id: string
+  title: string
+  fileUrl: string
+  date: string
+  type: 'memo' | 'policy'
+}
