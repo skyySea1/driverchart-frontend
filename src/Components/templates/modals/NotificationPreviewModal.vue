@@ -1,10 +1,5 @@
 <template>
-  <BaseModal
-    :title="'Send Notifications'"
-    :isOpen="isOpen"
-    @close="emit('close')"
-    size="max-w-2xl"
-  >
+  <BaseModal :title="'Send Notifications'" :isOpen="isOpen" @close="emit('close')" size="max-w-2xl">
     <div class="space-y-6">
       <!-- Header Info -->
       <div class="space-y-1">
@@ -39,44 +34,66 @@
           >
         </label>
         <div class="flex items-center gap-2">
-           <button
+          <button
             @click="showPreview = !showPreview"
             class="text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:underline px-2 py-1"
-           >
-             {{ showPreview ? 'Hide Email Preview' : 'Show Email Preview' }}
-           </button>
-           <BaseBadge variant="secondary" class="bg-slate-100 text-slate-700 px-3 py-1 border-0">
-             {{ selectedIds.length }} selected
-           </BaseBadge>
+          >
+            {{ showPreview ? 'Hide Email Preview' : 'Show Email Preview' }}
+          </button>
+          <BaseBadge variant="secondary" class="bg-slate-100 text-slate-700 px-3 py-1 border-0">
+            {{ selectedIds.length }} selected
+          </BaseBadge>
         </div>
       </div>
 
       <!-- Email Template Preview -->
-      <div v-if="showPreview" class="p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 space-y-2 mb-4">
-        <h4 class="font-bold text-slate-900 border-b border-slate-200 pb-2 mb-2">Email Template Preview</h4>
+      <div
+        v-if="showPreview"
+        class="p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 space-y-2 mb-4"
+      >
+        <h4 class="font-bold text-slate-900 border-b border-slate-200 pb-2 mb-2">
+          Email Template Preview
+        </h4>
         <div class="font-mono text-xs bg-white p-3 rounded border border-slate-100">
-          <p class="mb-2"><strong>Subject:</strong> Attention: Your [Document Type] is expiring soon / expired</p>
-          <hr class="border-slate-100 my-2"/>
+          <p class="mb-2">
+            <strong>Subject:</strong> Attention: Your [Document Type] is expiring soon / expired
+          </p>
+          <hr class="border-slate-100 my-2" />
           <p>Hello <strong>[Driver Name]</strong>,</p>
           <p>This is an automated notification regarding your <strong>[Document Type]</strong>.</p>
-          <p>Status: <span class="font-bold text-amber-600">Expiring in [X] days / Expired [X] days ago</span></p>
+          <p>
+            Status:
+            <span class="font-bold text-amber-600"
+              >Expiring in [X] days / Expired [X] days ago</span
+            >
+          </p>
           <p>Expiration Date: <strong>[Date]</strong></p>
           <p>Please update your document as soon as possible to maintain compliance.</p>
-          <p class="text-xs text-slate-400 mt-2">This is an automated message from CharterSafe Compliance System.</p>
+          <p class="text-xs text-slate-400 mt-2">
+            This is an automated message from CharterSafe Compliance System.
+          </p>
         </div>
       </div>
 
       <!-- Notifications List -->
       <div class="space-y-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
-        <div v-if="loadingData" class="py-12 text-center text-slate-500 flex flex-col items-center gap-2">
-           <div class="w-6 h-6 border-2 border-slate-300 border-t-indigo-600 rounded-full animate-spin"></div>
-           <span class="text-xs">Loading notifications...</span>
+        <div
+          v-if="loadingData"
+          class="py-12 text-center text-slate-500 flex flex-col items-center gap-2"
+        >
+          <div
+            class="w-6 h-6 border-2 border-slate-300 border-t-indigo-600 rounded-full animate-spin"
+          ></div>
+          <span class="text-xs">Loading notifications...</span>
         </div>
 
-        <div v-else-if="notifications.length === 0" class="py-12 text-center text-slate-400 flex flex-col items-center gap-2">
-           <CheckCircle2 class="w-8 h-8 text-slate-300" />
-           <span class="text-sm font-bold">All Good!</span>
-           <span class="text-xs">No documents are expiring within the next 30 days.</span>
+        <div
+          v-else-if="notifications.length === 0"
+          class="py-12 text-center text-slate-400 flex flex-col items-center gap-2"
+        >
+          <CheckCircle2 class="w-8 h-8 text-slate-300" />
+          <span class="text-sm font-bold">All Good!</span>
+          <span class="text-xs">No documents are expiring within the next 30 days.</span>
         </div>
 
         <div
@@ -240,7 +257,8 @@ async function handleSend() {
     } else {
       alertState.value = {
         type: 'error',
-        message: 'No notifications were sent. Please check if the drivers have valid email addresses and the Resend API key is configured.',
+        message:
+          'No notifications were sent. Please check if the drivers have valid email addresses and the Resend API key is configured.',
       }
     }
   } catch (error) {

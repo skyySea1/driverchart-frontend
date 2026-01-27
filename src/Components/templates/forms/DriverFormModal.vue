@@ -39,7 +39,7 @@
             <label class="block text-xs font-bold text-slate-700"
               >First Name <span class="text-red-500">*</span></label
             >
-            <input id="firstNameInput" v-model.trim="form.firstName" required class="input-base" />
+            <input id="firstNameInput" v-model.trim="form.firstName" required class="input-base" data-testid="input-firstname" />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Middle Name</label>
@@ -49,14 +49,14 @@
             <label class="block text-xs font-bold text-slate-700"
               >Last Name <span class="text-red-500">*</span></label
             >
-            <input id="lastNameInput" v-model.trim="form.lastName" required class="input-base" />
+            <input id="lastNameInput" v-model.trim="form.lastName" required class="input-base" data-testid="input-lastname" />
           </div>
 
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
               >Date of Birth <span class="text-red-500">*</span></label
             >
-            <input id="dobInput" v-model="form.dob" type="date" class="input-base" />
+            <input id="dobInput" v-model="form.dob" type="date" class="input-base" data-testid="input-dob" />
           </div>
           <InputGroup
             id="phoneInput"
@@ -65,12 +65,13 @@
             type="tel"
             required
             placeholder="(123) 456-7890"
+            data-testid="input-phone-group"
           />
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
               >Email Address <span class="text-red-500">*</span>
             </label>
-            <input id="emailInput" v-model.trim="form.email" type="email" class="input-base" />
+            <input id="emailInput" v-model.trim="form.email" type="email" class="input-base" data-testid="input-email" />
           </div>
 
           <div class="space-y-1">
@@ -249,7 +250,7 @@
         </div>
 
         <div
-          class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-2 rounded-lg border border-slate-200"
+          class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-2 items-center rounded-lg border border-slate-200"
         >
           <div>
             <InputGroup
@@ -259,11 +260,6 @@
               required
               maxlength="11"
               isSSN
-            />
-            <FileInput
-              label="Upload SSN Card"
-              :fileName="form.ssnDocName"
-              @change="(event: Event) => handleFileChange('ssnDocFile', event)"
             />
           </div>
 
@@ -348,11 +344,15 @@
                     :status="uploadStatus.license"
                     @click="triggerUpload('license')"
                   />
-
                 </div>
-                <div v-if="form.license.file" class="flex items-center gap-1 text-[9px] text-green-600 mt-1">
+                <div
+                  v-if="form.license.file"
+                  class="flex items-center gap-1 text-[9px] text-green-600 mt-1"
+                >
                   <CheckCircle class="w-3 h-3" />
-                  <span class="truncate max-w-37.5" :title="form.license.file">Document Uploaded</span>
+                  <span class="truncate max-w-37.5" :title="form.license.file"
+                    >Document Uploaded</span
+                  >
                 </div>
               </div>
             </div>
@@ -386,11 +386,15 @@
                     :status="uploadStatus.medical"
                     @click="triggerUpload('medical')"
                   />
-
                 </div>
-                <div v-if="form.medical.file" class="flex items-center gap-1 text-[9px] text-green-600 mt-1">
+                <div
+                  v-if="form.medical.file"
+                  class="flex items-center gap-1 text-[9px] text-green-600 mt-1"
+                >
                   <CheckCircle class="w-3 h-3" />
-                  <span class="truncate max-w-37.5" :title="form.medical.file">Document Uploaded</span>
+                  <span class="truncate max-w-37.5" :title="form.medical.file"
+                    >Document Uploaded</span
+                  >
                 </div>
               </div>
             </div>
@@ -426,9 +430,11 @@
                     :status="uploadStatus.mvr"
                     @click="triggerUpload('mvr')"
                   />
-
                 </div>
-                <div v-if="form.mvr.file" class="flex items-center gap-1 text-[9px] text-green-600 mt-1">
+                <div
+                  v-if="form.mvr.file"
+                  class="flex items-center gap-1 text-[9px] text-green-600 mt-1"
+                >
                   <CheckCircle class="w-3 h-3" />
                   <span class="truncate max-w-37.5" :title="form.mvr.file">Document Uploaded</span>
                 </div>
@@ -471,9 +477,14 @@
                     @click="triggerUpload('drugAlcohol')"
                   />
                 </div>
-                <div v-if="form.drugAlcohol.file" class="flex items-center gap-1 text-[9px] text-green-600 mt-1">
+                <div
+                  v-if="form.drugAlcohol.file"
+                  class="flex items-center gap-1 text-[9px] text-green-600 mt-1"
+                >
                   <CheckCircle class="w-3 h-3" />
-                  <span class="truncate max-w-37.5" :title="form.drugAlcohol.file">Document Uploaded</span>
+                  <span class="truncate max-w-37.5" :title="form.drugAlcohol.file"
+                    >Document Uploaded</span
+                  >
                 </div>
               </div>
             </div>
@@ -509,11 +520,15 @@
                     :status="uploadStatus.roadTest"
                     @click="triggerUpload('roadTest')"
                   />
-
                 </div>
-                <div v-if="form.roadTest.file" class="flex items-center gap-1 text-[9px] text-green-600 mt-1">
+                <div
+                  v-if="form.roadTest.file"
+                  class="flex items-center gap-1 text-[9px] text-green-600 mt-1"
+                >
                   <CheckCircle class="w-3 h-3" />
-                  <span class="truncate max-w-37.5" :title="form.roadTest.file">Document Uploaded</span>
+                  <span class="truncate max-w-37.5" :title="form.roadTest.file"
+                    >Document Uploaded</span
+                  >
                 </div>
               </div>
             </div>
@@ -535,6 +550,7 @@
           type="submit"
           :disabled="isSaving"
           v-cursor
+          data-testid="btn-submit-driver"
           class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center shadow-sm shadow-blue-200 btn-up-hover-effect"
         >
           <Save class="w-4 h-4 mr-2" />
@@ -569,14 +585,13 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { dataService } from '@/services/dataService'
 import { useDashboard } from '@/Composables/useDashboard'
 import type { Driver, DriverForm, ComplianceItem } from '@/types'
-import { sanitizeInput, capitalizeName } from '@/utils/utils'
+import { sanitizeInput, capitalizeName, getChangedFields } from '@/utils/utils'
 import BaseAlert from '@/Components/ui/BaseAlert.vue'
 import BaseModal from '@/Components/ui/BaseModal.vue'
 import FormW9 from '@/Components/templates/forms/FormW9.vue'
 import FormI9 from '@/Components/templates/forms/FormI9.vue'
 import RoadTestCertificate from '@/Components/templates/RoadTestCertificate.vue'
 import InputGroup from '@/Components/ui/InputGroup.vue'
-import FileInput from '@/Components/ui/FileInput.vue'
 import ActionIcon from '@/Components/ui/ActionIcon.vue'
 import {
   User,
@@ -591,7 +606,6 @@ import {
   ClipboardList,
   FlaskConical,
   Map,
-
   Upload,
   Phone,
   Save,
@@ -678,9 +692,6 @@ const form = ref<DriverForm>({
   businessName: '',
   taxClassification: 'individual',
   i9EmployerSignature: '',
-  ssnDocName: '',
-  ssnDocFile: null,
-  ssnDocPreviewUrl: '',
   id: '',
   qualificationChecklist: {
     dotApplication: false,
@@ -696,7 +707,8 @@ const form = ref<DriverForm>({
     randomProgramPlacement: false,
     companyTestingPolicyReceipt: false,
     drugAlcoholStatement: false,
-    completedAt: {}
+    hoursOfService: false,
+    completedAt: {},
   },
   // Application Reference
   applicationId: '',
@@ -808,51 +820,6 @@ function updateForm(newData: Partial<typeof form.value>) {
   form.value = { ...form.value, ...newData }
 }
 
-async function handleFileChange(fieldName: 'ssnDocFile', event: Event) {
-  if (!(event.target instanceof HTMLInputElement)) {
-    console.warn('Event target is not an HTMLInputElement:', event.target)
-    return
-  }
-  const target = event.target
-  if (target.files && target.files[0]) {
-    const file = target.files[0]
-
-    // Validate Driver Context existence (ID or Name)
-    if (!form.value.id && (!form.value.firstName || !form.value.lastName)) {
-      errorMsg.value = 'Please fill in the driver\'s first and last name before uploading documents.'
-      target.value = '' // Reset input
-      return
-    }
-
-    if (fieldName === 'ssnDocFile') {
-      try {
-        const driverName = `${form.value.firstName} ${form.value.lastName}`
-        const today = new Date().toISOString()
-
-        // Optimistic UI update for preview (optional)
-        form.value.ssnDocPreviewUrl = URL.createObjectURL(file)
-
-        // Real Upload
-        const { url, filename } = await dataService.uploadDocument(
-          form.value.id || null,
-          'ssnDoc',
-          file,
-          today,
-          driverName,
-          undefined,
-          !form.value.id ? driverName : undefined
-        )
-
-        form.value.ssnDocName = filename
-        form.value.ssnDoc = url
-      } catch (e) {
-        console.error('SSN Upload failed', e)
-        errorMsg.value = 'Failed to upload SSN Card.'
-      }
-    }
-  }
-}
-
 // Compliance File Upload Logic
 function triggerUpload(docType: string) {
   uploadingDocType.value = docType
@@ -869,7 +836,8 @@ async function onComplianceFileSelected(event: Event) {
     if (docType) {
       if (['license', 'medical', 'mvr', 'drugAlcohol', 'roadTest'].includes(docType)) {
         if (!form.value.id && (!form.value.firstName || !form.value.lastName)) {
-          errorMsg.value = 'Please fill in the driver\'s first and last name before uploading documents.'
+          errorMsg.value =
+            "Please fill in the driver's first and last name before uploading documents."
           target.value = ''
           uploadingDocType.value = null
           return
@@ -879,7 +847,11 @@ async function onComplianceFileSelected(event: Event) {
         if (item) {
           uploadStatus.value[docType] = 'loading'
           try {
-            const driverName = `${form.value.firstName} ${form.value.lastName}`
+            // Match DriverProfileView lookup logic (Title Case + Middle Name)
+            const driverName = [form.value.firstName, form.value.middleName, form.value.lastName]
+              .filter(Boolean)
+              .map((n) => capitalizeName(n as string))
+              .join(' ')
             const today = new Date().toISOString()
 
             const { url } = await dataService.uploadDocument(
@@ -889,7 +861,7 @@ async function onComplianceFileSelected(event: Event) {
               today,
               driverName,
               item.expiryDate,
-              !form.value.id ? driverName : undefined
+              !form.value.id ? driverName : undefined,
             )
 
             item.file = url
@@ -927,14 +899,72 @@ async function save() {
       const issues = validationResult.error.issues
       if (issues && issues.length > 0) {
         const firstError = issues[0]
-        if (firstError && firstError.message) {
+        if (!firstError) return // Should not happen if length > 0
+
+        // 1. Set Error Message
+        if (firstError.message) {
           errorMsg.value = firstError.message
         } else {
-          errorMsg.value = 'Validation failed with unknown error.'
+          errorMsg.value = 'Please check the required fields.'
         }
-        const path = firstError && firstError.path ? firstError.path.join('.') : ''
-        if (path) {
-          console.warn('Validation error at:', path)
+
+        // 2. Map Error Path to DOM ID
+        const path = firstError.path
+        let elementId = ''
+
+        // Map common paths to IDs
+        // Note: Make sure input IDs in template match these logic or updated template.
+        // Current template IDs: firstNameInput, middleNameInput, lastNameInput, dobInput, phoneInput, emailInput, hireDateInput
+        // Nested ones likely need IDs added to template or inferred.
+
+        if (path[0] === 'firstName') elementId = 'firstNameInput'
+        else if (path[0] === 'lastName') elementId = 'lastNameInput'
+        else if (path[0] === 'middleName') elementId = 'middleNameInput'
+        else if (path[0] === 'dob') elementId = 'dobInput'
+        else if (path[0] === 'email') elementId = 'emailInput'
+        else if (path[0] === 'phone') elementId = 'phoneInput'
+        else if (path[0] === 'hireDate') elementId = 'hireDateInput'
+        // Nested Compliance Mapping
+        else if (path[0] === 'license') {
+          if (path[1] === 'documentNumber') elementId = 'licenseNumberInput' // Need to add ID to template
+          if (path[1] === 'state') elementId = 'licenseStateInput' // Need to add ID to template
+          if (path[1] === 'expiryDate') elementId = 'licenseExpiryInput' // Need to add ID to template
+        } else if (path[0] === 'medical') {
+          if (path[1] === 'expiryDate') elementId = 'medicalExpiryInput'
+        } else if (path[0] === 'mvr') {
+          if (path[1] === 'expiryDate') elementId = 'mvrExpiryInput'
+        } else if (path[0] === 'drugAlcohol') {
+          if (path[1] === 'expiryDate') elementId = 'drugAlcoholExpiryInput'
+        } else if (path[0] === 'roadTest') {
+          if (path[1] === 'examiner') elementId = 'roadTestExaminerInput'
+          if (path[1] === 'date') elementId = 'roadTestDateInput'
+        } else if (path[0] === 'emergencyContact') {
+          if (path[1] === 'name') elementId = 'ecNameInput'
+          if (path[1] === 'phone') elementId = 'ecPhoneInput'
+          if (path[1] === 'relationship') elementId = 'ecRelInput'
+        }
+
+        if (elementId) {
+          // Wait for DOM update if needed, but alert/modal is open so immediate
+          setTimeout(() => {
+            const el = document.getElementById(elementId)
+            if (el) {
+              el.focus()
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+              // Highlight effect?
+              el.classList.add('ring-2', 'ring-red-500', 'border-red-500')
+              setTimeout(() => {
+                el.classList.remove('ring-2', 'ring-red-500', 'border-red-500')
+              }, 3000)
+            } else {
+              console.warn('Could not find element with ID:', elementId)
+            }
+          }, 100)
+        }
+
+        const pathStr = firstError.path ? firstError.path.join('.') : ''
+        if (pathStr) {
+          console.warn('Validation error at:', pathStr)
         }
       } else {
         errorMsg.value = 'Validation failed with unknown error.'
@@ -961,11 +991,34 @@ async function save() {
     }
 
     const finalData = { ...dataToSave }
-    delete finalData.ssnDocFile
-    delete finalData.ssnDocPreviewUrl
 
     if (props.driver?.id) {
-      await dataService.updateDriver({ ...finalData, id: props.driver.id })
+      // Perform deep diff to avoid sending unchanged fields (which causes verbose Audit Logs)
+      const changes = getChangedFields(props.driver, finalData)
+
+      if (changes && Object.keys(changes).length > 0) {
+        console.log('Partial update with changes:', changes)
+        await dataService.updateDriverPartial(props.driver.id, changes)
+
+        // Manual Audit Log for Partial Updates
+        const changedKeys = Object.keys(changes)
+          .map((k) => {
+            // Format keys like 'firstName' to 'First Name'
+            return k.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())
+          })
+          .join(', ')
+
+        await dataService.addAuditLog({
+          date: new Date().toISOString(),
+          type: 'profile_update',
+          description: `Updated profile fields: ${changedKeys}`,
+          user: 'Admin', // Context user
+          entityId: props.driver.id,
+          entityName: `${finalData.firstName} ${finalData.lastName}`,
+        })
+      } else {
+        console.log('No changes detected, skipping update.')
+      }
     } else {
       await dataService.addDriver({ ...finalData })
     }
