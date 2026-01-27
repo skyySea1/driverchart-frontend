@@ -41,8 +41,6 @@ export const DriverSchema = z.object({
   businessName: z.string().optional(),
   taxClassification: z.string().optional(),
   i9EmployerSignature: z.string().optional(),
-  ssnDoc: z.string().optional(),
-  ssnDocName: z.string().optional(),
 
   // Compliance Sections
   license: ComplianceItemSchema.extend({
@@ -56,6 +54,11 @@ export const DriverSchema = z.object({
 
   mvr: ComplianceItemSchema,
   drugAlcohol: ComplianceItemSchema,
+
+  // Missing Compliance Fields needed for file storage
+  goodFaithEffort: ComplianceItemSchema.optional(),
+  cdlisReport: ComplianceItemSchema.optional(),
+  hoursOfService: ComplianceItemSchema.optional(),
 
   roadTest: ComplianceItemSchema.extend({
     examiner: z.string().default(''),
@@ -83,6 +86,7 @@ export const DriverSchema = z.object({
       medicalRegistryVerification: z.boolean().default(false),
       annualDrivingReview: z.boolean().default(false),
       cdlisReport: z.boolean().default(false),
+      hoursOfService: z.boolean().default(false),
       drugAlcoholClearinghouse: z.boolean().default(false),
       preEmploymentDrugTest: z.boolean().default(false),
       randomProgramPlacement: z.boolean().default(false),
@@ -92,7 +96,7 @@ export const DriverSchema = z.object({
       completedAt: z.record(z.string(), z.string()).optional(),
     })
     .optional(),
-  
+
   // Application Reference
   applicationId: z.string().optional(),
   appliedDate: z.string().optional(),
