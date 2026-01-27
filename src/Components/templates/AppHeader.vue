@@ -39,7 +39,7 @@
       <!-- Notifications Dropdown -->
       <div class="relative" v-if="props.showNotifications">
         <button
-        v-if="false"
+          v-if="false"
           class="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 shadow-sm transition-all hover:scale-105 active:scale-95 duration-200 hover:bg-indigo-50/30 group relative"
           @click="toggleMenu('notifications')"
           aria-label="Notifications"
@@ -84,14 +84,18 @@
                 <p
                   :class="[
                     'text-sm leading-tight group-hover:text-indigo-700 transition-colors',
-                    n.read ? 'text-slate-500 font-medium' : 'text-slate-800 font-bold'
+                    n.read ? 'text-slate-500 font-medium' : 'text-slate-800 font-bold',
                   ]"
                 >
                   {{ n.entityName || n.entity || 'System Update' }}
                 </p>
                 <p class="text-xs text-slate-500 truncate mt-0.5">{{ n.message }}</p>
-                <p class="text-[9px] font-black text-slate-400 mt-1.5 uppercase tracking-widest flex items-center gap-1.5">
-                  <span class="bg-slate-100 px-1.5 py-0.5 rounded">{{ dayjs(n.dueDate).format('MMM DD') }}</span>
+                <p
+                  class="text-[9px] font-black text-slate-400 mt-1.5 uppercase tracking-widest flex items-center gap-1.5"
+                >
+                  <span class="bg-slate-100 px-1.5 py-0.5 rounded">{{
+                    dayjs(n.dueDate).format('MMM DD')
+                  }}</span>
                   <span v-if="!n.read" class="text-indigo-600 flex items-center gap-1">
                     <span class="w-1 h-1 bg-indigo-600 rounded-full animate-pulse"></span>
                     New
@@ -102,14 +106,17 @@
 
             <!-- Empty State -->
             <div v-if="notifications.length === 0" class="py-12 px-4 text-center">
-              <div class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div
+                class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3"
+              >
                 <CheckCircle2 class="w-6 h-6 text-slate-300" />
               </div>
-              <p class="text-[11px] font-black text-slate-400 tracking-widest uppercase">All cleared!</p>
+              <p class="text-[11px] font-black text-slate-400 tracking-widest uppercase">
+                All cleared!
+              </p>
               <p class="text-[10px] text-slate-400 mt-1">No compliance alerts at this moment.</p>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -223,7 +230,18 @@ import { useRouter } from 'vue-router'
 import { useModalStore } from '@/stores/ModalStore'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useNotificationStore } from '@/stores/NotificationStore'
-import { Bell, Plus, Menu, Bus, UserPlus, Settings, LogOut, ChevronDown, Send, CheckCircle2 } from 'lucide-vue-next'
+import {
+  Bell,
+  Plus,
+  Menu,
+  Bus,
+  UserPlus,
+  Settings,
+  LogOut,
+  ChevronDown,
+  Send,
+  CheckCircle2,
+} from 'lucide-vue-next'
 import dayjs from 'dayjs'
 
 const props = withDefaults(
