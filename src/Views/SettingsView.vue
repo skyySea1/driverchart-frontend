@@ -2,7 +2,6 @@
 <template>
   <div class="space-y-6">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
       <!-- Sidebar Settings Nav -->
       <div class="space-y-2">
         <button
@@ -26,7 +25,7 @@
       <div
         class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
       >
-      <!-- Options container -->
+        <!-- Options container -->
         <div class="p-6 border-b border-slate-100">
           <h3 class="text-lg font-black text-slate-800">{{ selectedOption }}</h3>
           <p class="text-slate-500 text-sm italic">
@@ -66,6 +65,14 @@
                   disabled
                 />
               </div>
+              <div class="space-y-1">
+                <InputGroup
+                  label="Role"
+                  type="text"
+                  :modelValue="authStore.userRole || ''"
+                  disabled
+                />
+              </div>
             </form>
           </template>
 
@@ -86,24 +93,30 @@
               </div>
             </div>
           </template>
-
-          <template v-if="activeSection === 'security'">
-            <div class="p-4 border border-amber-100 bg-amber-50 rounded-xl flex gap-3">
-              <ShieldAlert class="w-5 h-5 text-amber-600 shrink-0" />
-              <div>
-                <p class="text-sm font-bold text-amber-900">Two-Factor Authentication</p>
-                <p class="text-xs text-amber-700 mt-1">
-                  Enhance your account security by enabling 2FA. Currently disabled.
-                </p>
-                <button class="mt-3 text-xs font-black uppercase text-indigo-600 hover:underline">
-                  Enable Now
-                </button>
+          <template v-if="activeSection === 'company'">
+            <div class="space-y-4">
+              <div class="space-y-1">
+                <InputGroup
+                  label="Organization Name"
+                  type="text"
+                  :modelValue="ORGANIZATION.name || ''"
+                  disabled
+                />
+              </div>
+              <div class="space-y-1">
+                <InputGroup
+                  label="Organization Domain"
+                  type="text"
+                  :modelValue="ORGANIZATION.domain || ''"
+                  disabled
+                />
               </div>
             </div>
           </template>
 
           <div class="pt-6 border-t border-slate-100 flex justify-end">
             <BaseButton
+              :icon="Check"
               @click="saveProfile"
               :label="authStore.isLoading ? 'Saving...' : 'Save Changes'"
               :disabled="authStore.isLoading"
@@ -118,9 +131,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { User, Bell, LucideShieldX, Globe, ShieldAlert } from 'lucide-vue-next'
+import { User, Globe, Check } from 'lucide-vue-next'
 import InputGroup from '@/Components/ui/InputGroup.vue'
-import BaseButton from '@/Components/ui/BaseButton.vue'
+import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
+import { ORGANIZATION } from '@/utils/constants'
 import { useAuthStore } from '@/stores/AuthStore'
 
 const authStore = useAuthStore()
@@ -135,8 +149,7 @@ const formProfile = ref({
 
 const menuOptions = [
   { id: 'profile', label: 'User Profile', icon: User },
-  { id: 'notifications', label: 'Notifications', icon: Bell },
-  { id: 'security', label: 'Security', icon: LucideShieldX },
+  // temporary disabled { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'company', label: 'Organization', icon: Globe },
 ]
 

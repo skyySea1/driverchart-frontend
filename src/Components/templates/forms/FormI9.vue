@@ -25,8 +25,8 @@
           <span class="font-bold">Name:</span> {{ fullName }}
         </div>
         <div class="text-xs border-b border-slate-400">
-          <span class="font-bold">Address:</span> {{ data.w9Address || '' }}
-          {{ data.w9CityStateZip || '' }}
+          <span class="font-bold">Address:</span> {{ address1 }}
+          {{ address2 }}
         </div>
         <div class="text-xs border-b border-slate-400">
           <span class="font-bold">Birth Date:</span> {{ data.dob }}
@@ -34,7 +34,7 @@
       </div>
       <div class="grid grid-cols-3 gap-2">
         <div class="text-xs border-b border-slate-400">
-          <span class="font-bold">SSN:</span> {{ data.ssn }}
+          <span class="font-bold">SSN:</span> {{ data.ssnNumber }}
         </div>
         <div class="text-xs border-b border-slate-400">
           <span class="font-bold">Email:</span> {{ data.email }}
@@ -140,8 +140,9 @@
             <input
               type="text"
               class="w-full border-b border-black bg-transparent text-sm"
-              :value="data.i9EmployerTitle || ''"
+              :value="'PHOENIXBUS ORLANDO'"
               @input="onInput('i9EmployerTitle', ($event.target as HTMLInputElement).value)"
+              readonly
             />
           </div>
           <div>
@@ -165,6 +166,11 @@ const fullName = computed(() => {
   const parts = [props.data.firstName, props.data.middleName, props.data.lastName]
   return parts.filter(Boolean).join(' ')
 })
+
+const address1 = computed(() => [props.data.address].filter(Boolean).join(' '))
+const address2 = computed(() =>
+  [props.data.city, props.data.state, props.data.zip].filter(Boolean).join(', '),
+)
 
 function onInput(key: keyof I9FormData, value: string) {
   emit('update:data', { ...props.data, [key]: value })

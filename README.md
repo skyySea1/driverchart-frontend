@@ -6,7 +6,7 @@
 
 ## Project Architecture
 
-```
+```txt
 driverchart/
 ├── src/
 │   ├── Components/Dashboard.vue       # Main app component ( migrated of react 1000+ lines, all state management)
@@ -44,12 +44,12 @@ driverchart/
  Script de validação rápido
 
  1) Simular expirations and ensure alerts appear
- 2) Generate a road test certificate and print to PDF 
+ 2) Generate a road test certificate and print to PDF
 
 ## Compliance Date Calculations (lib/utils.js)
 
 ```javascript
-getDaysDiff(expirationDate); // Days until future date (CDL, Medical Cert)
+getDaysDiff(expirationDate); // Days until future date (license, Medical Cert)
 getDaysUntilDue(lastActionDate); // Days until 1-year anniversary (MVR, Drug Test)
 getStatusColor(days); // Returns Tailwind classes: red (expired), yellow (<30), green
 getStatusText(days); // Returns "EXPIRED", "Due in X days", or "Valid"

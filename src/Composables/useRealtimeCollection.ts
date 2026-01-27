@@ -7,9 +7,10 @@ type UseRealtimeCollectionOptions<T extends FirestoreDoc> = {
   map: (doc: FirestoreDoc) => T
 }
 
-export function useRealtimeCollection(
-  path: string,
-): { items: Ref<FirestoreDoc[]>; loading: Ref<boolean> }
+export function useRealtimeCollection(path: string): {
+  items: Ref<FirestoreDoc[]>
+  loading: Ref<boolean>
+}
 export function useRealtimeCollection<T extends FirestoreDoc>(
   path: string,
   options: UseRealtimeCollectionOptions<T>,
@@ -32,7 +33,7 @@ export function useRealtimeCollection<T extends FirestoreDoc>(
     unsub = onSnapshot(
       q,
       (snap) => {
-        const rawDocs: FirestoreDoc[] = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+        const rawDocs: FirestoreDoc[] = snap.docs.map((d) => ({ ...d.data(), id: d.id }))
 
         if (options?.map) {
           const next: T[] = []

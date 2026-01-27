@@ -17,28 +17,21 @@ function asNumber(value: unknown, fallback = 0): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback
 }
 
-function asOptionalBoolean(value: unknown): boolean | undefined {
-  return typeof value === 'boolean' ? value : undefined
+function asBoolean(value: unknown, fallback = false): boolean {
+  return typeof value === 'boolean' ? value : fallback
 }
 
 function asHireStatus(value: unknown): Driver['hireStatus'] {
-  switch (value) {
-    case 'Active':
-    case 'Inactive':
-    case 'Terminated':
-    case 'Rehired':
-    case 'On Leave':
-      return value
-    default:
-      return 'Active'
+  if (value === 'Terminated' || value === 'Rehired' || value === 'Pending' || value === 'Active') {
+    return value
   }
+  return 'Active'
 }
 
 function asVehicleStatus(value: unknown): Vehicle['vehicleStatus'] {
   switch (value) {
     case 'Active':
     case 'Maintenance':
-    case 'Inactive':
       return value
     default:
       return 'Active'
@@ -46,7 +39,7 @@ function asVehicleStatus(value: unknown): Vehicle['vehicleStatus'] {
 }
 
 export function parseDriverDoc(doc: FirestoreDoc): Driver {
-  const cdl = getProp(doc, 'cdl')
+  const license = getProp(doc, 'license')
   const medical = getProp(doc, 'medical')
   const mvr = getProp(doc, 'mvr')
   const drugAlcohol = getProp(doc, 'drugAlcohol')
@@ -60,7 +53,7 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
     middleName: asString(getProp(doc, 'middleName')),
     lastName: asString(getProp(doc, 'lastName')),
     dob: asString(getProp(doc, 'dob')),
-    ssn: asString(getProp(doc, 'ssn')),
+    ssnNumber: asString(getProp(doc, 'ssnNumber')),
     phone: asString(getProp(doc, 'phone')),
     email: asString(getProp(doc, 'email')),
     address: asString(getProp(doc, 'address')),
@@ -75,28 +68,24 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
     bankName: asOptionalString(getProp(doc, 'bankName')),
     routingNumber: asOptionalString(getProp(doc, 'routingNumber')),
     accountNumber: asOptionalString(getProp(doc, 'accountNumber')),
-    w9Signed: asOptionalBoolean(getProp(doc, 'w9Signed')),
+    w9Signed: asBoolean(getProp(doc, 'w9Signed')),
     businessName: asOptionalString(getProp(doc, 'businessName')),
     taxClassification: asOptionalString(getProp(doc, 'taxClassification')),
     i9EmployerSignature: asOptionalString(getProp(doc, 'i9EmployerSignature')),
-    ssnDoc: asOptionalString(getProp(doc, 'ssnDoc')),
-    ssnDocName: asOptionalString(getProp(doc, 'ssnDocName')),
-    ssnDocFile: undefined,
-    ssnDocPreviewUrl: asOptionalString(getProp(doc, 'ssnDocPreviewUrl')),
 
-    cdl: {
-      documentNumber: asString(getProp(cdl, 'documentNumber')),
-      expiryDate: asOptionalString(getProp(cdl, 'expiryDate')),
-      file: asOptionalString(getProp(cdl, 'file')),
-      state: asString(getProp(cdl, 'state')),
-      value: asOptionalString(getProp(cdl, 'value')),
+    license: {
+      documentNumber: asString(getProp(license, 'documentNumber')),
+      expiryDate: asOptionalString(getProp(license, 'expiryDate')),
+      file: asOptionalString(getProp(license, 'file')),
+      state: asString(getProp(license, 'state')),
+      value: asOptionalString(getProp(license, 'value')),
     },
 
     medical: {
       documentNumber: asString(getProp(medical, 'documentNumber')),
       expiryDate: asOptionalString(getProp(medical, 'expiryDate')),
       file: asOptionalString(getProp(medical, 'file')),
-      registry: asOptionalString(getProp(medical, 'registry')),
+      registry: asString(getProp(medical, 'registry')),
     },
 
     mvr: {
@@ -123,6 +112,55 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
       name: asString(getProp(emergencyContact, 'name')),
       phone: asString(getProp(emergencyContact, 'phone')),
       relationship: asString(getProp(emergencyContact, 'relationship')),
+    },
+
+    // Flagging
+    isFlagged: asBoolean(getProp(doc, 'isFlagged')),
+    flagReason: asString(getProp(doc, 'flagReason')),
+    flagDate: asString(getProp(doc, 'flagDate')),
+
+    // Application Reference
+    applicationId: asOptionalString(getProp(doc, 'applicationId')),
+    appliedDate: asOptionalString(getProp(doc, 'appliedDate')),
+    applicationFile: asOptionalString(getProp(doc, 'applicationFile')),
+
+    // Signatures
+    drugTestSignature: asString(getProp(doc, 'drugTestSignature')),
+    drugTestDate: asString(getProp(doc, 'drugTestDate')),
+    authReleaseSignature: asString(getProp(doc, 'authReleaseSignature')),
+    authReleaseDate: asString(getProp(doc, 'authReleaseDate')),
+    pspDisclosureSignature: asString(getProp(doc, 'pspDisclosureSignature')),
+    pspDisclosureDate: asString(getProp(doc, 'pspDisclosureDate')),
+    fmcsaConsentSignature: asString(getProp(doc, 'fmcsaConsentSignature')),
+    fmcsaConsentDate: asString(getProp(doc, 'fmcsaConsentDate')),
+    alcoholDrugPolicySignature: asString(getProp(doc, 'alcoholDrugPolicySignature')),
+    alcoholDrugPolicyDate: asString(getProp(doc, 'alcoholDrugPolicyDate')),
+    generalWorkPolicySignature: asString(getProp(doc, 'generalWorkPolicySignature')),
+    generalWorkPolicyDate: asString(getProp(doc, 'generalWorkPolicyDate')),
+    fairCreditReportingSignature: asString(getProp(doc, 'fairCreditReportingSignature')),
+    fairCreditReportingDate: asString(getProp(doc, 'fairCreditReportingDate')),
+
+    // Qualification Checklist
+    qualificationChecklist: getProp(
+      doc,
+      'qualificationChecklist',
+    ) as Driver['qualificationChecklist'],
+
+    // Missing Compliance Fields (Added to Schema)
+    goodFaithEffort: {
+      documentNumber: asString(getProp(getProp(doc, 'goodFaithEffort'), 'documentNumber')),
+      expiryDate: asOptionalString(getProp(getProp(doc, 'goodFaithEffort'), 'expiryDate')),
+      file: asOptionalString(getProp(getProp(doc, 'goodFaithEffort'), 'file')),
+    },
+    cdlisReport: {
+      documentNumber: asString(getProp(getProp(doc, 'cdlisReport'), 'documentNumber')),
+      expiryDate: asOptionalString(getProp(getProp(doc, 'cdlisReport'), 'expiryDate')),
+      file: asOptionalString(getProp(getProp(doc, 'cdlisReport'), 'file')),
+    },
+    hoursOfService: {
+      documentNumber: asString(getProp(getProp(doc, 'hoursOfService'), 'documentNumber')),
+      expiryDate: asOptionalString(getProp(getProp(doc, 'hoursOfService'), 'expiryDate')),
+      file: asOptionalString(getProp(getProp(doc, 'hoursOfService'), 'file')),
     },
   }
 }

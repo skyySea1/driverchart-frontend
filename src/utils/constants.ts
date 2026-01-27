@@ -1,14 +1,27 @@
 // src/utils/constants.ts
-// This file will contain project-wide constants.
+
+const APP_ID = import.meta.env.VITE_APP_ID || 'driverchart'
 
 export const STATUS_ACTIVE = 'Active'
 export const STATUS_INACTIVE = 'Inactive'
 export const MOBILE_BREAKPOINT = 768
+export const SYSTEM_USER_CURRENT = 'current user'
+export const SYSTEM_USER_SYSTEM = 'system'
+export const SYSTEM_USERS = [SYSTEM_USER_CURRENT, SYSTEM_USER_SYSTEM] as const
+
 export const STATUS_MAINTENANCE = 'Maintenance'
 export const APP_NAME = 'CharterSafe'
 export const APP_VERSION = '1.0.0'
 export const COMPANY_NAME = 'PhoenixBus Orlando'
-export const API_BASE_URL = 'https://api.vuebus.com'
+export const API_BASE_URL = 'https://driversafe-api.vercel.app/api/'
+export const DEV_API_BASE_URL = 'http://localhost:3000/api/'
+
+export const COLLECTION_PATHS = {
+  drivers: `artifacts/${APP_ID}/public/data/drivers`,
+  vehicles: `artifacts/${APP_ID}/public/data/vehicles`,
+  applications: `artifacts/${APP_ID}/public/data/applications`,
+  users: `artifacts/${APP_ID}/public/data/users`,
+}
 
 export const US_STATES = [
   { code: 'AL', name: 'Alabama' },
@@ -62,3 +75,20 @@ export const US_STATES = [
   { code: 'WI', name: 'Wisconsin' },
   { code: 'WY', name: 'Wyoming' },
 ]
+
+export const VEHICLE_TYPES = [
+  'Passenger Bus',
+  'School Bus',
+  'Charter Bus',
+  'Straight Truck',
+  'Semi-Truck/Trailer',
+  'Van/Doubles',
+  'Tractor',
+]
+
+export const ORGANIZATION = {
+  name: 'Phoenix Bus Orlando',
+  domain: 'phoenixbusorlando.com',
+  address: 'Orlando, FL',
+  email: 'contact@phoenixbusorlando.com',
+}

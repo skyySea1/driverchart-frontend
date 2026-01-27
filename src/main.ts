@@ -14,8 +14,7 @@ async function bootstrap() {
   try {
     const authStore = useAuthStore()
     await authStore.init()
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Failed to initialize authentication:', error)
   }
 

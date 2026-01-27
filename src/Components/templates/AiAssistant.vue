@@ -19,7 +19,7 @@
         </p>
         <div
           class="prose prose-invert prose-sm max-w-none"
-          v-html="chatResponse.replace(/\n/g, '<br>')"
+          v-html="sanitize(chatResponse.replace(/\n/g, '<br>'))"
         ></div>
       </div>
 
@@ -78,6 +78,7 @@
 import { ref, onUpdated } from 'vue'
 import { Bot, Send } from 'lucide-vue-next'
 import { askRegulatoryAssistant } from '@/services/geminiService'
+import DOMPurify from 'dompurify'
 
 const chatInput = ref('')
 const chatResponse = ref('')
@@ -100,6 +101,10 @@ const handleAskAI = async () => {
   } finally {
     isThinking.value = false
   }
+}
+
+const sanitize = (html: string) => {
+  return DOMPurify.sanitize(html)
 }
 
 onUpdated(() => {

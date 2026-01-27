@@ -1,58 +1,110 @@
 <!-- src/Components/templates/DefaultTable.vue -->
 <template>
-  <div class="bg-white rounded-lg shadow overflow-hidden border border-slate-200 w-full">
+  <div
+    class="bg-white rounded-lg shadow overflow-hidden border border-slate-200 w-full transition-all duration-300"
+  >
     <div class="overflow-x-auto w-full">
-      <table class="w-full text-sm text-left border-collapse">
+      <table :class="['w-full text-left border-collapse', props.compact ? 'text-xs' : 'text-sm']">
         <thead class="bg-slate-50 text-slate-700 font-semibold border-b">
           <tr>
             <th
               v-for="col in props.columns"
               :key="col.key"
               :class="[
-                'p-4 whitespace-nowrap transition-colors select-none',
-                col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : 'text-left',
-                col.sortable ? 'cursor-pointer hover:bg-slate-100 group' : ''
+                props.compact ? 'p-2' : 'p-4',
+                'whitespace-nowrap select-none transition-colors',
+                col.align === 'center'
+                  ? 'text-center'
+                  : col.align === 'right'
+                    ? 'text-right'
+                    : col.align === 'left'
+                      ? 'text-left'
+                      : '',
+                col.sortable ? 'cursor-pointer hover:bg-slate-100 hover:text-slate-900' : '',
               ]"
-              @click="col.sortable ? toggleSort(col.key) : null"
+              @click="col.sortable ? handleSort(String(col.key)) : null"
             >
-              <div :class="['flex items-center gap-1', col.align === 'center' ? 'justify-center' : col.align === 'right' ? 'justify-end' : 'justify-start']">
+              <div
+                class="flex items-center gap-1"
+                :class="{
+                  'justify-center': col.align === 'center',
+                  'justify-end': col.align === 'right',
+                  'justify-start': col.align === 'left' || !col.align,
+                }"
+              >
                 {{ col.label }}
-                <!-- Sort Icon -->
-                <span v-if="col.sortable" class="text-slate-400 group-hover:text-indigo-500 transition-colors">
-                  <ArrowUp v-if="sortKey === col.key && sortOrder === 'asc'" class="w-3.5 h-3.5" />
-                  <ArrowDown v-else-if="sortKey === col.key && sortOrder === 'desc'" class="w-3.5 h-3.5" />
-                  <ChevronsUpDown v-else class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100" />
+                <span v-if="col.sortable" class="text-slate-400">
+                  <ChevronUp
+                    v-if="props.currentSortKey === col.key && props.currentSortOrder === 'asc'"
+                    class="w-4 h-4 text-blue-600"
+                  />
+                  <ChevronDown
+                    v-else-if="
+                      props.currentSortKey === col.key && props.currentSortOrder === 'desc'
+                    "
+                    class="w-4 h-4 text-blue-600"
+                  />
+                  <ChevronsUpDown v-else class="w-4 h-4 opacity-50 hover:opacity-100" />
                 </span>
               </div>
             </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
-
           <!-- Skeleton State -->
           <template v-if="props.loading">
-            <tr v-for="i in 5" :key="i" >
-              <td v-cursor v-for="col in props.columns" :key="col.key" class="p-4">
+            <tr v-for="i in 5" :key="i">
+              <td
+                v-for="col in props.columns"
+                :key="col.key"
+                :class="props.compact ? 'p-2' : 'p-4'"
+              >
                 <div
-                  :class="['h-4 skeleton rounded', col.align === 'center' ? 'mx-auto w-12' : col.align === 'right' ? 'ml-auto w-16' : 'w-24', ]">
-                </div>
+                  :class="[
+                    'h-4 skeleton rounded',
+                    col.align === 'center'
+                      ? 'mx-auto w-12'
+                      : col.align === 'right'
+                        ? 'ml-auto w-16'
+                        : 'w-24',
+                  ]"
+                ></div>
               </td>
             </tr>
           </template>
 
           <template v-else>
-            <tr v-for="(item, index) in sortedItems" :key="item.id || index" class="hover:bg-slate-50 transition-colors">
-              <td v-for="col in props.columns" :key="col.key" :class="[ 'p-4 whitespace-nowrap',
-                   col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : '', ]">
-                <slot :name="`cell(${col.key})`" :item="item" :value="item[col.key]">
+            <tr
+              v-for="(item, index) in props.items"
+              :key="item.id || index"
+              class="hover:bg-slate-50 transition-colors cursor-pointer select-none"
+              @click="emit('row-click', item)"
+              @dblclick="emit('row-dblclick', item)"
+            >
+              <td
+                v-for="col in props.columns"
+                :key="col.key"
+                :class="[
+                  props.compact ? 'p-2' : 'p-4',
+                  'whitespace-nowrap',
+                  col.align === 'center'
+                    ? 'text-center'
+                    : col.align === 'right'
+                      ? 'text-right'
+                      : '',
+                ]"
+              >
+                <slot :name="`cell(${String(col.key)})`" :item="item" :value="item[col.key]">
                   <span class="text-slate-600">{{ item[col.key] || '-' }}</span>
                 </slot>
               </td>
             </tr>
 
-            <tr v-if="sortedItems.length === 0">
-              <td :colspan="props.columns.length" class="p-8 text-center text-slate-500">
-                <slot name="empty">No records found.</slot>
+            <tr v-if="props.items.length === 0">
+              <td :colspan="props.columns.length" class="p-8 text-center text-slate-500 min-h-50">
+                <div class="py-20">
+                  <slot name="empty">No records found.</slot>
+                </div>
               </td>
             </tr>
           </template>
@@ -62,44 +114,33 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-import type { Column } from '@/types'
-import { ArrowUp, ArrowDown, ChevronsUpDown } from 'lucide-vue-next'
+<script setup lang="ts" generic="T extends Record<string, any>">
+import type { Column, SortOrder } from '@/types'
+import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-vue-next'
 
 const props = defineProps<{
-  readonly columns: Column[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly items: any[]
+  readonly columns: Column<T>[]
+  readonly items: T[]
   readonly loading?: boolean
+  readonly currentSortKey?: string
+  readonly currentSortOrder?: SortOrder
+  readonly compact?: boolean
 }>()
 
-const sortKey = ref<string | null>(null)
-const sortOrder = ref<'asc' | 'desc'>('asc')
+const emit = defineEmits<{
+  (e: 'row-dblclick', item: T): void
+  (e: 'row-click', item: T): void
+  (e: 'sort', payload: { key: string; order: SortOrder }): void
+}>()
 
-const toggleSort = (key: string) => {
-  if (sortKey.value === key) {
-    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
-  } else {
-    sortKey.value = key
-    sortOrder.value = 'asc'
+function handleSort(key: string) {
+  let newOrder: SortOrder = 'asc'
+
+  if (props.currentSortKey === key) {
+    if (props.currentSortOrder === 'asc') newOrder = 'desc'
+    else if (props.currentSortOrder === 'desc') newOrder = null
   }
+
+  emit('sort', { key, order: newOrder })
 }
-
-const sortedItems = computed(() => {
-  if (!sortKey.value) return props.items
-
-  return [...props.items].sort((a, b) => {
-    const valA = a[sortKey.value!]
-    const valB = b[sortKey.value!]
-
-    // Handle null/undefined - push to bottom
-    if (valA === null || valA === undefined) return 1
-    if (valB === null || valB === undefined) return -1
-
-    if (valA < valB) return sortOrder.value === 'asc' ? -1 : 1
-    if (valA > valB) return sortOrder.value === 'asc' ? 1 : -1
-    return 0
-  })
-})
 </script>

@@ -7,18 +7,15 @@ const Login = () => import('@/Views/LoginView.vue')
 const AppLayout = () => import('@/Components/templates/AppLayout.vue')
 const Dashboard = () => import('@/Views/DashboardView.vue')
 const Applications = () => import('@/Views/ApplicationsView.vue')
-const PublicApplicationForm = () => import('@/Views/PublicApplicationForm.vue')
-const Drivers = () => import('@/Views/DriversView.vue')
+const PublicApplicationForm = () => import('@/Views/ApplyFormView.vue')
 const Vehicles = () => import('@/Views/VehiclesView.vue')
-const DocumentRegistry = () => import('@/Views/DocumentRegistryView.vue')
-const MainReports = () => import('@/Views/MainReports.vue')
-const AuditReports = () => import('@/Views/AuditReportsView.vue')
 const Settings = () => import('@/Views/SettingsView.vue')
+const UserManagement = () => import('@/Views/UserManagementView.vue')
 const DriverProfile = () => import('@/Views/DriverProfileView.vue')
 const ApplicantProfile = () => import('@/Views/ApplicantProfileView.vue')
+const PublicUploadView = () => import('@/Views/PublicUploadView.vue')
 const Notfound = () => import('@/Views/NotFound.vue')
 
-// todo add navigation guards for auth using meta.requiresAuth(meta fields) on routes that need auth
 const routes: RouteRecordRaw[] = [
   {
     path: '/login',
@@ -26,11 +23,17 @@ const routes: RouteRecordRaw[] = [
     component: Login,
     meta: { requiresAuth: false },
   },
-{
+  {
     path: '/apply',
     name: 'apply',
     component: PublicApplicationForm,
     meta: { requiresAuth: false, title: 'Apply Now' },
+  },
+  {
+    path: '/driver/upload',
+    name: 'driver-upload',
+    component: PublicUploadView,
+    meta: { requiresAuth: false, title: 'Secure Document Upload' },
   },
   {
     path: '/',
@@ -44,15 +47,6 @@ const routes: RouteRecordRaw[] = [
         component: Dashboard,
         meta: {
           title: 'Safety & Compliance Overview',
-          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-        },
-      },
-      {
-        path: 'drivers',
-        name: 'drivers',
-        component: Drivers,
-        meta: {
-          title: 'Driver Qualification Files',
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
         },
       },
@@ -75,26 +69,6 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: 'docs',
-        name: 'docs',
-        component: DocumentRegistry,
-        meta: {
-          title: 'Document Registry',
-          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-        },
-      },
-      {
-        path: 'audit',
-        name: 'audit',
-        component: AuditReports,
-        meta: {
-          title: 'Management & Audit Reports',
-          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-        },
-      },
-
-
-      {
         path: 'applications',
         name: 'applications',
         component: Applications,
@@ -112,16 +86,6 @@ const routes: RouteRecordRaw[] = [
           subtitle: 'Application Details',
         },
       },
-
-      {
-        path: 'reports',
-        name: 'reports',
-        component: MainReports,
-        meta: {
-          title: ' Main Reports',
-          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-        },
-      },
       {
         path: 'settings',
         name: 'settings',
@@ -129,6 +93,16 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'System Settings',
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
+        },
+      },
+      {
+        path: 'settings/users',
+        name: 'user-management',
+        component: UserManagement,
+        meta: {
+          title: 'User Management',
+          subtitle: 'Manage System Access & Roles',
+          requiresAdmin: true,
         },
       },
     ],
@@ -157,9 +131,14 @@ router.beforeEach(async (to, from, next) => {
   const isAuthenticated = authStore.isAuthenticated
 
   if (to.meta.requiresAuth && !isAuthenticated) {
+    console.log('[Router] Unauthorized access to', to.path)
     next('/login')
   } else if (to.path === '/login' && isAuthenticated) {
+    console.log('[Router] Already authenticated, redirecting to dashboard')
     next('/dashboard')
+  } else if (to.meta.requiresAdmin && authStore.user?.role !== 'Admin') {
+    // Redirect to 403 error page using the improved NotFound view logic
+    next({ name: 'NotFound', query: { code: 403 } })
   } else {
     next()
   }
