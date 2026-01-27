@@ -83,8 +83,15 @@ const dedupedDocuments = computed(() => {
       const timeDiff = Math.abs(dayjs(log.date).valueOf() - dayjs(existing.date).valueOf())
       if (timeDiff <= 10000) {
         // Prefer the one with a real user name
-        const existingIsSystem = systemUsers.includes((existing.user || '').toLowerCase())
-        const currentIsSystem = systemUsers.includes((log.user || '').toLowerCase())
+        // Map user string to enum value for comparison
+        const normalizeUser = (user: string | undefined) => {
+          const u = (user || '').toLowerCase()
+          if (u === 'system audit' || u === 'system') return 'system'
+          if (u === 'current user') return 'current user'
+          return u
+        }
+        const existingIsSystem = systemUsers.includes(normalizeUser(existing.user) as typeof SYSTEM_USERS[number])
+        const currentIsSystem = systemUsers.includes(normalizeUser(log.user) as typeof SYSTEM_USERS[number])
 
         if (existingIsSystem && !currentIsSystem) {
           seen.set(key, log) // Replace with better user

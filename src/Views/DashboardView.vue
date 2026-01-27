@@ -10,6 +10,7 @@
         :value="statsData?.alertsCount ?? 0"
         :loading="isLoading"
         is-clickable
+        @click="handleFilterClick({ expiration: ['expiring', 'expired'] })"
       />
       <StatCard
         type="license"
@@ -17,7 +18,7 @@
         :value="statsData?.expiringLicense ?? 0"
         :loading="isLoading"
         is-clickable
-        @click="router.push('/drivers?expiration=expiring')"
+        @click="handleFilterClick({ expiration: 'expiring' })"
       />
       <StatCard
         type="clearinghouse"
@@ -25,7 +26,7 @@
         :value="statsData?.expiringClearinghouse ?? 0"
         :loading="isLoading"
         is-clickable
-        @click="router.push('/drivers?expiration=expiring')"
+        @click="handleFilterClick({ expiration: 'expiring' })"
       />
       <StatCard
         type="medical"
@@ -33,7 +34,7 @@
         :value="statsData?.expiringMedCards ?? 0"
         :loading="isLoading"
         is-clickable
-        @click="router.push('/drivers?expiration=expiring')"
+        @click="handleFilterClick({ expiration: 'expiring' })"
       />
       <StatCard
         type="applications"
@@ -49,7 +50,7 @@
         :value="statsData?.annualRecordReview ?? 0"
         :loading="isLoading"
         is-clickable
-        @click="router.push('/drivers?expiration=expiring')"
+        @click="handleFilterClick({ expiration: 'expiring' })"
       />
       <StatCard
         type="audit"
@@ -138,7 +139,7 @@
     </div>
 
     <!-- Drivers Module Section -->
-    <div class="mt-6">
+    <div class="mt-6" ref="driversSection">
       <DriversModule />
     </div>
 
@@ -169,7 +170,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute, type LocationQueryRaw } from 'vue-router'
 import StatCard from '@/Components/templates/StatCard.vue'
 import DriversModule from '@/Components/templates/DriversModule.vue'
 import DriverFormModal from '@/Components/templates/forms/DriverFormModal.vue'
@@ -185,8 +186,12 @@ import SmallButton from '@/Components/ui/buttons/SmallButton.vue'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 
 const router = useRouter()
+const route = useRoute()
 const { statsData, isLoading, fetchDashboardStats } = useDashboard()
 const modalStore = useModalStore()
+
+// Refs
+const driversSection = ref<HTMLElement | null>(null)
 
 // Upload Modal State
 const isUploadModalOpen = ref(false)
@@ -203,13 +208,17 @@ const formatDate = (date?: string) => {
   return dayjs(date).format('MM/DD/YYYY')
 }
 
+function handleFilterClick(newQuery: LocationQueryRaw) {
+  router.replace({
+    query: { ...route.query, ...newQuery },
+  })
+  driversSection.value?.scrollIntoView({ behavior: 'smooth' })
+}
+
 const navigateToDriver = (alert: Alert) => {
   const searchTerm = alert.entityName || alert.entity
   if (searchTerm) {
-    router.push({
-      path: '/drivers',
-      query: { search: searchTerm },
-    })
+    handleFilterClick({ search: searchTerm })
   }
 }
 

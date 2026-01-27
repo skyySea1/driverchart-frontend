@@ -8,7 +8,7 @@ export const navigateToDriver = (alert: Alert) => {
   const driverName = alert.entityName || alert.entity
   if (driverName) {
     router.push({
-      path: '/drivers',
+      path: '/dashboard',
       query: { search: driverName },
     })
   }
