@@ -4,7 +4,7 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-xl font-bold text-slate-900">Drivers List</h1>
+        <h1 class="text-xl font-bold text-slate-900" data-testid="drivers-module-title">Drivers List</h1>
         <p class="text-sm text-slate-500">Manage all drivers</p>
       </div>
 
@@ -14,7 +14,6 @@
           @click="generateDriverListReport(driversData)"
           label="Export List"
           :icon="FileText"
-
         />
         <BaseButton
           @click="openNew"
@@ -69,7 +68,7 @@
       </div>
     </div>
 
-    <div class="overflow-x-auto -mx-6 px-6 border-t border-slate-100 min-h-[400px]">
+    <div class="overflow-x-auto -mx-6 px-6 border-t border-slate-100 min-h-100">
       <DefaultTable
         :columns="tableColumns"
         :items="driversData"
@@ -533,5 +532,4 @@ async function deleteDriver() {
     console.error('Error deleting driver:', err)
   }
 }
-
 </script>
