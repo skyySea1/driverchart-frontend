@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-<!--review why this use dynamic class binding -->
+    <!--review why this use dynamic class binding -->
     <input
       :type="type"
       :required="required"
@@ -44,7 +44,9 @@
       :maxlength="maxlength"
       @input="handleInput"
     />
-    <p v-if="error" class="text-[10px] text-red-500 font-semibold mt-1 animate-pulse">{{ error }}</p>
+    <p v-if="error" class="text-[10px] text-red-500 font-semibold mt-1 animate-pulse">
+      {{ error }}
+    </p>
   </div>
 </template>
 

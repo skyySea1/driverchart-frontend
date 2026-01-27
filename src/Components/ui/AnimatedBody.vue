@@ -1,10 +1,13 @@
 <template>
   <div
-    class="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden">
-
+    class="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center p-4 relative overflow-hidden"
+  >
     <!-- SVG pulsing Background -->
-    <svg class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none animate-pulse-slow"
-      xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <svg
+      class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none animate-pulse-slow"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMid slice"
+    >
       <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stop-color="#4f46e5" />
@@ -23,7 +26,4 @@
   </div>
 </template>
 
-<script setup lang="ts">
-
-</script>
-
+<script setup lang="ts"></script>

@@ -3,10 +3,7 @@
     v-cursor
     type="button"
     :title="title"
-    :class="[
-      'p-1 rounded transition-all border',
-      computedClasses
-    ]"
+    :class="['p-1 rounded transition-all border', computedClasses]"
     @click="$emit('click')"
     :disabled="status === 'loading'"
   >
@@ -23,16 +20,19 @@ import { computed } from 'vue'
 import type { Component } from 'vue'
 import { Check, Loader2, X } from 'lucide-vue-next'
 
-const props = withDefaults(defineProps<{
-  icon: Component
-  title?: string
-  variant?: 'default' | 'primary' | 'danger'
-  status?: 'idle' | 'loading' | 'success' | 'error'
-}>(), {
-  title: '',
-  variant: 'default',
-  status: 'idle'
-})
+const props = withDefaults(
+  defineProps<{
+    icon: Component
+    title?: string
+    variant?: 'default' | 'primary' | 'danger'
+    status?: 'idle' | 'loading' | 'success' | 'error'
+  }>(),
+  {
+    title: '',
+    variant: 'default',
+    status: 'idle',
+  },
+)
 
 defineEmits<{ (e: 'click'): void }>()
 
