@@ -301,7 +301,7 @@
       <!-- Documents Tab -->
       <div v-else-if="activeTab === 'documents'">
         <ComplianceDocuments
-          title="All Apllicant Related Files"
+          title="All Applicant Related Files"
           v-if="applicant && applicantAsDriver"
           :driver="applicantAsDriver"
           :logs="documents"
