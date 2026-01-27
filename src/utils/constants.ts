@@ -5,7 +5,9 @@ const APP_ID = import.meta.env.VITE_APP_ID || 'driverchart'
 export const STATUS_ACTIVE = 'Active'
 export const STATUS_INACTIVE = 'Inactive'
 export const MOBILE_BREAKPOINT = 768
-export const SYSTEM_USERS = ['current user', 'system']
+export const SYSTEM_USER_CURRENT = 'current user'
+export const SYSTEM_USER_SYSTEM = 'system'
+export const SYSTEM_USERS = [SYSTEM_USER_CURRENT, SYSTEM_USER_SYSTEM] as const
 
 export const STATUS_MAINTENANCE = 'Maintenance'
 export const APP_NAME = 'CharterSafe'

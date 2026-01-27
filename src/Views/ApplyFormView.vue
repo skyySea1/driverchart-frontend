@@ -2221,10 +2221,12 @@ function isVehicleSelected(type: string) {
 
 function toggleVehicleType(type: VehicleTypes, checked: boolean) {
   if (checked) {
-    form.value.vehicleExperience.push({ type })
+    // Add the vehicle type if it is not already selected
     if (!isVehicleSelected(type)) {
       form.value.vehicleExperience.push({ type })
     }
+  } else {
+    // Remove the vehicle type if it is currently selected
     const index = form.value.vehicleExperience.findIndex((v) => v.type === type)
     if (index !== -1) {
       form.value.vehicleExperience.splice(index, 1)

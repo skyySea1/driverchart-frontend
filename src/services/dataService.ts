@@ -19,7 +19,7 @@ import { db } from './firebaseService'
 import { COLLECTION_PATHS } from '@/utils/constants'
 import { parseDriverDoc } from '@/utils/firestoreParsers'
 
-// migrate for enitty based service and document handling
+// migrate for entity based service and document handling
 export const dataService = {
   // --- Drivers ---
   getDrivers: async (): Promise<
@@ -334,7 +334,7 @@ export const dataService = {
     if (!application.id) throw new Error('Application ID missing')
     await apiClient.put(`/applications/${application.id}`, application)
   },
-  // todo this meethod must be used or improved for hiring process too
+  // todo this method must be used or improved for hiring process too
   updateApplicationStatus: async (
     id: string,
     status: 'Pending' | 'Rejected' | 'Hired',
@@ -352,82 +352,97 @@ export const dataService = {
   // --- Dashboard Stats ---
   getDashboardStats: async (): Promise<DashboardStats> => {
     console.log('[Dashboard] Fetching stats...')
-    // Removed try/catch block to let errors propagate to the caller (useDashboard)
-    // allowing it to maintain the previous valid state instead of overwriting with zeros.
-    const [driversRes, vehiclesRes, alertsRes, applicationsRes] = await Promise.all([
-      apiClient.get<Driver[]>('/drivers'),
-      apiClient.get<Vehicle[]>('/vehicles'),
-      apiClient.get<Alert[]>('/expiration/alerts'),
-      apiClient.get<Applications[]>('/applications'),
-    ])
+    try {
+      const [driversRes, vehiclesRes, alertsRes, applicationsRes] = await Promise.all([
+        apiClient.get<Driver[]>('/drivers'),
+        apiClient.get<Vehicle[]>('/vehicles'),
+        apiClient.get<Alert[]>('/expiration/alerts'),
+        apiClient.get<Applications[]>('/applications'),
+      ])
 
-    const drivers = driversRes.data
-    const vehicles = vehiclesRes.data
-    const alerts = alertsRes.data
-    const applications = applicationsRes.data
+      const drivers = driversRes.data
+      const vehicles = vehiclesRes.data
+      const alerts = alertsRes.data
+      const applications = applicationsRes.data
 
-    const newApplicationsCount = applications.filter((a) => a.status === 'New').length
+      const newApplicationsCount = applications.filter((a) => a.status === 'New').length
 
-    const today = dayjs().startOf('day')
+      const today = dayjs().startOf('day')
 
-    const isExpiringSoon = (dateStr?: string) => {
-      if (!dateStr) return false
-      const diff = dayjs(dateStr).diff(today, 'day')
-      return diff >= 0 && diff <= 30
+      const isExpiringSoon = (dateStr?: string) => {
+        if (!dateStr) return false
+        const diff = dayjs(dateStr).diff(today, 'day')
+        return diff >= 0 && diff <= 30
+      }
+
+      const isExpired = (dateStr?: string) => {
+        if (!dateStr) return false
+        return dayjs(dateStr).isBefore(today, 'day')
+      }
+
+      const {
+        expiringMedCardsDrivers,
+        expiringLicenseDrivers,
+        expiringClearinghouseDrivers,
+        expiredMvrDrivers,
+      } = drivers.reduce<{
+        expiringMedCardsDrivers: Driver[]
+        expiringLicenseDrivers: Driver[]
+        expiringClearinghouseDrivers: Driver[]
+        expiredMvrDrivers: Driver[]
+      }>(
+        (acc, d) => {
+          if (isExpiringSoon(d.medical?.expiryDate)) {
+            acc.expiringMedCardsDrivers.push(d)
+          }
+          if (isExpiringSoon(d.license?.expiryDate)) {
+            acc.expiringLicenseDrivers.push(d)
+          }
+          if (isExpiringSoon(d.drugAlcohol?.expiryDate)) {
+            acc.expiringClearinghouseDrivers.push(d)
+          }
+          if (isExpired(d.mvr?.expiryDate)) {
+            acc.expiredMvrDrivers.push(d)
+          }
+          return acc
+        },
+        {
+          expiringMedCardsDrivers: [],
+          expiringLicenseDrivers: [],
+          expiringClearinghouseDrivers: [],
+          expiredMvrDrivers: [],
+        },
+      )
+
+      const stats = {
+        totalDrivers: drivers.length,
+        totalVehicles: vehicles.length,
+        alertsCount: alerts.length,
+        alerts: alerts,
+        expiringMedCards: expiringMedCardsDrivers.length,
+        expiringLicense: expiringLicenseDrivers.length,
+        expiringClearinghouse: expiringClearinghouseDrivers.length,
+        auditScore: '94%',
+        newApplications: newApplicationsCount,
+        annualRecordReview: expiredMvrDrivers.length,
+      }
+      return stats
+    } catch (error) {
+      console.error('[Dashboard] Failed to fetch stats', error)
+      const fallbackStats: DashboardStats = {
+        totalDrivers: 0,
+        totalVehicles: 0,
+        alertsCount: 0,
+        alerts: [],
+        expiringMedCards: 0,
+        expiringLicense: 0,
+        expiringClearinghouse: 0,
+        auditScore: '0%',
+        newApplications: 0,
+        annualRecordReview: 0,
+      }
+      return fallbackStats
     }
-
-    const isExpired = (dateStr?: string) => {
-      if (!dateStr) return false
-      return dayjs(dateStr).isBefore(today, 'day')
-    }
-
-    const {
-      expiringMedCardsDrivers,
-      expiringLicenseDrivers,
-      expiringClearinghouseDrivers,
-      expiredMvrDrivers,
-    } = drivers.reduce<{
-      expiringMedCardsDrivers: Driver[]
-      expiringLicenseDrivers: Driver[]
-      expiringClearinghouseDrivers: Driver[]
-      expiredMvrDrivers: Driver[]
-    }>(
-      (acc, d) => {
-        if (isExpiringSoon(d.medical?.expiryDate)) {
-          acc.expiringMedCardsDrivers.push(d)
-        }
-        if (isExpiringSoon(d.license?.expiryDate)) {
-          acc.expiringLicenseDrivers.push(d)
-        }
-        if (isExpiringSoon(d.drugAlcohol?.expiryDate)) {
-          acc.expiringClearinghouseDrivers.push(d)
-        }
-        if (isExpired(d.mvr?.expiryDate)) {
-          acc.expiredMvrDrivers.push(d)
-        }
-        return acc
-      },
-      {
-        expiringMedCardsDrivers: [],
-        expiringLicenseDrivers: [],
-        expiringClearinghouseDrivers: [],
-        expiredMvrDrivers: [],
-      },
-    )
-
-    const stats = {
-      totalDrivers: drivers.length,
-      totalVehicles: vehicles.length,
-      alertsCount: alerts.length,
-      alerts: alerts,
-      expiringMedCards: expiringMedCardsDrivers.length,
-      expiringLicense: expiringLicenseDrivers.length,
-      expiringClearinghouse: expiringClearinghouseDrivers.length,
-      auditScore: '94%',
-      newApplications: newApplicationsCount,
-      annualRecordReview: expiredMvrDrivers.length,
-    }
-    return stats
   },
 
   sendNotifications: async (
