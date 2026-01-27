@@ -1,0 +1,99 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserRole() {
+      // Custom claim set by backend
+      return request.auth.token.role;
+    }
+    
+    function hasRole(roles) {
+      return isAuthenticated() && getUserRole() in roles;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Match the specific app path structure
+    // Collection path: artifacts/{appId}/public/data/{collection}
+    // We use a wildcard for appId to support different environments/configs
+    match /artifacts/{appId}/public/data {
+      
+      // Users Collection
+      // Path: artifacts/{appId}/public/data/users/{userId}
+      match /users/{userId} {
+        // Admin: Full Access
+        allow create, delete: if hasRole(['Admin']);
+        
+        // Read: Admin or Self
+        allow read: if hasRole(['Admin']) || isOwner(userId);
+        
+        // Update: Admin or Self (Self updates might be restricted in API, but allowed here for flexibility)
+        allow update: if hasRole(['Admin']) || isOwner(userId);
+      }
+      
+      // Drivers Collection
+      // Path: artifacts/{appId}/public/data/drivers/{driverId}
+      match /drivers/{driverId} {
+        // Read: All authenticated roles
+        allow read: if hasRole(['Admin', 'Manager', 'Dispatcher', 'Auditor', 'Viewer']);
+        
+        // Create/Update: Admin, Manager
+        allow create, update: if hasRole(['Admin', 'Manager']);
+        
+        // Delete: Admin only
+        allow delete: if hasRole(['Admin']);
+      }
+      
+      // Vehicles Collection
+      // Path: artifacts/{appId}/public/data/vehicles/{vehicleId}
+      match /vehicles/{vehicleId} {
+        // Read: All authenticated roles
+        allow read: if hasRole(['Admin', 'Manager', 'Dispatcher', 'Auditor', 'Viewer']);
+        
+        // Write: Admin, Manager, Dispatcher
+        allow write: if hasRole(['Admin', 'Manager', 'Dispatcher']);
+      }
+      
+      // Applications Collection
+      // Path: artifacts/{appId}/public/data/applications/{applicationId}
+      match /applications/{applicationId} {
+        // Read/Write: Admin, Manager
+        allow read, write: if hasRole(['Admin', 'Manager']);
+        // Note: Public submission usually goes through API or Cloud Function, 
+        // so we don't enable public create here unless specifically needed.
+      }
+      
+      // Audit Logs
+      // Path: artifacts/{appId}/public/data/audit_logs/{logId}
+      match /audit_logs/{logId} {
+        allow read: if hasRole(['Admin', 'Manager', 'Auditor']);
+        // Logs are usually append-only by system, but if frontend needs to create:
+        allow create: if hasRole(['Admin', 'Manager']);
+        allow update, delete: if false;
+      }
+      
+      // Document Logs
+      // Path: artifacts/{appId}/public/data/document_logs/{logId}
+      match /document_logs/{logId} {
+        allow read: if hasRole(['Admin', 'Manager', 'Auditor', 'Dispatcher']);
+        allow create: if hasRole(['Admin', 'Manager']);
+        allow update, delete: if false;
+      }
+
+      // Memos
+      // Path: artifacts/{appId}/public/data/memos/{memoId}
+      match /memos/{memoId} {
+        allow read: if isAuthenticated();
+        allow write: if hasRole(['Admin', 'Manager']);
+      }
+    }
+  }
+}
