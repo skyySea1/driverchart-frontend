@@ -9,10 +9,13 @@ vi.mock('@/services/dataService', () => ({
   },
 }))
 
+import { resetDashboardState } from '@/Composables/useDashboard'
+
 describe('useDashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.useFakeTimers()
+    resetDashboardState()
   })
 
   it('should initialize with default values', () => {
