@@ -7,7 +7,7 @@
     <div class="space-y-1">
       <label class="block text-xs font-bold text-slate-700"
         >Bus Number <span class="text-red-500">*</span></label
-    >
+      >
       <input
         v-model.trim="formData.busNumber"
         type="text"
@@ -106,7 +106,7 @@ watch(
         vin: newVal.vin ?? '',
         lastAnnualInspection: newVal.lastAnnualInspection ?? '',
         mileage: newVal.mileage ?? 0,
-        vehicleStatus: newVal.vehicleStatus ?? 'Active'
+        vehicleStatus: newVal.vehicleStatus ?? 'Active',
       }
     } else {
       formData.value = {
@@ -142,7 +142,7 @@ async function saveVehicle() {
 
   if (!result.success) {
     const issues = result.error.issues
-    errorMsg.value = issues.map(i => i.message).join('. ')
+    errorMsg.value = issues.map((i) => i.message).join('. ')
     return
   }
 
@@ -152,9 +152,9 @@ async function saveVehicle() {
     const dataToSave = result.data
 
     if (props.initialData?.id) {
-        await dataService.updateVehicle({ ...dataToSave, id: props.initialData.id })
+      await dataService.updateVehicle({ ...dataToSave, id: props.initialData.id })
     } else {
-        await dataService.addVehicle(dataToSave)
+      await dataService.addVehicle(dataToSave)
     }
     emit('saved')
   } catch (error) {

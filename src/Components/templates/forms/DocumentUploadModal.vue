@@ -63,7 +63,6 @@ import BaseAlert from '@/Components/ui/BaseAlert.vue'
 import InputGroup from '@/Components/ui/InputGroup.vue'
 import FileInput from '@/Components/ui/FileInput.vue'
 import { Info, Upload, X } from 'lucide-vue-next'
-import { dataService } from '@/services/dataService'
 
 const props = defineProps<{
   isOpen: boolean
@@ -107,6 +106,13 @@ function handleFileSelected(event: Event) {
   }
 }
 
+import { useDocumentsStore } from '@/stores/documentsStore'
+
+// ... existing imports ...
+
+// Replace dataService usage
+const documentStore = useDocumentsStore()
+
 async function handleUpload() {
   if (!selectedFile.value) {
     errorMsg.value = 'Please select a file to upload.'
@@ -122,24 +128,22 @@ async function handleUpload() {
   errorMsg.value = ''
 
   try {
-    await dataService.uploadDocument(
-      props.driverId,
-      props.documentType,
-      selectedFile.value,
-      new Date().toISOString(),
-      props.driverName,
-      form.expiryDate,
-      props.isApplicant ? props.driverName : undefined
-    )
+    await documentStore.uploadDocument({
+      entityId: props.driverId,
+      documentType: props.documentType,
+      file: selectedFile.value,
+      entityName: props.driverName,
+      expiryDate: form.expiryDate,
+      isApplicant: props.isApplicant,
+    })
 
     emit('success')
     emit('close')
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('Upload failed:', err)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (err && typeof err === 'object' && 'message' in err && typeof (err as any).message === 'string') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      errorMsg.value = (err as any).message
+     
+    if (err instanceof Error) {
+      errorMsg.value = err.message
     } else {
       errorMsg.value = 'Failed to upload document. Please try again.'
     }
