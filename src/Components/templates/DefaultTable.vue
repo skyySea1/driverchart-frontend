@@ -1,6 +1,8 @@
 <!-- src/Components/templates/DefaultTable.vue -->
 <template>
-  <div class="bg-white rounded-lg shadow overflow-hidden border border-slate-200 w-full transition-all duration-300">
+  <div
+    class="bg-white rounded-lg shadow overflow-hidden border border-slate-200 w-full transition-all duration-300"
+  >
     <div class="overflow-x-auto w-full">
       <table :class="['w-full text-left border-collapse', props.compact ? 'text-xs' : 'text-sm']">
         <thead class="bg-slate-50 text-slate-700 font-semibold border-b">
@@ -18,19 +20,30 @@
                     : col.align === 'left'
                       ? 'text-left'
                       : '',
-                col.sortable ? 'cursor-pointer hover:bg-slate-100 hover:text-slate-900' : ''
+                col.sortable ? 'cursor-pointer hover:bg-slate-100 hover:text-slate-900' : '',
               ]"
               @click="col.sortable ? handleSort(String(col.key)) : null"
             >
-              <div class="flex items-center gap-1" :class="{
-                'justify-center': col.align === 'center',
-                'justify-end': col.align === 'right',
-                'justify-start': col.align === 'left' || !col.align
-              }">
+              <div
+                class="flex items-center gap-1"
+                :class="{
+                  'justify-center': col.align === 'center',
+                  'justify-end': col.align === 'right',
+                  'justify-start': col.align === 'left' || !col.align,
+                }"
+              >
                 {{ col.label }}
                 <span v-if="col.sortable" class="text-slate-400">
-                  <ChevronUp v-if="props.currentSortKey === col.key && props.currentSortOrder === 'asc'" class="w-4 h-4 text-blue-600" />
-                  <ChevronDown v-else-if="props.currentSortKey === col.key && props.currentSortOrder === 'desc'" class="w-4 h-4 text-blue-600" />
+                  <ChevronUp
+                    v-if="props.currentSortKey === col.key && props.currentSortOrder === 'asc'"
+                    class="w-4 h-4 text-blue-600"
+                  />
+                  <ChevronDown
+                    v-else-if="
+                      props.currentSortKey === col.key && props.currentSortOrder === 'desc'
+                    "
+                    class="w-4 h-4 text-blue-600"
+                  />
                   <ChevronsUpDown v-else class="w-4 h-4 opacity-50 hover:opacity-100" />
                 </span>
               </div>
@@ -41,7 +54,11 @@
           <!-- Skeleton State -->
           <template v-if="props.loading">
             <tr v-for="i in 5" :key="i">
-              <td v-for="col in props.columns" :key="col.key" :class="props.compact ? 'p-2' : 'p-4'">
+              <td
+                v-for="col in props.columns"
+                :key="col.key"
+                :class="props.compact ? 'p-2' : 'p-4'"
+              >
                 <div
                   :class="[
                     'h-4 skeleton rounded',

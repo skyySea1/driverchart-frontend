@@ -28,7 +28,10 @@
         </div>
 
         <!-- Chat Area -->
-        <div ref="chatContainer" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-900/95 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
+        <div
+          ref="chatContainer"
+          class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-900/95 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900"
+        >
           <div v-if="messages.length === 0" class="text-center text-slate-500 text-sm mt-8 px-4">
             <Bot :size="32" class="mx-auto mb-2 opacity-50" />
             <p>How can I help you with DOT compliance today?</p>
@@ -48,7 +51,11 @@
                   : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-bl-none',
               ]"
             >
-              <div v-if="msg.role === 'assistant'" class="prose prose-invert prose-sm max-w-none" v-html="formatMessage(msg.content)"></div>
+              <div
+                v-if="msg.role === 'assistant'"
+                class="prose prose-invert prose-sm max-w-none"
+                v-html="formatMessage(msg.content)"
+              ></div>
               <span v-else>{{ msg.content }}</span>
             </div>
           </div>
@@ -56,8 +63,12 @@
           <div v-if="isThinking" class="flex items-center gap-2 text-xs text-blue-400 p-2">
             <div class="flex space-x-1">
               <div class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce"></div>
-              <div class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-              <div class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+              <div
+                class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:0.2s]"
+              ></div>
+              <div
+                class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:0.4s]"
+              ></div>
             </div>
             <span>Analyzing regulations...</span>
           </div>
@@ -95,7 +106,10 @@
       </Transition>
 
       <!-- Ping effect if closed and inactive for a while (optional enhancement) -->
-      <span v-if="!isOpen && messages.length > 0" class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-900"></span>
+      <span
+        v-if="!isOpen && messages.length > 0"
+        class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-900"
+      ></span>
     </button>
   </div>
 </template>
@@ -127,10 +141,8 @@ function toggleOpen() {
 
 function formatMessage(content: string) {
   // Simple formatting for line breaks and basic markdown-like structures
-  const formatted = content
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>')
-  
+  const formatted = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')
+
   return DOMPurify.sanitize(formatted)
 }
 
@@ -157,16 +169,24 @@ async function handleAskAI() {
     const response = await askRegulatoryAssistant(query)
     messages.value.push({ role: 'assistant', content: response })
   } catch {
-      messages.value.push({ role: 'assistant', content: 'Sorry, I encountered an error connecting to the regulatory database. Please try again.' })
+    messages.value.push({
+      role: 'assistant',
+      content:
+        'Sorry, I encountered an error connecting to the regulatory database. Please try again.',
+    })
   } finally {
     isThinking.value = false
     scrollToBottom()
   }
 }
 
-watch(messages, () => {
-  scrollToBottom()
-}, { deep: true })
+watch(
+  messages,
+  () => {
+    scrollToBottom()
+  },
+  { deep: true },
+)
 </script>
 
 <style scoped>

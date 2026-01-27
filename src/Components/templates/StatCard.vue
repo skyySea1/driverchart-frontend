@@ -2,6 +2,7 @@
 <template>
   <div
     @click="$emit('click')"
+    :data-testid="`stat-card-${props.type}`"
     :class="[
       'bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 min-h-27.5 flex items-center gap-4 relative',
       isClickable ? 'cursor-pointer hover:border-blue-300' : '',

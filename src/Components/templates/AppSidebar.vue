@@ -28,6 +28,7 @@
         v-for="item in visibleNavItems"
         :key="item.id"
         @click="$emit('navigate', item.id)"
+        :data-testid="`nav-item-${item.id}`"
         :class="[
           '-item flex items-center gap-3 w-full text-left p-3 rounded-lg transition-colors duration-200',
           props.currentRoute === item.id
@@ -54,9 +55,7 @@
     <!-- User Section (Footer) -->
     <footer class="sidebar__footer p-4 border-t border-slate-800">
       <UserBadge :show-info="!props.collapsed" />
-      <div
-        v-show="!props.collapsed"
-        class="text-xs text-slate-500 text-center mt-3">
+      <div v-show="!props.collapsed" class="text-xs text-slate-500 text-center mt-3">
         &copy; 2025 CharterSafe
       </div>
     </footer>
