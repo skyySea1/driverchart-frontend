@@ -25,7 +25,7 @@ export const useNotificationStore = defineStore('notifications', () => {
   }
 
   const unreadCount = computed(() => {
-    return notifications.value.filter(n => !n.read).length
+    return notifications.value.filter((n) => !n.read).length
   })
 
   const fetchNotifications = async () => {
@@ -33,13 +33,15 @@ export const useNotificationStore = defineStore('notifications', () => {
     try {
       const alerts = await dataService.getAlerts()
       const readStatus = getReadStatus()
-      
-      notifications.value = alerts.map(alert => ({
-        ...alert,
-        read: !!readStatus[alert.id],
-        createdAt: alert.dueDate // Fallback to dueDate as creation relative for mock feel
-      })).sort((a, b) => dayjs(b.dueDate).diff(dayjs(a.dueDate)))
-      
+
+      notifications.value = alerts
+        .map((alert) => ({
+          ...alert,
+          read: !!readStatus[alert.id],
+          createdAt: alert.dueDate, // Fallback to dueDate as creation relative for mock feel
+        }))
+        .sort((a, b) => dayjs(b.dueDate).diff(dayjs(a.dueDate)))
+
       error.value = null
     } catch (err) {
       console.error('Failed to fetch notifications:', err)
@@ -50,7 +52,7 @@ export const useNotificationStore = defineStore('notifications', () => {
   }
 
   const markAsRead = (id: string) => {
-    const notification = notifications.value.find(n => n.id === id)
+    const notification = notifications.value.find((n) => n.id === id)
     if (notification) {
       notification.read = true
       const readStatus = getReadStatus()
@@ -61,7 +63,7 @@ export const useNotificationStore = defineStore('notifications', () => {
 
   const markAllAsRead = () => {
     const readStatus = getReadStatus()
-    notifications.value.forEach(n => {
+    notifications.value.forEach((n) => {
       n.read = true
       readStatus[n.id] = true
     })
@@ -81,6 +83,6 @@ export const useNotificationStore = defineStore('notifications', () => {
     fetchNotifications,
     markAsRead,
     markAllAsRead,
-    clearNotifications
+    clearNotifications,
   }
 })

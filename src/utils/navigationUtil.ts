@@ -9,7 +9,7 @@ export const navigateToDriver = (alert: Alert) => {
   if (driverName) {
     router.push({
       path: '/drivers',
-      query: { search: driverName }
+      query: { search: driverName },
     })
   }
 }
