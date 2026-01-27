@@ -30,8 +30,8 @@ const mockPut = vi.fn()
 vi.mock('@/services/apiService', () => ({
   apiClient: {
     get: (url: string) => mockGet(url),
-    post: (url: string, data: any) => mockPost(url, data),
-    put: (url: string, data: any) => mockPut(url, data),
+    post: (url: string, data: unknown) => mockPost(url, data),
+    put: (url: string, data: unknown) => mockPut(url, data),
   },
 }))
 
@@ -72,7 +72,7 @@ describe('dataService Logic', () => {
       if (url === '/vehicles') return Promise.resolve({ data: [{}, {}] }) // 2 Vehicles
       if (url === '/expiration/alerts') return Promise.resolve({ data: [{ id: 'a1' }] }) // 1 Alert
       if (url === '/applications')
-        return Promise.resolve({ data: [{ status: 'Pending' }, { status: 'Hired' }] }) // 1 Pending
+        return Promise.resolve({ data: [{ status: 'New' }, { status: 'Hired' }] }) // 1 New
       return Promise.reject(new Error('Unknown URL'))
     })
 
@@ -94,73 +94,23 @@ describe('dataService Logic', () => {
   })
 })
 
-  it('migrateApplicantToDriver correctly maps data and calls APIs', async () => {
-    // Setup Mock Data
-    const appId = 'app123'
-    const application = {
-      id: appId,
-      status: 'New',
-      personalInfo: {
-        firstName: 'New',
-        lastName: 'Driver',
-        email: 'new@driver.com',
-        phone: '555-0000',
-        ssnNumber: '123-00-1234',
-        middleName: '',
-        dob: '1990-01-01',
-        medicalExpirationDate: '2025-01-01',
-      },
-      addresses: [
-        { street: '123 Main St', city: 'Orlando', state: 'FL', zip: '32801' }
-      ],
-      licenses: [
-        { number: 'L123', state: 'FL', expirationDate: '2026-01-01' }
-      ]
-    }
+it('migrateApplicantToDriver correctly maps data and calls APIs', async () => {
+  // Setup Mock Data
+  const appId = 'app123'
 
-    // Mock Responses
-    mockGet.mockImplementation((url) => {
-      if (url === `/applications/${appId}`) return Promise.resolve({ data: application })
-      if (url === '/drivers') return Promise.resolve({ data: [] }) // No duplicates
-      return Promise.reject(new Error('Unknown URL'))
-    })
+  // Mock promotion response
+  mockPost.mockResolvedValue({ data: { driverId: 'driver123' } })
 
-    mockPost.mockResolvedValue({ data: { id: 'driver123' } }) // Address addDriver
-    mockPut.mockResolvedValue({}) // Address updateApplication
+  await dataService.migrateApplicantToDriver(appId)
 
-    await dataService.migrateApplicantToDriver(appId)
+  // Verify Backend Promotion Call
+  expect(mockPost).toHaveBeenCalledWith(`/applications/${appId}/promote`, undefined)
+})
 
-    // Verify Driver Creation
-    expect(mockPost).toHaveBeenCalledWith('/drivers', expect.objectContaining({
-      firstName: 'New',
-      lastName: 'Driver',
-      hireStatus: 'Pending', // Creating as Pending
-      email: 'new@driver.com',
-      license: expect.objectContaining({
-        documentNumber: 'L123',
-        state: 'FL'
-      })
-    }))
+it('migrateApplicantToDriver throws error on failure', async () => {
+  const appId = 'app123'
+  const error = new Error('Driver already exists')
+  mockPost.mockRejectedValue(error)
 
-    // Verify Application Status Update
-    expect(mockPut).toHaveBeenCalledWith(`/applications/${appId}`, { status: 'Pending' })
-  })
-
-  it('migrateApplicantToDriver throws error on duplicate', async () => {
-     // Setup Mock Data
-    const appId = 'app123'
-    const application = {
-      id: appId,
-      personalInfo: { email: 'duplicate@driver.com', ssnNumber: '111', firstName: 'Dup', lastName: 'Licate' },
-      addresses: [], licenses: []
-    }
-
-    // Mock Responses
-    mockGet.mockImplementation((url) => {
-      if (url === `/applications/${appId}`) return Promise.resolve({ data: application })
-      if (url === '/drivers') return Promise.resolve({ data: [{ email: 'duplicate@driver.com' }] }) // Duplicate exist
-      return Promise.reject(new Error('Unknown URL'))
-    })
-
-    await expect(dataService.migrateApplicantToDriver(appId)).rejects.toThrow('already exists')
-  })
+  await expect(dataService.migrateApplicantToDriver(appId)).rejects.toThrow('Driver already exists')
+})

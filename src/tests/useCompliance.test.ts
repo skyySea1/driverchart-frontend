@@ -10,7 +10,7 @@ describe('useCompliance Logic', () => {
   it('isExpired identifies past dates correctly', () => {
     const yesterday = today.subtract(1, 'day').toISOString()
     const tomorrow = today.add(1, 'day').toISOString()
-    
+
     expect(isExpired(yesterday)).toBe(true)
     expect(isExpired(tomorrow)).toBe(false)
     expect(isExpired(undefined)).toBe(false)
