@@ -2,13 +2,23 @@
   <div v-if="logs.length > 0" class="mt-10 space-y-4">
     <!-- Header -->
     <div class="flex items-center justify-between">
-      <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+      <h3
+        class="text-sm font-black text-slate-800 uppercase tracking-widest flex items-center gap-2"
+      >
         <History class="w-4 h-4 text-indigo-600" />
         Document Upload History
       </h3>
-      <span class="text-[9px] font-black text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full uppercase">
+      <span
+        class="text-[9px] font-black text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full uppercase"
+      >
         {{ logs.length }} {{ logs.length === 1 ? 'Record' : 'Records' }}
       </span>
+    </div>
+    <div
+      v-if="descriptions && descriptions['Document Upload History']"
+      class="text-xs text-slate-500 mt-1"
+    >
+      {{ descriptions['Document Upload History'] }}
     </div>
 
     <!-- Table -->
@@ -16,29 +26,35 @@
       <table class="w-full">
         <thead class="bg-slate-50 border-b border-slate-200">
           <tr>
-            <th class="px-4 py-3 text-left text-[10px] font-black text-slate-600 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-left text-[10px] font-black text-slate-600 uppercase tracking-wider"
+            >
               Date
             </th>
-            <th class="px-4 py-3 text-left text-[10px] font-black text-slate-600 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-left text-[10px] font-black text-slate-600 uppercase tracking-wider"
+            >
               Document Type
             </th>
-            <th class="px-4 py-3 text-left text-[10px] font-black text-slate-600 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-left text-[10px] font-black text-slate-600 uppercase tracking-wider"
+            >
               File Name
             </th>
-            <th class="px-4 py-3 text-left text-[10px] font-black text-slate-600 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-left text-[10px] font-black text-slate-600 uppercase tracking-wider"
+            >
               Uploaded By
             </th>
-            <th class="px-4 py-3 text-right text-[10px] font-black text-slate-600 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-right text-[10px] font-black text-slate-600 uppercase tracking-wider"
+            >
               Action
             </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
-          <tr
-            v-for="log in sortedLogs"
-            :key="log.id"
-            class="hover:bg-slate-50 transition-colors"
-          >
+          <tr v-for="log in sortedLogs" :key="log.id" class="hover:bg-slate-50 transition-colors">
             <td class="px-4 py-3 text-xs text-slate-600 font-medium">
               {{ formatDate(log.date) }}
             </td>
@@ -51,7 +67,10 @@
                 {{ formatType(log.type) }}
               </span>
             </td>
-            <td class="px-4 py-3 text-xs text-slate-700 font-mono max-w-xs truncate" :title="log.fileName">
+            <td
+              class="px-4 py-3 text-xs text-slate-700 font-mono max-w-xs truncate"
+              :title="log.fileName"
+            >
               {{ log.fileName }}
             </td>
             <td class="px-4 py-3 text-xs text-slate-600">
@@ -66,9 +85,7 @@
                 <Eye class="w-3 h-3" />
                 View
               </button>
-              <span v-else class="text-[10px] text-slate-400 font-medium">
-                No file
-              </span>
+              <span v-else class="text-[10px] text-slate-400 font-medium"> No file </span>
             </td>
           </tr>
         </tbody>
@@ -80,18 +97,31 @@
   <div v-else class="mt-10 bg-slate-50 border border-slate-200 rounded-xl p-8 text-center">
     <FileX class="w-12 h-12 text-slate-300 mx-auto mb-3" />
     <p class="text-sm font-bold text-slate-500">No document upload history found</p>
-    <p class="text-xs text-slate-400 mt-1">Document uploads will appear here once files are added</p>
+    <p class="text-xs text-slate-400 mt-1">
+      Document uploads will appear here once files are added
+    </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { History, Eye, FileX, FileCheck, ShieldAlert, GraduationCap, FileSignature, Truck, FileText } from 'lucide-vue-next'
+import {
+  History,
+  Eye,
+  FileX,
+  FileCheck,
+  ShieldAlert,
+  GraduationCap,
+  FileSignature,
+  Truck,
+  FileText,
+} from 'lucide-vue-next'
 import type { DocumentLog } from '@/types'
 import dayjs from 'dayjs'
 
 const props = defineProps<{
   logs: DocumentLog[]
+  descriptions?: Record<string, string>
 }>()
 
 defineEmits(['view-log'])
@@ -114,7 +144,7 @@ function formatType(type: string): string {
     mvr: 'MVR',
     drugAlcohol: 'Clearinghouse',
     roadTest: 'Road Test',
-    application: 'Application'
+    application: 'Application',
   }
   return typeMap[type] || type
 }
@@ -126,19 +156,19 @@ function getTypeColor(type: string): string {
     mvr: 'bg-purple-100 text-purple-700',
     drugAlcohol: 'bg-orange-100 text-orange-700',
     roadTest: 'bg-indigo-100 text-indigo-700',
-    application: 'bg-slate-100 text-slate-700'
+    application: 'bg-slate-100 text-slate-700',
   }
   return colorMap[type] || 'bg-slate-100 text-slate-700'
 }
 
 function getTypeIcon(type: string) {
-  const iconMap: Record<string, any> = {
+  const iconMap: Record<string, typeof FileText> = {
     license: FileCheck,
     medical: ShieldAlert,
     mvr: GraduationCap,
     drugAlcohol: FileSignature,
     roadTest: Truck,
-    application: FileText
+    application: FileText,
   }
   return iconMap[type] || FileText
 }

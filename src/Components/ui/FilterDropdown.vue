@@ -2,10 +2,11 @@
   <div class="relative inline-block text-left" ref="dropdownRef">
     <!-- Trigger Button -->
     <button
-    v-cursor
-    type="button"
+      v-cursor
+      type="button"
       class="group inline-flex items-center justify-between w-full min-w-40 gap-x-1.5 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      @click="toggleDropdown">
+      @click="toggleDropdown"
+    >
       <div class="flex items-center gap-2">
         <Filter class="h-3.5 w-3.5 text-slate-500 group-hover:text-blue-600 transition-colors" />
         <span>Filters</span>
@@ -26,7 +27,11 @@
       >
         <X class="h-3.5 w-3.5" />
       </div>
-      <ChevronDown v-else class="-mr-1 h-4 w-4 text-slate-400 group-hover:text-slate-600" aria-hidden="true" />
+      <ChevronDown
+        v-else
+        class="-mr-1 h-4 w-4 text-slate-400 group-hover:text-slate-600"
+        aria-hidden="true"
+      />
     </button>
 
     <!-- Dropdown Panel -->
@@ -73,21 +78,24 @@
         </div>
 
         <!-- Footer / Actions -->
-        <div class="bg-slate-50 p-2 rounded-b-xl flex justify-between items-center" v-if="totalActiveCount > 0">
-           <button
+        <div
+          class="bg-slate-50 p-2 rounded-b-xl flex justify-between items-center"
+          v-if="totalActiveCount > 0"
+        >
+          <button
             v-cursor
-             @click="clearAll"
-             class="text-xs font-semibold text-slate-500 hover:text-indigo-600 px-2 py-1 rounded transition-colors"
-           >
-             Clear All
-           </button>
-           <button
-           v-cursor
-             @click="isOpen = false"
-             class="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-md shadow-sm transition-all"
-           >
-             Done
-           </button>
+            @click="clearAll"
+            class="text-xs font-semibold text-slate-500 hover:text-indigo-600 px-2 py-1 rounded transition-colors"
+          >
+            Clear All
+          </button>
+          <button
+            v-cursor
+            @click="isOpen = false"
+            class="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-md shadow-sm transition-all"
+          >
+            Done
+          </button>
         </div>
       </div>
     </transition>
@@ -156,7 +164,7 @@ function toggleSelection(groupKey: string, value: string) {
   // Emit new object state
   emit('update:modelValue', {
     ...props.modelValue,
-    [groupKey]: currentSelection
+    [groupKey]: currentSelection,
   })
 }
 

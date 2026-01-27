@@ -1,6 +1,8 @@
 <template>
   <BaseModal :isOpen="isOpen" :title="title" size="max-w-5xl" @close="$emit('close')">
-    <div class="h-[80vh] w-full bg-slate-100 rounded-lg overflow-hidden border border-slate-200 shadow-inner">
+    <div
+      class="h-[80vh] w-full bg-slate-100 rounded-lg overflow-hidden border border-slate-200 shadow-inner"
+    >
       <iframe
         v-if="pdfUrl"
         :src="pdfUrl"
@@ -11,7 +13,7 @@
         No document to display.
       </div>
     </div>
-    
+
     <template #actions>
       <BaseButton
         v-if="pdfUrl"
