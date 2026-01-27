@@ -7,9 +7,10 @@ type UseRealtimeCollectionOptions<T extends FirestoreDoc> = {
   map: (doc: FirestoreDoc) => T
 }
 
-export function useRealtimeCollection(
-  path: string,
-): { items: Ref<FirestoreDoc[]>; loading: Ref<boolean> }
+export function useRealtimeCollection(path: string): {
+  items: Ref<FirestoreDoc[]>
+  loading: Ref<boolean>
+}
 export function useRealtimeCollection<T extends FirestoreDoc>(
   path: string,
   options: UseRealtimeCollectionOptions<T>,
