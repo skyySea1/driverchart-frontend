@@ -175,9 +175,17 @@ import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import SmallButton from '@/Components/ui/buttons/SmallButton.vue'
 import VehicleForm from '@/Components/templates/forms/VehicleForm.vue'
 import DeleteConfirmation from '@/Components/ui/DeleteConfirmation.vue'
-import FilterDropdown, { type FilterOptions, type FilterState } from '@/Components/ui/FilterDropdown.vue'
+import FilterDropdown, {
+  type FilterOptions,
+  type FilterState,
+} from '@/Components/ui/FilterDropdown.vue'
 import { useModalStore } from '@/stores/ModalStore'
-import { STATUS_ACTIVE, STATUS_INACTIVE, STATUS_MAINTENANCE, COLLECTION_PATHS } from '@/utils/constants'
+import {
+  STATUS_ACTIVE,
+  STATUS_INACTIVE,
+  STATUS_MAINTENANCE,
+  COLLECTION_PATHS,
+} from '@/utils/constants'
 import { compareValues } from '@/utils/utils'
 
 import { parseVehicleDoc } from '@/utils/firestoreParsers'
@@ -188,9 +196,12 @@ const modalStore = useModalStore()
 const { getStatusColor, daysToExpire } = useCompliance()
 
 // Fetch Data
-const { items: vehiclesItems, loading } = useRealtimeCollection<Vehicle>(COLLECTION_PATHS.vehicles, {
-  map: parseVehicleDoc,
-})
+const { items: vehiclesItems, loading } = useRealtimeCollection<Vehicle>(
+  COLLECTION_PATHS.vehicles,
+  {
+    map: parseVehicleDoc,
+  },
+)
 
 const toDelete = ref<Vehicle | null>(null)
 const searchQuery = ref('')

@@ -1,7 +1,9 @@
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div class="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+    <div
+      class="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+    >
       <div>
         <h1 class="text-2xl font-bold text-slate-900">User Management</h1>
         <p class="text-sm text-slate-500">Manage system access and roles</p>
@@ -24,34 +26,58 @@
       <table class="min-w-full divide-y divide-slate-200">
         <thead class="bg-slate-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">User</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Role</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
+            >
+              User
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
+            >
+              Role
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
+            >
+              Status
+            </th>
+            <th
+              class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider"
+            >
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-slate-200">
           <tr v-for="user in users" :key="user.id" class="hover:bg-slate-50 transition-colors">
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
-                <div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold uppercase">
+                <div
+                  class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold uppercase"
+                >
                   {{ getInitials(user.name || user.firstName) }}
                 </div>
                 <div class="ml-4">
-                  <div class="text-sm font-medium text-slate-900">{{ user.name || (user.firstName + (user.lastName ? ' ' + user.lastName : '')) }}</div>
+                  <div class="text-sm font-medium text-slate-900">
+                    {{ user.name || user.firstName + (user.lastName ? ' ' + user.lastName : '') }}
+                  </div>
                   <div class="text-sm text-slate-500">{{ user.email }}</div>
                 </div>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                :class="getRoleBadgeClass(user.role)">
+              <span
+                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                :class="getRoleBadgeClass(user.role)"
+              >
                 {{ user.role }}
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                :class="user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+              <span
+                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                :class="user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+              >
                 {{ user.isActive ? 'Active' : 'Inactive' }}
               </span>
             </td>
@@ -60,12 +86,16 @@
                 v-if="canManageUsers"
                 @click="openModal(user)"
                 class="text-indigo-600 cursor-pointer hover:text-indigo-900 mr-4"
-              >Edit</button>
+              >
+                Edit
+              </button>
               <button
                 v-if="canManageUsers && currentUser?.id !== user.id"
                 @click="confirmDelete(user)"
                 class="text-red-600 cursor-pointer hover:text-red-900"
-              >Delete</button>
+              >
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -80,7 +110,13 @@
     >
       <form @submit.prevent="saveUser" class="space-y-4 p-1">
         <InputGroup v-model="form.name" label="Full Name" required placeholder="John Doe" />
-        <InputGroup v-model="form.email" label="Email Address" type="email" required placeholder="john@example.com" />
+        <InputGroup
+          v-model="form.email"
+          label="Email Address"
+          type="email"
+          required
+          placeholder="john@example.com"
+        />
 
         <InputGroup
           v-if="!editingUser"
@@ -117,13 +153,28 @@
         </div>
 
         <div class="flex items-center gap-2 pt-2">
-          <input type="checkbox" v-model="form.isActive" id="isActive" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+          <input
+            type="checkbox"
+            v-model="form.isActive"
+            id="isActive"
+            class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+          />
           <label for="isActive" class="text-sm font-medium text-slate-700">User is Active</label>
         </div>
 
         <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-4">
-          <BaseButton :icon="X" label="Cancel" variant="secondary" @click="closeModal" type="button" />
-          <BaseButton :label="editingUser ? 'Update User' : 'Create User'" :loading="isSaving" type="submit" />
+          <BaseButton
+            :icon="X"
+            label="Cancel"
+            variant="secondary"
+            @click="closeModal"
+            type="button"
+          />
+          <BaseButton
+            :label="editingUser ? 'Update User' : 'Create User'"
+            :loading="isSaving"
+            type="submit"
+          />
         </div>
       </form>
     </BaseModal>
@@ -159,7 +210,7 @@ const form = reactive({
   email: '',
   password: '',
   role: 'Viewer' as UserRole,
-  isActive: true
+  isActive: true,
 })
 
 // Permissions Preview Logic
@@ -169,15 +220,25 @@ const selectedRolePermissions = computed(() => {
 
 function getInitials(name: string) {
   if (!name) return '??'
-  return name.trim().split(/\s+/).map(n => n[0]).join('').substring(0, 2).toUpperCase()
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((n) => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase()
 }
 
 function getRoleBadgeClass(role: string) {
-  switch(role) {
-    case 'Admin': return 'bg-purple-100 text-purple-800'
-    case 'Manager': return 'bg-blue-100 text-blue-800'
-    case 'Auditor': return 'bg-orange-100 text-orange-800'
-    default: return 'bg-slate-100 text-slate-800'
+  switch (role) {
+    case 'Admin':
+      return 'bg-purple-100 text-purple-800'
+    case 'Manager':
+      return 'bg-blue-100 text-blue-800'
+    case 'Auditor':
+      return 'bg-orange-100 text-orange-800'
+    default:
+      return 'bg-slate-100 text-slate-800'
   }
 }
 
@@ -196,7 +257,7 @@ async function fetchUsers() {
 function openModal(user?: User) {
   if (user) {
     editingUser.value = user
-    form.name = user.name || (user.firstName + ' ' + user.lastName)
+    form.name = user.name || user.firstName + ' ' + user.lastName
     form.email = user.email
     form.role = user.role
     form.isActive = user.isActive
@@ -228,7 +289,7 @@ async function saveUser() {
       email: form.email,
       role: form.role,
       isActive: form.isActive,
-      ...(form.password ? { password: form.password } : {})
+      ...(form.password ? { password: form.password } : {}),
     }
 
     if (editingUser.value) {
@@ -260,7 +321,11 @@ async function saveUser() {
 }
 
 async function confirmDelete(user: User) {
-  if (confirm(`Are you sure you want to delete ${user.name || user.email}? This action cannot be undone.`)) {
+  if (
+    confirm(
+      `Are you sure you want to delete ${user.name || user.email}? This action cannot be undone.`,
+    )
+  ) {
     try {
       await userService.deleteUser(user.id)
       await fetchUsers()
