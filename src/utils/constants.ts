@@ -5,13 +5,14 @@ const APP_ID = import.meta.env.VITE_APP_ID || 'driverchart'
 export const STATUS_ACTIVE = 'Active'
 export const STATUS_INACTIVE = 'Inactive'
 export const MOBILE_BREAKPOINT = 768
+export const SYSTEM_USERS = ['current user', 'system']
+
 export const STATUS_MAINTENANCE = 'Maintenance'
 export const APP_NAME = 'CharterSafe'
 export const APP_VERSION = '1.0.0'
 export const COMPANY_NAME = 'PhoenixBus Orlando'
 export const API_BASE_URL = 'https://driversafe-api.vercel.app/api/'
-export const DEV_API_BASE_URL = "http://localhost:3000/api/"
-
+export const DEV_API_BASE_URL = 'http://localhost:3000/api/'
 
 export const COLLECTION_PATHS = {
   drivers: `artifacts/${APP_ID}/public/data/drivers`,

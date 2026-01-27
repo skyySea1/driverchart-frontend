@@ -1,12 +1,16 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from 'firebase/auth'
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  updateProfile,
+} from 'firebase/auth'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { auth, db } from '@/services/firebaseService'
 import type { User } from '@/types'
 
 export const useAuthStore = defineStore('auth', () => {
-
   const user = ref<User | null>(null)
   const isLoading = ref(false)
   const isInitializing = ref(true)
@@ -47,7 +51,8 @@ export const useAuthStore = defineStore('auth', () => {
                 id: firebaseUser.uid,
                 email: data.email || firebaseUser.email || '',
                 firstName: data.firstName || firebaseUser.displayName?.split(' ')[0] || '',
-                lastName: data.lastName || firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
+                lastName:
+                  data.lastName || firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
                 role: data.role || 'Viewer',
                 isActive: data.isActive ?? true,
                 createdAt: data.createdAt || new Date().toISOString(),
@@ -55,7 +60,7 @@ export const useAuthStore = defineStore('auth', () => {
                 avatar: data.avatar,
                 displayName: data.displayName,
                 name: data.name,
-                lastLogin: data.lastLogin
+                lastLogin: data.lastLogin,
               }
             } else {
               // Fallback for users not in Firestore (e.g. bootstrap or legacy)
@@ -69,7 +74,7 @@ export const useAuthStore = defineStore('auth', () => {
                 role: 'Viewer',
                 isActive: true,
                 createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+                updatedAt: new Date().toISOString(),
               }
             }
           } catch (e) {
@@ -92,13 +97,27 @@ export const useAuthStore = defineStore('auth', () => {
       await signInWithEmailAndPassword(auth, email, password)
 
       // Wait for the user state to be updated by the observer (init logic)
-      await new Promise<void>((resolve) => {
-        const unwatch = watch(user, (val) => {
-          if (val) {
-            unwatch()
-            resolve()
-          }
-        }, { immediate: true })
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          unwatch()
+          reject(new Error('Login timed out waiting for user profile'))
+        }, 10000)
+
+        const unwatch = watch(
+          [user, error],
+          ([newUser, newError]) => {
+            if (newUser) {
+              clearTimeout(timeout)
+              unwatch()
+              resolve()
+            } else if (newError) {
+              clearTimeout(timeout)
+              unwatch()
+              reject(new Error(newError))
+            }
+          },
+          { immediate: true },
+        )
       })
     } catch (err) {
       if (err instanceof Error) {
@@ -140,19 +159,22 @@ export const useAuthStore = defineStore('auth', () => {
         // 2. Prepare data for Firestore
         const firstName = data.displayName.split(' ')[0] || ''
         const lastName = data.displayName.split(' ').slice(1).join(' ') || ''
-        
+
         // 3. Update Firestore Document
         const docRef = doc(db, USERS_COLLECTION, auth.currentUser.uid)
-        
+
         try {
-            await updateDoc(docRef, {
-                firstName,
-                lastName,
-                displayName: data.displayName,
-                updatedAt: new Date().toISOString()
-            })
+          await updateDoc(docRef, {
+            firstName,
+            lastName,
+            displayName: data.displayName,
+            updatedAt: new Date().toISOString(),
+          })
         } catch (e) {
-            console.warn('Firestore update failed (doc might not exist), attempting to create/merge...', e)
+          console.warn(
+            'Firestore update failed (doc might not exist), attempting to create/merge...',
+            e,
+          )
         }
 
         // 4. Optimistic update of local state

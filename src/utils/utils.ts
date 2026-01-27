@@ -1,6 +1,7 @@
 import type { comparedValues } from '@/types'
 import { z } from 'zod'
 import dayjs from 'dayjs'
+import isEqual from 'fast-deep-equal'
 
 export const getDaysDiff = (dateStr: string | null | undefined): number => {
   if (!dateStr) return 0
@@ -34,6 +35,7 @@ export const getStatusText = (days: number): string => {
 
 export const formatDate = (
   timestamp: Date | string | number | { toDate: () => Date } | null | undefined,
+  withTime: boolean = false,
 ): string => {
   if (!timestamp) return 'N/A'
   let date: Date
@@ -46,6 +48,13 @@ export const formatDate = (
   }
 
   if (isNaN(date.getTime())) return 'Invalid Date'
+  if (withTime) {
+    return (
+      date.toLocaleDateString() +
+      ' ' +
+      date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    )
+  }
   return date.toLocaleDateString()
 }
 
@@ -109,6 +118,20 @@ export function compareValues(a: comparedValues, b: comparedValues, order: 'asc'
   return 0
 }
 
+export const cleanFileName = (name: string) => {
+  try {
+    // Decode URL entities like %2F
+    const decoded = decodeURIComponent(name)
+    // Take the last part after /
+    const parts = decoded.split('/')
+    const fileName = parts[parts.length - 1]
+    // Remove query params if any
+    return fileName ? fileName.split('?')[0] : ''
+  } catch {
+    return name
+  }
+}
+
 export const futureIsoDate = (message = 'Date must be in the future') =>
   z
     .string()
@@ -135,4 +158,57 @@ export const formatSSN = (value: string | undefined | null): string => {
   if (digits.length <= 3) return digits
   if (digits.length <= 5) return `${digits.slice(0, 3)}-${digits.slice(3)}`
   return `${digits.slice(0, 3)}-${digits.slice(3, 5)}-${digits.slice(5, 9)}`
+}
+
+/**
+ * Deeply compares two objects and returns a partial object containing only the changed fields.
+ * Treats null, undefined, and empty string as equivalent "empty" values.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getChangedFields = (original: any, current: any): any => {
+  // 1. Primitive comparison
+  if (original === current) return undefined
+
+  // 2. Handle "Empty" equivalence (null == undefined == "")
+  const isEmpty = (v: unknown) => v === null || v === undefined || v === ''
+  if (isEmpty(original) && isEmpty(current)) return undefined
+
+  // 3. Date handling (compare values)
+  if (original instanceof Date && current instanceof Date) {
+    return original.getTime() === current.getTime() ? undefined : current
+  }
+
+  // 4. Object handling (recursive)
+  if (
+    typeof original === 'object' &&
+    typeof current === 'object' &&
+    original !== null &&
+    current !== null
+  ) {
+    // Array handling
+    if (Array.isArray(original) || Array.isArray(current)) {
+      // For arrays, simplistic approach: if strictly different JSON, return current
+      return isEqual(original, current) ? undefined : current
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const diff: any = {}
+    let hasChanges = false
+
+    // Check keys in current
+    for (const key in current) {
+      if (Object.prototype.hasOwnProperty.call(current, key)) {
+        const change = getChangedFields(original[key], current[key])
+        if (change !== undefined) {
+          diff[key] = change
+          hasChanges = true
+        }
+      }
+    }
+
+    return hasChanges ? diff : undefined
+  }
+
+  // 5. Value mismatch
+  return current
 }
