@@ -72,10 +72,6 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
     businessName: asOptionalString(getProp(doc, 'businessName')),
     taxClassification: asOptionalString(getProp(doc, 'taxClassification')),
     i9EmployerSignature: asOptionalString(getProp(doc, 'i9EmployerSignature')),
-    ssnFile: asOptionalString(getProp(doc, 'ssnFile')),
-    ssnDocName: asOptionalString(getProp(doc, 'ssnDocName')),
-    ssnDocFile: undefined,
-    ssnDocPreviewUrl: asOptionalString(getProp(doc, 'ssnDocPreviewUrl')),
 
     license: {
       documentNumber: asString(getProp(license, 'documentNumber')),
@@ -117,7 +113,7 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
       phone: asString(getProp(emergencyContact, 'phone')),
       relationship: asString(getProp(emergencyContact, 'relationship')),
     },
-    
+
     // Flagging
     isFlagged: asBoolean(getProp(doc, 'isFlagged')),
     flagReason: asString(getProp(doc, 'flagReason')),
@@ -145,7 +141,27 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
     fairCreditReportingDate: asString(getProp(doc, 'fairCreditReportingDate')),
 
     // Qualification Checklist
-    qualificationChecklist: getProp(doc, 'qualificationChecklist') as Driver['qualificationChecklist']
+    qualificationChecklist: getProp(
+      doc,
+      'qualificationChecklist',
+    ) as Driver['qualificationChecklist'],
+
+    // Missing Compliance Fields (Added to Schema)
+    goodFaithEffort: {
+      documentNumber: asString(getProp(getProp(doc, 'goodFaithEffort'), 'documentNumber')),
+      expiryDate: asOptionalString(getProp(getProp(doc, 'goodFaithEffort'), 'expiryDate')),
+      file: asOptionalString(getProp(getProp(doc, 'goodFaithEffort'), 'file')),
+    },
+    cdlisReport: {
+      documentNumber: asString(getProp(getProp(doc, 'cdlisReport'), 'documentNumber')),
+      expiryDate: asOptionalString(getProp(getProp(doc, 'cdlisReport'), 'expiryDate')),
+      file: asOptionalString(getProp(getProp(doc, 'cdlisReport'), 'file')),
+    },
+    hoursOfService: {
+      documentNumber: asString(getProp(getProp(doc, 'hoursOfService'), 'documentNumber')),
+      expiryDate: asOptionalString(getProp(getProp(doc, 'hoursOfService'), 'expiryDate')),
+      file: asOptionalString(getProp(getProp(doc, 'hoursOfService'), 'file')),
+    },
   }
 }
 
