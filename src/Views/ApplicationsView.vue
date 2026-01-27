@@ -179,7 +179,7 @@ function openApplicantProfile(item: Applications) {
     router.push({ name: 'applicant-profile', params: { id: item.id } })
   }
 }
-// review what kinda of sort is implemented here
+// review what kind of sort is implemented here
 const sortedApplications = computed<Applications[]>(() => {
   let list = [...applications.value] // Create a shallow copy to sort
 

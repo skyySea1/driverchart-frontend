@@ -65,8 +65,8 @@ export const formatDate = (
 export const sanitizeInput = (str: string): string => {
   if (!str) return ''
   return str
-    .toUpperCase()
     .trim()
+    .toUpperCase()
     .replace(/[^A-Z0-9\s.,-]/g, '') // Basic whitelist
 }
 
