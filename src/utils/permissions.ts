@@ -24,7 +24,7 @@ export const PERMISSIONS = {
   AUDIT_FULL_ACCESS: 'audit:full',
 } as const
 
-export type Permission = typeof PERMISSIONS[keyof typeof PERMISSIONS]
+export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
 
 // 2. Mapping Roles to Permissions (The Catalog)
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
@@ -67,7 +67,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   Viewer: [
     // Basic read-only
     PERMISSIONS.DRIVERS_VIEW,
-  ]
+  ],
 }
 
 // Helper to get permissions for a specific role

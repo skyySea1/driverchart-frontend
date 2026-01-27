@@ -8,7 +8,6 @@ const AppLayout = () => import('@/Components/templates/AppLayout.vue')
 const Dashboard = () => import('@/Views/DashboardView.vue')
 const Applications = () => import('@/Views/ApplicationsView.vue')
 const PublicApplicationForm = () => import('@/Views/ApplyFormView.vue')
-const Drivers = () => import('@/Views/DriversView.vue')
 const Vehicles = () => import('@/Views/VehiclesView.vue')
 const Settings = () => import('@/Views/SettingsView.vue')
 const UserManagement = () => import('@/Views/UserManagementView.vue')
@@ -24,7 +23,7 @@ const routes: RouteRecordRaw[] = [
     component: Login,
     meta: { requiresAuth: false },
   },
-{
+  {
     path: '/apply',
     name: 'apply',
     component: PublicApplicationForm,
@@ -48,15 +47,6 @@ const routes: RouteRecordRaw[] = [
         component: Dashboard,
         meta: {
           title: 'Safety & Compliance Overview',
-          subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
-        },
-      },
-      {
-        path: 'drivers',
-        name: 'drivers',
-        component: Drivers,
-        meta: {
-          title: 'Driver Qualification Files',
           subtitle: 'US DOT #1234567 | FMCSA Passenger Carrier',
         },
       },
@@ -112,7 +102,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'User Management',
           subtitle: 'Manage System Access & Roles',
-          requiresAdmin: true
+          requiresAdmin: true,
         },
       },
     ],
