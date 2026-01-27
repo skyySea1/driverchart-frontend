@@ -9,7 +9,6 @@
         :value="statsData?.alertsCount ?? 0"
         :loading="isLoading"
         is-clickable
-
       />
       <StatCard
         type="license"
@@ -49,7 +48,7 @@
         :value="statsData?.annualRecordReview ?? 0"
         :loading="isLoading"
         is-clickable
-       @click="router.push('/drivers?expiration=expiring')"
+        @click="router.push('/drivers?expiration=expiring')"
       />
       <StatCard
         type="audit"
@@ -154,7 +153,11 @@
       v-if="isUploadModalOpen && selectedDriver"
       :isOpen="isUploadModalOpen"
       :driverId="selectedDriver.id!"
-      :driverName="`${selectedDriver.firstName} ${selectedDriver.lastName}`"
+      :driverName="
+        [selectedDriver.firstName, selectedDriver.middleName, selectedDriver.lastName]
+          .filter(Boolean)
+          .join(' ')
+      "
       :documentType="selectedDocType"
       :currentExpiry="currentDocExpiry"
       @close="isUploadModalOpen = false"

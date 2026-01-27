@@ -116,7 +116,7 @@
 
           <div class="pt-6 border-t border-slate-100 flex justify-end">
             <BaseButton
-            :icon="Check"
+              :icon="Check"
               @click="saveProfile"
               :label="authStore.isLoading ? 'Saving...' : 'Save Changes'"
               :disabled="authStore.isLoading"
@@ -136,7 +136,6 @@ import InputGroup from '@/Components/ui/InputGroup.vue'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import { ORGANIZATION } from '@/utils/constants'
 import { useAuthStore } from '@/stores/AuthStore'
-
 
 const authStore = useAuthStore()
 const activeSection = ref('profile')
