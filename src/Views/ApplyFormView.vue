@@ -6,7 +6,11 @@
     <div
       class="app-card bg-white rounded-2xl shadow-2xl w-full overflow-hidden z-10 flex flex-col transition-all duration-500 ease-in-out"
       :class="
-        currentStep === 6 || currentStep === 7 || currentStep === 8 || currentStep === 10 || currentStep === 11
+        currentStep === 6 ||
+        currentStep === 7 ||
+        currentStep === 8 ||
+        currentStep === 10 ||
+        currentStep === 11
           ? 'max-w-3xl'
           : 'max-w-md'
       "

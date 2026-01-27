@@ -21,17 +21,25 @@
       >
         <div class="flex-1 w-full">
           <!-- Flag Alert Banner -->
-          <div v-if="driver.isFlagged" class="mb-4 flex items-center justify-between bg-red-50 border border-red-200 rounded-lg py-2 px-3 shadow-sm border-l-4 border-l-red-600">
+          <div
+            v-if="driver.isFlagged"
+            class="mb-4 flex items-center justify-between bg-red-50 border border-red-200 rounded-lg py-2 px-3 shadow-sm border-l-4 border-l-red-600"
+          >
             <div class="flex items-center gap-2 text-slate-800 text-sm">
               <div class="bg-red-600 rounded-full p-1.5 shadow-sm">
                 <Flag class="w-3.5 h-3.5 text-white" fill="currentColor" />
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="font-black text-slate-900 border-r border-slate-200 pr-1.5 mr-0.5">{{ dayjs(driver.flagDate).format('MM/DD/YYYY') }}:</span>
+                <span class="font-black text-slate-900 border-r border-slate-200 pr-1.5 mr-0.5"
+                  >{{ dayjs(driver.flagDate).format('MM/DD/YYYY') }}:</span
+                >
                 <span class="text-slate-600 font-medium">{{ driver.flagReason }}</span>
               </div>
             </div>
-            <button @click="clearFlag" class="text-[11px] font-black text-slate-800 hover:text-red-700 underline underline-offset-2 transition-all cursor-pointer mr-2">
+            <button
+              @click="clearFlag"
+              class="text-[11px] font-black text-slate-800 hover:text-red-700 underline underline-offset-2 transition-all cursor-pointer mr-2"
+            >
               CLEAR FLAG
             </button>
           </div>
@@ -62,16 +70,48 @@
               </div>
 
               <!-- Quick Actions Row -->
-              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 pt-3 border-t border-slate-100 text-[13px] font-semibold">
-                <button v-cursor @click="handleAction('send_policy')" class="text-green-600 hover:text-green-700 transition-colors">Send Policy</button>
+              <div
+                class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 pt-3 border-t border-slate-100 text-[13px] font-semibold"
+              >
+                <button
+                  v-cursor
+                  @click="handleAction('send_policy')"
+                  class="text-green-600 hover:text-green-700 transition-colors"
+                >
+                  Send Policy
+                </button>
                 <span class="text-slate-300">•</span>
-                <button v-cursor @click="handleAction('send_memo')" class="text-green-600 hover:text-green-700 transition-colors">Send Memo</button>
+                <button
+                  v-cursor
+                  @click="handleAction('send_memo')"
+                  class="text-green-600 hover:text-green-700 transition-colors"
+                >
+                  Send Memo
+                </button>
                 <span class="text-slate-300">•</span>
-                <button v-cursor @click="handleAction('request_license')" class="text-green-600 hover:text-green-700 transition-colors">Request License Upload</button>
+                <button
+                  v-cursor
+                  @click="handleAction('request_license')"
+                  class="text-green-600 hover:text-green-700 transition-colors"
+                >
+                  Request License Upload
+                </button>
                 <span class="text-slate-300">•</span>
-                <button v-cursor @click="handleAction('request_medical')" class="text-green-600 hover:text-green-700 transition-colors">Request Med Card Upload</button>
+                <button
+                  v-cursor
+                  @click="handleAction('request_medical')"
+                  class="text-green-600 hover:text-green-700 transition-colors"
+                >
+                  Request Med Card Upload
+                </button>
                 <span class="text-slate-300">•</span>
-                <button v-cursor @click="handleAction('flag_driver')" class="text-red-600 hover:text-red-700 transition-colors">Flag Driver</button>
+                <button
+                  v-cursor
+                  @click="handleAction('flag_driver')"
+                  class="text-red-600 hover:text-red-700 transition-colors"
+                >
+                  Flag Driver
+                </button>
               </div>
             </div>
           </div>
@@ -125,7 +165,7 @@
         <div class="space-y-6">
           <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4 h-fit">
             <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
-              <User class="w-5 h-5 text-slate-400" /> Driver Information
+              <UserIcon class="w-5 h-5 text-slate-400" /> Driver Information
             </h2>
             <div class="space-y-3 text-sm">
               <div class="flex flex-col gap-1">
@@ -181,7 +221,9 @@
                   <div v-if="event.description" class="text-xs text-slate-500 mt-0.5">
                     {{ event.description }}
                   </div>
-                  <div class="text-[12px] text-slate-400 font-bold mt-1 italic">by {{ event.user || 'Unknown' }}</div>
+                  <div class="text-[12px] text-slate-400 font-bold mt-1 italic">
+                    by {{ event.user || 'Unknown' }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -286,43 +328,8 @@
             </div>
           </div>
 
-          <!-- Document History (Logs) -->
-          <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2 mb-4">
-              <History class="w-5 h-5 text-slate-400" /> Document History
-            </h2>
-            <div v-if="documents.length === 0" class="text-center py-8 text-slate-500 text-sm">
-              No audit logs found.
-            </div>
-            <div v-else class="overflow-x-auto overflow-y-auto max-h-[350px] rounded-lg border border-slate-200 custom-scrollbar">
-              <table class="min-w-full divide-y divide-slate-200">
-                <thead class="bg-slate-50">
-                  <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
-                      Date
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
-                      Action
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
-                      User
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-slate-200">
-                  <tr v-for="doc in documents" :key="doc.id" class="hover:bg-slate-50">
-                    <td class="px-4 py-3 text-sm text-slate-600">{{ formatDate(doc.date) }}</td>
-                    <td class="px-4 py-3 text-sm font-medium text-slate-900">
-                      Uploaded {{ doc.type }} ({{
-                        doc.fileName ? cleanFileName(doc.fileName) : 'Unknown File'
-                      }})
-                    </td>
-                    <td class="px-4 py-3 text-sm text-slate-500">{{ doc.user }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <!-- Document (Logs) -->
+          <HistoryLogTable :data="documents" />
         </div>
       </div>
     </div>
@@ -393,6 +400,7 @@
         :item="qualificationModal.item"
         :driver="driver"
         :user="user"
+        :isLoading="isSubmitting"
         @close="qualificationModal.isOpen = false"
         @complete="handleQualificationComplete"
       />
@@ -432,10 +440,18 @@ import DriverChecklistData from '@/Components/templates/DriverChecklistData.vue'
 import QualificationActionModal from '@/Components/templates/forms/QualificationActionModal.vue'
 import ComplianceDocuments from '@/Components/templates/ComplianceDocuments.vue'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
+import { useDocumentsStore } from '@/stores/documentsStore'
 import BaseLoading from '@/Components/ui/BaseLoading.vue'
-import type { Driver, DocumentLog, AuditLog } from '@/types'
-import {
+import type {
+  Driver,
+  DocumentLog,
+  AuditLog,
   User,
+  QualificationActionItem,
+  SignatureDoc,
+} from '@/types'
+import {
+  User as UserIcon,
   Phone,
   MapPin,
   Calendar,
@@ -453,20 +469,34 @@ import {
   UserCheck,
 } from 'lucide-vue-next'
 import dayjs from 'dayjs'
-import { capitalizeName } from '@/utils/utils'
+import { capitalizeName, formatDate } from '@/utils/utils'
 import { useComplianceReport } from '@/Composables/useComplianceReport'
 import { useAuthStore } from '@/stores/AuthStore'
+import HistoryLogTable from '@/Components/templates/tables/HistoryLogTable.vue'
 const router = useRouter()
 const route = useRoute()
 const modalStore = useModalStore()
 const { can } = usePermissions()
-
+const authStore = useAuthStore()
+const documentStore = useDocumentsStore()
 const { generateComplianceReport: generatePDFReport } = useComplianceReport()
 
-const authStore = useAuthStore()
-
 const driver = ref<Driver | null>(null)
-const user = computed(() => authStore.user || { name: 'System' } as any)
+const user = computed<User>(
+  () =>
+    authStore.user ||
+    ({
+      id: 'system',
+      firstName: 'System',
+      lastName: 'User',
+      email: 'system@vuebus.com',
+      name: 'System',
+      role: 'Admin',
+      isActive: true,
+      createdAt: dayjs().toISOString(),
+      updatedAt: dayjs().toISOString(),
+    } as User),
+)
 const documents = ref<DocumentLog[]>([])
 const auditLogs = ref<AuditLog[]>([])
 const isLoading = ref(true)
@@ -480,11 +510,10 @@ const tabs = [
 ]
 
 // Qualification Modal State
-const qualificationModal = ref({
+const qualificationModal = ref<{ isOpen: boolean; item: QualificationActionItem }>({
   isOpen: false,
-  item: { key: '', label: '', cfr: '' }
+  item: { key: '', label: '', cfr: '' },
 })
-
 
 // Upload Modal State
 const isUploadModalOpen = ref(false)
@@ -498,14 +527,16 @@ const viewingPdfTitle = ref('')
 
 const signatureProof = ref({
   isOpen: false,
-  doc: null as any
+  doc: null as SignatureDoc | null,
 })
 
 // Action Modal State
 const actionModal = ref({
   isOpen: false,
-  mode: ''
+  mode: '',
 })
+
+const isSubmitting = ref(false)
 
 const driverId = computed(() => {
   const id = route.params.id
@@ -514,11 +545,9 @@ const driverId = computed(() => {
 
 const driverName = computed(() => {
   if (!driver.value) return ''
-  const parts = [
-    driver.value.firstName,
-    driver.value.middleName,
-    driver.value.lastName
-  ].filter(Boolean)
+  const parts = [driver.value.firstName, driver.value.middleName, driver.value.lastName].filter(
+    Boolean,
+  )
   return parts.map(capitalizeName).join(' ')
 })
 
@@ -574,13 +603,8 @@ const getStatusIcon = (status: string) => {
     case 'expired':
       return XCircle
     default:
-      return User
+      return UserIcon
   }
-}
-
-const formatDate = (date?: string) => {
-  if (!date) return 'N/A'
-  return dayjs(date).format('MM/DD/YYYY - HH:mm:ss')
 }
 
 const fetchDriverData = async () => {
@@ -626,35 +650,25 @@ const complianceItems = computed(() => {
     },
     { label: 'MVR Check', date: driver.value.mvr?.expiryDate, doc: 'Annual Review' },
     { label: 'Drug & Alcohol', date: driver.value.drugAlcohol?.expiryDate, doc: 'Clearinghouse' },
-    { label: 'Signed Application', date: (driver.value.appliedDate || driver.value.createdAt) as string | undefined, doc: 'Part 391.21' },
+    {
+      label: 'Signed Application',
+      date: (driver.value.appliedDate || driver.value.createdAt) as string | undefined,
+      doc: 'Part 391.21',
+    },
   ]
-}) as any
-
-function cleanFileName(name: string) {
-  try {
-    // Decode URL entities like %2F
-    const decoded = decodeURIComponent(name)
-    // Take the last part after /
-    const parts = decoded.split('/')
-    const fileName = parts[parts.length - 1]
-    // Remove query params if any
-    return fileName ? fileName.split('?')[0] : ''
-  } catch {
-    return name
-  }
-}
+})
 
 const timelineEvents = computed(() => {
   const events: { date: string; title: string; description?: string; user?: string }[] = []
 
   // Add system creation if not in audit logs (fallback for legacy)
-  const hasCreation = auditLogs.value.some(l => l.type === 'creation')
+  const hasCreation = auditLogs.value.some((l) => l.type === 'creation')
   if (!hasCreation && driver.value?.hireDate) {
     events.push({
       date: driver.value.hireDate,
       title: 'Profile Created',
       description: 'System initialization / Migration',
-      user: 'System'
+      user: 'System',
     })
   }
 
@@ -667,7 +681,7 @@ const timelineEvents = computed(() => {
       date: log.date,
       title,
       description: log.description,
-      user: log.user
+      user: log.user,
     })
   })
 
@@ -716,9 +730,12 @@ async function confirmHire(data: { notes: string; checklist: Record<string, bool
   if (!driver.value) return
 
   try {
-    const updatedNotes = driver.value.notes && data.notes
-       ? `${driver.value.notes}\n\n[HIRE PROMOTION]: ${data.notes}`
-       : data.notes ? `[HIRE PROMOTION]: ${data.notes}` : driver.value.notes
+    const updatedNotes =
+      driver.value.notes && data.notes
+        ? `${driver.value.notes}\n\n[HIRE PROMOTION]: ${data.notes}`
+        : data.notes
+          ? `[HIRE PROMOTION]: ${data.notes}`
+          : driver.value.notes
 
     // Update to Active
     await dataService.updateDriver({
@@ -726,7 +743,7 @@ async function confirmHire(data: { notes: string; checklist: Record<string, bool
       id: driver.value.id,
       hireStatus: 'Active',
       hireDate: dayjs().format('YYYY-MM-DD'),
-      notes: updatedNotes // Append notes if any
+      notes: updatedNotes, // Append notes if any
     })
 
     isPromotionModalOpen.value = false
@@ -742,24 +759,9 @@ async function confirmHire(data: { notes: string; checklist: Record<string, bool
 async function handleChecklistItemUpdate({ key, value }: { key: string; value: boolean }) {
   if (!driver.value) return
 
-  const currentChecklist = {
-    dotApplication: false,
-    drivingRecordInquiry: false,
-    goodFaithEffort: false,
-    roadTest: false,
-    medicalCertificate: false,
-    medicalRegistryVerification: false,
-    annualDrivingReview: false,
-    cdlisReport: false,
-    drugAlcoholClearinghouse: false,
-    preEmploymentDrugTest: false,
-    randomProgramPlacement: false,
-    companyTestingPolicyReceipt: false,
-    drugAlcoholStatement: false,
-    ...(driver.value.qualificationChecklist || {})
-  }
-
-  const completedAt = { ...(currentChecklist.completedAt || {}) }
+  // Use spread to preserve all existing keys
+  const currentChecklist = driver.value.qualificationChecklist
+  const completedAt = currentChecklist?.completedAt ? { ...currentChecklist.completedAt } : {}
 
   if (value) {
     completedAt[key] = dayjs().toISOString()
@@ -768,16 +770,20 @@ async function handleChecklistItemUpdate({ key, value }: { key: string; value: b
   }
 
   try {
-    const updatedDriver = {
-      ...driver.value,
+    const checklistUpdate = {
       qualificationChecklist: {
         ...currentChecklist,
         [key]: value,
-        completedAt
-      }
+        completedAt,
+      },
     }
 
-    await dataService.updateDriver(updatedDriver)
+    // Use partial update to bypass potential API schema validation issues
+    // Cast to any to bypass strict Partial<Driver> checks which fail on nested optional properties
+    await dataService.updateDriverPartial(
+      driver.value.id,
+      checklistUpdate as unknown as Partial<Driver>,
+    )
     await fetchDriverData()
   } catch (err) {
     console.error('Failed to update checklist item:', err)
@@ -785,14 +791,24 @@ async function handleChecklistItemUpdate({ key, value }: { key: string; value: b
   }
 }
 
-function openQualificationModal(item: any) {
+function openQualificationModal(item: QualificationActionItem) {
   qualificationModal.value.item = item
   qualificationModal.value.isOpen = true
 }
 
-async function handleQualificationComplete({ key, value, file, notes }: any) {
-  if (file && driver.value) {
-    try {
+async function handleQualificationComplete({
+  key,
+  value,
+  file,
+}: {
+  key: string
+  value: boolean
+  file?: File
+  notes?: string
+}) {
+  isSubmitting.value = true
+  try {
+    if (file && driver.value) {
       // Standardize document types for the Wallet cards based on checklist keys
       const typeMapping: Record<string, string> = {
         drivingRecordInquiry: 'mvr',
@@ -802,29 +818,47 @@ async function handleQualificationComplete({ key, value, file, notes }: any) {
         roadTest: 'roadTest',
         dotApplication: 'application',
         goodFaithEffort: 'goodFaithEffort',
+        cdlisReport: 'cdlisReport',
+        hoursOfService: 'hoursOfService',
         drugAlcoholClearinghouse: 'drugAlcohol',
         preEmploymentDrugTest: 'drugAlcohol',
         companyTestingPolicyReceipt: 'drugAlcohol',
-        drugAlcoholStatement: 'drugAlcohol'
+        drugAlcoholStatement: 'drugAlcohol',
       }
 
       const docType = typeMapping[key] || key
 
-      await dataService.uploadDocument(
-        driver.value.id,
-        docType,
-        file,
-        dayjs().toISOString(),
-        driverName.value
-      )
-    } catch (err) {
-      console.error('Failed to upload qualification document:', err)
-      alert('Checklist updated, but the document upload encountered an error.')
-    }
-  }
+      const uploadResult = await documentStore.uploadDocument({
+        entityId: driver.value.id,
+        documentType: docType,
+        file: file,
+        entityName: driverName.value,
+      })
 
-  await handleChecklistItemUpdate({ key, value })
-  qualificationModal.value.isOpen = false
+      // Update the specific document field on the driver object with the new file URL
+      // This ensures that when handleChecklistItemUpdate saves the driver, it includes the new file link
+      if (uploadResult?.url) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const d = driver.value as Record<string, any>
+
+        // If the field is an object (like license, medical), update the file property
+        // Otherwise, create/set the object wrapper
+        if (d[docType] && typeof d[docType] === 'object') {
+          d[docType].file = uploadResult.url
+        } else {
+          d[docType] = { file: uploadResult.url }
+        }
+      }
+    }
+
+    await handleChecklistItemUpdate({ key, value })
+    qualificationModal.value.isOpen = false
+  } catch (err) {
+    console.error('Failed to complete qualification:', err)
+    alert('The operation encountered an error. Please try again.')
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 function openUploadModal(type: string) {
@@ -843,10 +877,10 @@ function openPdfViewer(type: string) {
   }
 }
 
-function handleViewDocument(doc: any) {
+function handleViewDocument(doc: { file?: string; label?: string }) {
   if (doc?.file && doc.file !== 'APP_EXISTS') {
     viewingPdfUrl.value = doc.file
-    viewingPdfTitle.value = doc.label
+    viewingPdfTitle.value = doc.label || 'Document'
     isPdfModalOpen.value = true
   } else if (doc.file === 'APP_EXISTS' && driver.value) {
     generatePDFReport(driver.value, documents.value)
@@ -869,7 +903,7 @@ function handleViewLog(log: DocumentLog) {
 
 function handleViewChecklistFile(key: string) {
   if (!driver.value) return
-  
+
   // Map checklist keys to driver document fields (same as typeMapping)
   const fileMap: Record<string, { field: string; label: string }> = {
     dotApplication: { field: 'applicationFile', label: 'DOT Application' },
@@ -880,28 +914,30 @@ function handleViewChecklistFile(key: string) {
     medicalCertificate: { field: 'medical', label: 'Medical Certificate' },
     medicalRegistryVerification: { field: 'medical', label: 'Medical Registry Verification' },
     cdlisReport: { field: 'cdlisReport', label: 'CDLIS Report' },
+    hoursOfService: { field: 'hoursOfService', label: 'Hours of Service - 7 Days Time on Duty' },
     drugAlcoholClearinghouse: { field: 'drugAlcohol', label: 'Clearinghouse Report' },
     preEmploymentDrugTest: { field: 'drugAlcohol', label: 'Pre-Employment Drug Test' },
     companyTestingPolicyReceipt: { field: 'drugAlcohol', label: 'Testing Policy Receipt' },
     drugAlcoholStatement: { field: 'drugAlcohol', label: 'Drug & Alcohol Statement' },
   }
-  
+
   const mapping = fileMap[key]
   if (!mapping) {
     console.warn('No file mapping found for checklist key:', key)
     return
   }
-  
-  const value = (driver.value as any)[mapping.field]
+
+  const value = driver.value ? driver.value[mapping.field as keyof Driver] : null
   let fileUrl: string | null = null
-  
+
   // Handle both string URLs and object with file property
   if (typeof value === 'string') {
     fileUrl = value
-  } else if (typeof value === 'object' && value?.file) {
-    fileUrl = value.file
+  } else if (value && typeof value === 'object' && 'file' in value) {
+    const candidate = (value as { file: unknown }).file
+    fileUrl = typeof candidate === 'string' ? candidate : null
   }
-  
+
   if (fileUrl) {
     viewingPdfUrl.value = fileUrl
     viewingPdfTitle.value = mapping.label
@@ -911,10 +947,11 @@ function handleViewChecklistFile(key: string) {
   }
 }
 
-
-function handleViewSignature(doc: any) {
-  signatureProof.value.doc = doc
-  signatureProof.value.isOpen = true
+function handleViewSignature(doc: SignatureDoc) {
+  signatureProof.value = {
+    isOpen: true,
+    doc,
+  }
 }
 
 const generateComplianceReport = () => {
@@ -928,7 +965,7 @@ function handleAction(mode: string) {
   actionModal.value.isOpen = true
 }
 
-async function handleActionSuccess({ mode, data }: { mode: string; data: Record<string, unknown> }) {
+async function handleActionSuccess({ mode, data }: { mode: string; data: Partial<Driver> }) {
   if (!driver.value?.id) return
 
   if (mode === 'flag_driver') {
@@ -938,7 +975,7 @@ async function handleActionSuccess({ mode, data }: { mode: string; data: Record<
         id: driver.value.id,
         isFlagged: true,
         flagReason: data.reason as string,
-        flagDate: dayjs().toISOString()
+        flagDate: dayjs().toISOString(),
       })
       await fetchDriverData()
     } catch (err) {
@@ -960,7 +997,7 @@ async function clearFlag() {
       id: driver.value.id,
       isFlagged: false,
       flagReason: '',
-      flagDate: ''
+      flagDate: '',
     })
     await fetchDriverData()
   } catch (err) {
@@ -975,4 +1012,15 @@ onMounted(() => {
 watch(driverId, () => {
   fetchDriverData()
 })
+
+// React to store updates
+watch(
+  () => (driverId.value ? documentStore.lastUpdate[driverId.value] : undefined),
+  (newVal) => {
+    if (newVal) {
+      console.log('Detected update from store, refreshing driver data...')
+      fetchDriverData()
+    }
+  },
+)
 </script>

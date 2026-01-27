@@ -41,7 +41,7 @@
             </div>
             <button
               @click="clearFlag"
-              class="text-[11px] cursor-pointer font-black text-slate-800 hover:text-red-700 underline underline-offset-2 transition-all cursor-pointer mr-2"
+              class="text-[11px] font-black text-slate-800 hover:text-red-700 underline underline-offset-2 transition-all cursor-pointer mr-2"
             >
               CLEAR FLAG
             </button>
@@ -266,7 +266,9 @@
                     >
                       {{ item.label }}
                     </span>
-                    <span v-if="!item.isCompleted" class="text-[10px] text-orange-600/70 font-medium"
+                    <span
+                      v-if="!item.isCompleted"
+                      class="text-[10px] text-orange-600/70 font-medium"
                       >Pending Requirement</span
                     >
                     <span v-else class="text-[10px] text-green-600/70 font-medium">Verified</span>
@@ -300,8 +302,8 @@
       <div v-else-if="activeTab === 'documents'">
         <ComplianceDocuments
           title="All Apllicant Related Files"
-          v-if="applicant"
-          :driver="applicant"
+          v-if="applicant && applicantAsDriver"
+          :driver="applicantAsDriver"
           :logs="documents"
           @view="handleViewDocument"
           @upload="openUploadModal"
@@ -355,7 +357,13 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { dataService } from '@/services/dataService'
-import type { Applications, DriverApplicationForm, Driver } from '@/types'
+import type {
+  Applications,
+  DriverApplicationForm,
+  Driver,
+  DocumentLog,
+  SignatureDoc,
+} from '@/types'
 import { capitalizeName, formatDate } from '@/utils/utils'
 import { useApplicationReport } from '@/Composables/useApplicationReport'
 import DriverActionModal from '@/Components/templates/forms/DriverActionModal.vue'
@@ -363,9 +371,22 @@ import dayjs from 'dayjs'
 
 const { generateApplicationReport } = useApplicationReport()
 import {
-  User, Phone, Mail, Calendar, Check, X, Briefcase, ArrowLeft,
-  ClipboardCheck, CheckCircle2, XCircle, AlertCircle,
-  FileText, FileSignature, Image as ImageIcon, MapPin
+  User,
+  Phone,
+  Mail,
+  Calendar,
+  Check,
+  X,
+  Briefcase,
+  ArrowLeft,
+  ClipboardCheck,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  FileText,
+  FileSignature,
+  Image as ImageIcon,
+  MapPin,
 } from 'lucide-vue-next'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import ApplicantReviewData from '@/Components/templates/ApplicantReviewData.vue'
@@ -373,8 +394,7 @@ import ComplianceDocuments from '@/Components/templates/ComplianceDocuments.vue'
 import DocumentUploadModal from '@/Components/templates/forms/DocumentUploadModal.vue'
 import PdfViewerModal from '@/Components/ui/PdfViewerModal.vue'
 import SignatureProofModal from '@/Components/ui/SignatureProofModal.vue'
-import type { DocumentLog } from '@/types'
-
+import { useDocumentsStore } from '@/stores/documentsStore'
 
 const activeTab = ref<'overview' | 'review' | 'documents'>('overview')
 const documents = ref<DocumentLog[]>([])
@@ -386,7 +406,7 @@ const viewingPdfTitle = ref('')
 
 const signatureProof = ref({
   isOpen: false,
-  doc: null as any
+  doc: null as SignatureDoc | null,
 })
 
 const route = useRoute()
@@ -407,6 +427,8 @@ const actionModal = ref({
   mode: '',
 })
 
+const documentStore = useDocumentsStore()
+
 const complianceItems = computed(() => {
   if (!applicant.value) return []
   const a = applicant.value
@@ -419,15 +441,31 @@ const complianceItems = computed(() => {
     // History
     { label: 'Address History', isCompleted: (a.addresses?.length ?? 0) > 0, category: 'History' },
     { label: 'Licenses List', isCompleted: (a.licenses?.length ?? 0) > 0, category: 'History' },
-    { label: 'Employment History', isCompleted: (a.employmentHistory?.length ?? 0) > 0, category: 'History' },
+    {
+      label: 'Employment History',
+      isCompleted: (a.employmentHistory?.length ?? 0) > 0,
+      category: 'History',
+    },
 
     // Documents
     { label: 'License Front', isCompleted: !!a.licenseFront, category: 'Documents' },
     { label: 'License Back', isCompleted: !!a.licenseBack, category: 'Documents' },
     { label: 'Medical Card', isCompleted: !!a.medicalCard, category: 'Documents' },
-    { label: 'MVR Report', isCompleted: !!(a as any).mvr, category: 'Documents' }, 
-    { label: 'Drug & Alcohol', isCompleted: !!(a as any).drugAlcohol, category: 'Documents' },
-    { label: 'Road Test', isCompleted: !!(a as any).roadTest, category: 'Documents' },
+    {
+      label: 'MVR Report',
+      isCompleted: !!(a as Record<string, unknown>).mvr,
+      category: 'Documents',
+    },
+    {
+      label: 'Drug & Alcohol',
+      isCompleted: !!(a as Record<string, unknown>).drugAlcohol,
+      category: 'Documents',
+    },
+    {
+      label: 'Road Test',
+      isCompleted: !!(a as Record<string, unknown>).roadTest,
+      category: 'Documents',
+    },
 
     // Signatures
     { label: 'Drug Test Consent', isCompleted: !!a.drugTestSignature, category: 'Signatures' },
@@ -457,9 +495,7 @@ const completedCount = computed(() => complianceItems.value.filter((i) => i.isCo
 
 const progressColor = computed(() => {
   const ratio =
-    complianceItems.value.length > 0
-      ? completedCount.value / complianceItems.value.length
-      : 0
+    complianceItems.value.length > 0 ? completedCount.value / complianceItems.value.length : 0
   if (ratio === 1) return 'text-green-600'
   if (ratio > 0.5) return 'text-indigo-600'
   return 'text-orange-600'
@@ -467,25 +503,47 @@ const progressColor = computed(() => {
 
 const progressBarColor = computed(() => {
   const ratio =
-    complianceItems.value.length > 0
-      ? completedCount.value / complianceItems.value.length
-      : 0
+    complianceItems.value.length > 0 ? completedCount.value / complianceItems.value.length : 0
   if (ratio === 1) return 'bg-green-500'
   if (ratio > 0.5) return 'bg-indigo-500'
   return 'bg-orange-500'
 })
 
 // Map Applicant to Driver structure for compatibility with DriverActionModal
-const applicantAsDriver = computed(() => {
+const applicantAsDriver = computed<Driver | null>(() => {
   if (!applicant.value) return null
   return {
+    ...applicant.value,
     id: applicant.value.id,
     firstName: applicant.value.personalInfo.firstName,
     lastName: applicant.value.personalInfo.lastName,
     email: applicant.value.personalInfo.email,
     phone: applicant.value.personalInfo.phone,
-    // Add other fields if necessary for the modal
-  } as Driver // Cast to satisfy prop type with a single assertion
+    ssnNumber: applicant.value.personalInfo.ssnNumber || '',
+    w9Signed: false,
+    // Provide remaining required Driver fields with fallbacks
+    middleName: applicant.value.personalInfo.middleName || '',
+    dob: applicant.value.personalInfo.dob || '',
+    hireDate: dayjs().toISOString(),
+    hireStatus: 'Pending',
+    address: applicant.value.addresses?.[0]?.street || '',
+    city: applicant.value.addresses?.[0]?.city || '',
+    state: applicant.value.addresses?.[0]?.state || '',
+    zip: applicant.value.addresses?.[0]?.zip || '',
+    license: {
+      documentNumber: applicant.value.licenses?.[0]?.number || '',
+      expiryDate: applicant.value.licenses?.[0]?.expirationDate,
+      state: applicant.value.licenses?.[0]?.state || '',
+    },
+    medical: {
+      documentNumber: '',
+      expiryDate: applicant.value.medicalCard ? dayjs().toISOString() : undefined,
+    },
+    mvr: { documentNumber: '' },
+    drugAlcohol: { documentNumber: '' },
+    roadTest: { documentNumber: '', examiner: '' },
+    emergencyContact: { name: '', phone: '', relationship: '' },
+  } as unknown as Driver
 })
 
 const getCategoryIcon = (category: string) => {
@@ -572,7 +630,13 @@ function handleAction(mode: string) {
   actionModal.value.isOpen = true
 }
 
-async function handleActionSuccess({ mode, data }: { mode: string; data: Record<string, unknown> }) {
+async function handleActionSuccess({
+  mode,
+  data,
+}: {
+  mode: string
+  data: Record<string, unknown>
+}) {
   if (!applicant.value?.id) return
 
   if (mode === 'flag_driver') {
@@ -588,7 +652,6 @@ async function handleActionSuccess({ mode, data }: { mode: string; data: Record<
 
       // Persist using generic update
       await dataService.updateApplication(updatedApplicant as unknown as Applications)
-
     } catch (err) {
       console.error('Failed to flag applicant:', err)
       alert('Failed to flag applicant')
@@ -604,7 +667,7 @@ async function clearFlag() {
   if (!confirm('Are you sure you want to CLEAR this flag?')) return
 
   try {
-     const updatedApplicant = {
+    const updatedApplicant = {
       ...applicant.value,
       isFlagged: false,
       flagReason: '',
@@ -628,10 +691,10 @@ function openUploadModal(docType: string) {
   isUploadModalOpen.value = true
 }
 
-function handleViewDocument(doc: any) {
+function handleViewDocument(doc: { file?: string; label?: string }) {
   if (doc.file) {
     viewingPdfUrl.value = doc.file
-    viewingPdfTitle.value = doc.label
+    viewingPdfTitle.value = doc.label || 'Document'
     isPdfModalOpen.value = true
   }
 }
@@ -644,7 +707,7 @@ function handleViewLog(log: DocumentLog) {
   }
 }
 
-function handleViewSignature(doc: any) {
+function handleViewSignature(doc: SignatureDoc) {
   signatureProof.value.doc = doc
   signatureProof.value.isOpen = true
 }
@@ -656,4 +719,15 @@ onMounted(() => {
 watch(applicationId, () => {
   fetchApplicantData()
 })
+
+// React to store updates
+watch(
+  () => (applicationId.value ? documentStore.lastUpdate[applicationId.value] : undefined),
+  (newVal) => {
+    if (newVal) {
+      console.log('Detected update from store, refreshing applicant data...')
+      fetchApplicantData()
+    }
+  },
+)
 </script>
