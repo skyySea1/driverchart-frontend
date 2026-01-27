@@ -2,19 +2,20 @@
 import pdfMake from 'pdfmake/build/pdfmake'
 import * as pdfFonts from 'pdfmake/build/vfs_fonts'
 import type { Driver, DocumentLog } from '@/types'
+import type { TDocumentDefinitions } from 'pdfmake/interfaces'
 import dayjs from 'dayjs'
 
 export function useComplianceReport() {
   // Ensure VFS is registered only when needed or once
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (pdfFonts && (pdfFonts as any).pdfMake) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (pdfFonts && (pdfFonts as any).pdfMake) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(pdfMake as any).vfs = (pdfFonts as any).pdfMake.vfs
   }
   function calculateAuditScore(complianceItems: { date?: string }[]): string {
     if (!complianceItems.length) return 'N/A'
 
-    const validItems = complianceItems.filter(item => getStatus(item.date) === 'valid').length
+    const validItems = complianceItems.filter((item) => getStatus(item.date) === 'valid').length
     const totalItems = complianceItems.length
     const score = Math.round((validItems / totalItems) * 100)
 
@@ -65,7 +66,7 @@ export function useComplianceReport() {
         alignment: 'center',
         margin: [0, 20, 0, 10],
       },
-      footer: function(currentPage: number, pageCount: number) {
+      footer: function (currentPage: number, pageCount: number) {
         return {
           text: `Generated on ${dayjs().format('MM/DD/YYYY')} - Page ${currentPage} of ${pageCount}`,
           alignment: 'center',
@@ -88,21 +89,16 @@ export function useComplianceReport() {
                 { text: 'Full Name:', bold: true },
                 `${driver.firstName} ${driver.middleName || ''} ${driver.lastName}`.trim(),
               ],
-              [
-                { text: 'Hire Date:', bold: true },
-                formatDate(driver.hireDate),
-              ],
-              [
-                { text: 'Status:', bold: true },
-                driver.hireStatus || 'N/A',
-              ],
+              [{ text: 'Hire Date:', bold: true }, formatDate(driver.hireDate)],
+              [{ text: 'Status:', bold: true }, driver.hireStatus || 'N/A'],
               [
                 { text: 'Contact:', bold: true },
                 `${driver.phone || 'N/A'} | ${driver.email || 'N/A'}`,
               ],
               [
                 { text: 'Address:', bold: true },
-                `${driver.address || ''} ${driver.city || ''} ${driver.state || ''} ${driver.zip || ''}`.trim() || 'N/A',
+                `${driver.address || ''} ${driver.city || ''} ${driver.state || ''} ${driver.zip || ''}`.trim() ||
+                  'N/A',
               ],
             ],
           },
@@ -125,13 +121,17 @@ export function useComplianceReport() {
                 { text: 'Status', style: 'tableHeader' },
                 { text: 'Reference', style: 'tableHeader' },
               ],
-              ...complianceItems.map(item => [
+              ...complianceItems.map((item) => [
                 item.label,
                 formatDate(item.date),
                 {
                   text: getStatus(item.date).toUpperCase(),
-                  color: getStatus(item.date) === 'valid' ? 'green' :
-                         getStatus(item.date) === 'warning' ? 'orange' : 'red',
+                  color:
+                    getStatus(item.date) === 'valid'
+                      ? 'green'
+                      : getStatus(item.date) === 'warning'
+                        ? 'orange'
+                        : 'red',
                   bold: true,
                 },
                 item.doc || 'N/A',
@@ -163,11 +163,13 @@ export function useComplianceReport() {
                 { text: 'Action', style: 'tableHeader' },
                 { text: 'User', style: 'tableHeader' },
               ],
-              ...documents.slice(0, 10).map(doc => [
-                formatDate(doc.date),
-                `Uploaded ${doc.type} (${doc.fileName ? doc.fileName.split('/').pop() : 'Unknown File'})`,
-                doc.user,
-              ]),
+              ...documents
+                .slice(0, 10)
+                .map((doc) => [
+                  formatDate(doc.date),
+                  `Uploaded ${doc.type} (${doc.fileName ? doc.fileName.split('/').pop() : 'Unknown File'})`,
+                  doc.user,
+                ]),
             ],
           },
           margin: [0, 0, 0, 20],
@@ -201,7 +203,9 @@ export function useComplianceReport() {
 
     // Generate and download PDF
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(pdfMake as any).createPdf(docDefinition as any).download(`Compliance_Report_${driver.lastName}_${dayjs().format('YYYYMMDD')}.pdf`)
+    ;(pdfMake as any)
+      .createPdf(docDefinition as unknown as TDocumentDefinitions)
+      .download(`Compliance_Report_${driver.lastName}_${dayjs().format('YYYYMMDD')}.pdf`)
   }
 
   return {

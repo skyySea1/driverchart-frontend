@@ -1,8 +1,8 @@
-
 // src/Composables/useApplicationReport.ts
 import pdfMake from 'pdfmake/build/pdfmake'
 import * as pdfFonts from 'pdfmake/build/vfs_fonts'
 import type { DriverApplicationForm, Applications } from '@/types'
+import type { TDocumentDefinitions } from 'pdfmake/interfaces'
 import dayjs from 'dayjs'
 import { capitalizeName } from '@/utils/utils'
 
@@ -25,7 +25,7 @@ export function useApplicationReport() {
 
   function generateApplicationReport(applicant: Applications & DriverApplicationForm) {
     const fullName = `${capitalizeName(applicant.personalInfo.firstName)} ${capitalizeName(
-      applicant.personalInfo.lastName
+      applicant.personalInfo.lastName,
     )}`
 
     // Define styles
@@ -41,12 +41,16 @@ export function useApplicationReport() {
     }
 
     // Prepare content
-     
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const content: any[] = []
 
     // Title
-    content.push({ text: 'Driver Application for Employment', style: 'header', alignment: 'center' })
+    content.push({
+      text: 'Driver Application for Employment',
+      style: 'header',
+      alignment: 'center',
+    })
     content.push({
       text: `Generated on ${dayjs().format('MM/DD/YYYY HH:mm')}`,
       alignment: 'center',
@@ -126,7 +130,12 @@ export function useApplicationReport() {
         layout: 'lightHorizontalLines',
       })
     } else {
-      content.push({ text: 'No address history provided.', fontSize: 10, italics: true, color: '#94a3b8' })
+      content.push({
+        text: 'No address history provided.',
+        fontSize: 10,
+        italics: true,
+        color: '#94a3b8',
+      })
     }
 
     // Employment History
@@ -154,7 +163,12 @@ export function useApplicationReport() {
             {
               columns: [
                 { text: `${emp.city}, ${emp.state}`, fontSize: 9, color: '#64748b' },
-                { text: `Position: ${emp.position}`, alignment: 'right', fontSize: 9, color: '#64748b' },
+                {
+                  text: `Position: ${emp.position}`,
+                  alignment: 'right',
+                  fontSize: 9,
+                  color: '#64748b',
+                },
               ],
             },
             {
@@ -220,7 +234,13 @@ export function useApplicationReport() {
         margin: [0, 0, 0, 10],
       })
     } else {
-      content.push({ text: 'No licenses provided.', fontSize: 10, italics: true, color: '#94a3b8', margin: [0, 0, 0, 10] })
+      content.push({
+        text: 'No licenses provided.',
+        fontSize: 10,
+        italics: true,
+        color: '#94a3b8',
+        margin: [0, 0, 0, 10],
+      })
     }
 
     // Accidents
@@ -307,7 +327,11 @@ export function useApplicationReport() {
           width: '*',
           text: [
             { text: 'Have you ever been denied a license? ', bold: true, fontSize: 10 },
-            { text: formatBool(applicant.deniedLicense), fontSize: 10, color: applicant.deniedLicense ? 'red' : 'green' },
+            {
+              text: formatBool(applicant.deniedLicense),
+              fontSize: 10,
+              color: applicant.deniedLicense ? 'red' : 'green',
+            },
           ],
         },
         {
@@ -325,7 +349,10 @@ export function useApplicationReport() {
     })
     if (applicant.denialSuspensionExplanation) {
       content.push({
-        text: [{ text: 'Explanation: ', bold: true }, { text: applicant.denialSuspensionExplanation }],
+        text: [
+          { text: 'Explanation: ', bold: true },
+          { text: applicant.denialSuspensionExplanation },
+        ],
         fontSize: 10,
         margin: [0, 5, 0, 0],
         color: '#b91c1c',
@@ -340,11 +367,31 @@ export function useApplicationReport() {
     })
 
     const signatures = [
-      { label: 'Drug & Alcohol Test Consent', sig: applicant.drugTestSignature, date: applicant.drugTestDate },
-      { label: 'PSP Disclosure', sig: applicant.pspDisclosureSignature, date: applicant.pspDisclosureDate },
-      { label: 'FMCSA Clearinghouse Consent', sig: applicant.fmcsaConsentSignature, date: applicant.fmcsaConsentDate },
-      { label: 'Authorization & Release', sig: applicant.authReleaseSignature, date: applicant.authReleaseDate },
-      { label: 'General Work Policy', sig: applicant.generalWorkPolicySignature, date: applicant.generalWorkPolicyDate },
+      {
+        label: 'Drug & Alcohol Test Consent',
+        sig: applicant.drugTestSignature,
+        date: applicant.drugTestDate,
+      },
+      {
+        label: 'PSP Disclosure',
+        sig: applicant.pspDisclosureSignature,
+        date: applicant.pspDisclosureDate,
+      },
+      {
+        label: 'FMCSA Clearinghouse Consent',
+        sig: applicant.fmcsaConsentSignature,
+        date: applicant.fmcsaConsentDate,
+      },
+      {
+        label: 'Authorization & Release',
+        sig: applicant.authReleaseSignature,
+        date: applicant.authReleaseDate,
+      },
+      {
+        label: 'General Work Policy',
+        sig: applicant.generalWorkPolicySignature,
+        date: applicant.generalWorkPolicyDate,
+      },
       {
         label: 'Fair Credit Reporting Act',
         sig: applicant.fairCreditReportingSignature,
@@ -362,7 +409,12 @@ export function useApplicationReport() {
             style: 'signature',
             color: item.sig ? '#059669' : '#f97316',
           },
-          { width: 'auto', text: item.sig ? formatDate(item.date) : '', fontSize: 9, alignment: 'right' },
+          {
+            width: 'auto',
+            text: item.sig ? formatDate(item.date) : '',
+            fontSize: 9,
+            alignment: 'right',
+          },
         ],
         margin: [0, 5, 0, 0],
       })
@@ -379,7 +431,9 @@ export function useApplicationReport() {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(pdfMake as any).createPdf(docDefinition as any).download(`Application_${fullName.replace(/\s+/g, '_')}.pdf`)
+    ;(pdfMake as any)
+      .createPdf(docDefinition as unknown as TDocumentDefinitions)
+      .download(`Application_${fullName.replace(/\s+/g, '_')}.pdf`)
   }
 
   return {

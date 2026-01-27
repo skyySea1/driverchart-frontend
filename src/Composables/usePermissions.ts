@@ -20,12 +20,12 @@ export function usePermissions() {
 
   // Check if user has ANY of the provided permissions
   function canAny(permissions: Permission[]): boolean {
-    return permissions.some(p => can(p))
+    return permissions.some((p) => can(p))
   }
 
   return {
     can,
     canAny,
-    userPermissions
+    userPermissions,
   }
 }
