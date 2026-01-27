@@ -94,6 +94,16 @@ service cloud.firestore {
         allow read: if isAuthenticated();
         allow write: if hasRole(['Admin', 'Manager']);
       }
+
+      // Upload Tokens (for public document upload links)
+      // Path: artifacts/{appId}/public/data/upload_tokens/{tokenId}
+      match /upload_tokens/{tokenId} {
+        // Read: Public (validated via API, token acts as auth)
+        allow read: if true;
+        // Write: Admin, Manager only (create/revoke tokens)
+        allow create, update: if hasRole(['Admin', 'Manager']);
+        allow delete: if hasRole(['Admin']);
+      }
     }
   }
 }
