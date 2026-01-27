@@ -10,13 +10,14 @@ import type {
   Applications,
   DriverApplicationForm,
   DashboardStats,
+  UploadTokenContext,
+  Memo,
 } from '@/types'
 import { getApp } from 'firebase/app'
 import { doc, getDoc, collection, getDocs, deleteDoc } from 'firebase/firestore'
 import { db } from './firebaseService'
 import { COLLECTION_PATHS } from '@/utils/constants'
 import { parseDriverDoc } from '@/utils/firestoreParsers'
-
 
 // migrate for enitty based service and document handling
 export const dataService = {
@@ -97,6 +98,17 @@ export const dataService = {
     await apiClient.put(`/drivers/${driver.id}`, driver)
   },
 
+  updateDriverPartial: async (id: string, data: Partial<Driver>): Promise<void> => {
+    try {
+      const docRef = doc(db, COLLECTION_PATHS.drivers, id)
+      const { updateDoc } = await import('firebase/firestore')
+      await updateDoc(docRef, data)
+    } catch (error) {
+      console.warn('Failed to partial update driver via Firestore, falling back to API', error)
+      await apiClient.patch(`/drivers/${id}`, data)
+    }
+  },
+
   deleteDriver: async (id: string): Promise<void> => {
     try {
       const docRef = doc(db, COLLECTION_PATHS.drivers, id)
@@ -120,12 +132,12 @@ export const dataService = {
     const data = new FormData()
     // Logic to distinguish driver vs applicant ID
     if (id) {
-       // Heuristic: If applicantName is provided, assume ID is applicationId
-       if (applicantName) {
-         data.append('applicationId', id)
-       } else {
-         data.append('driverId', id)
-       }
+      // Heuristic: If applicantName is provided, assume ID is applicationId
+      if (applicantName) {
+        data.append('applicationId', id)
+      } else {
+        data.append('driverId', id)
+      }
     }
 
     if (applicantName) data.append('applicantName', applicantName)
@@ -217,6 +229,14 @@ export const dataService = {
     }
   },
 
+  addAuditLog: async (log: Omit<AuditLog, 'id'>): Promise<void> => {
+    try {
+      await apiClient.post('/documents/audit', log)
+    } catch (error) {
+      console.error('Failed to create audit log', error)
+    }
+  },
+
   sendUploadRequest: async (payload: {
     email: string
     driverName: string
@@ -230,8 +250,8 @@ export const dataService = {
     return resp.data
   },
 
-  validateUploadToken: async (token: string) => {
-    const resp = await apiClient.get<any>(`/documents/upload-context/${token}`)
+  validateUploadToken: async (token: string): Promise<UploadTokenContext> => {
+    const resp = await apiClient.get<UploadTokenContext>(`/documents/upload-context/${token}`)
     return resp.data
   },
 
@@ -239,21 +259,26 @@ export const dataService = {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('token', token)
-    
+
     // We target a new public endpoint that doesn't require session auth, but validates token
     const resp = await apiClient.post('/documents/public-upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: { 'Content-Type': 'multipart/form-data' },
     })
     return resp.data
   },
 
-  sendMemos: async (data: { email: string; driverName: string; memoTitle: string; memoLinks: string[] }) => {
+  sendMemos: async (data: {
+    email: string
+    driverName: string
+    memoTitle: string
+    memoLinks: string[]
+  }) => {
     return await apiClient.post('/documents/send-memos', data)
   },
 
-  getMemos: async (): Promise<unknown[]> => {
+  getMemos: async (): Promise<Memo[]> => {
     try {
-      const resp = await apiClient.get('/documents/memos')
+      const resp = await apiClient.get<Memo[]>('/documents/memos')
       return resp.data
     } catch {
       return []
@@ -266,7 +291,7 @@ export const dataService = {
     formData.append('title', title)
     formData.append('type', type)
     const resp = await apiClient.post('/documents/memos/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: { 'Content-Type': 'multipart/form-data' },
     })
     return resp.data
   },
@@ -309,13 +334,18 @@ export const dataService = {
     if (!application.id) throw new Error('Application ID missing')
     await apiClient.put(`/applications/${application.id}`, application)
   },
-// todo this meethod must be used or improved for hiring process too
-  updateApplicationStatus: async (id: string, status: 'Pending' | 'Rejected' | 'Hired'): Promise<void> => {
+  // todo this meethod must be used or improved for hiring process too
+  updateApplicationStatus: async (
+    id: string,
+    status: 'Pending' | 'Rejected' | 'Hired',
+  ): Promise<void> => {
     await apiClient.put(`/applications/${id}`, { status })
   },
 
   migrateApplicantToDriver: async (applicationId: string): Promise<string> => {
-    const response = await apiClient.post<{ driverId: string }>(`/applications/${applicationId}/promote`)
+    const response = await apiClient.post<{ driverId: string }>(
+      `/applications/${applicationId}/promote`,
+    )
     return response.data.driverId
   },
 
@@ -336,7 +366,7 @@ export const dataService = {
     const alerts = alertsRes.data
     const applications = applicationsRes.data
 
-    const pendingApplicationsCount = applications.filter((a) => a.status === 'Pending').length
+    const newApplicationsCount = applications.filter((a) => a.status === 'New').length
 
     const today = dayjs().startOf('day')
 
@@ -394,7 +424,7 @@ export const dataService = {
       expiringLicense: expiringLicenseDrivers.length,
       expiringClearinghouse: expiringClearinghouseDrivers.length,
       auditScore: '94%',
-      newApplications: pendingApplicationsCount,
+      newApplications: newApplicationsCount,
       annualRecordReview: expiredMvrDrivers.length,
     }
     return stats

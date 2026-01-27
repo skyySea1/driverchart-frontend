@@ -2,12 +2,13 @@
 import pdfMake from 'pdfmake/build/pdfmake'
 import * as pdfFonts from 'pdfmake/build/vfs_fonts'
 import type { DriverRow } from '@/types'
+import type { TDocumentDefinitions } from 'pdfmake/interfaces'
 import dayjs from 'dayjs'
 import { capitalizeName } from '@/utils/utils'
 
 export function useDriverListReport() {
   // Safe VFS initialization
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (pdfFonts && (pdfFonts as any).pdfMake) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(pdfMake as any).vfs = (pdfFonts as any).pdfMake.vfs
@@ -29,7 +30,7 @@ export function useDriverListReport() {
         alignment: 'center',
         margin: [0, 20, 0, 10],
       },
-      footer: function(currentPage: number, pageCount: number) {
+      footer: function (currentPage: number, pageCount: number) {
         return {
           text: `Generated on ${dayjs().format('MM/DD/YYYY')} - Page ${currentPage} of ${pageCount}`,
           alignment: 'center',
@@ -54,8 +55,11 @@ export function useDriverListReport() {
                 { text: 'Phone', style: 'tableHeader' },
               ],
               // Data Rows
-              ...drivers.map(driver => [
-                { text: `${capitalizeName(driver.firstName)} ${capitalizeName(driver.lastName)}`, style: 'tableCell' },
+              ...drivers.map((driver) => [
+                {
+                  text: `${capitalizeName(driver.firstName)} ${capitalizeName(driver.lastName)}`,
+                  style: 'tableCell',
+                },
                 { text: driver.hireStatus || 'N/A', style: 'tableCell' },
                 {
                   text: `${driver.license?.documentNumber || '-'} ${driver.license?.state ? `(${driver.license?.state})` : ''}`,
@@ -104,7 +108,9 @@ export function useDriverListReport() {
 
     // Generate and download PDF
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(pdfMake as any).createPdf(docDefinition as any).download(`Driver_List_Report_${dayjs().format('YYYYMMDD')}.pdf`)
+    ;(pdfMake as any)
+      .createPdf(docDefinition as unknown as TDocumentDefinitions)
+      .download(`Driver_List_Report_${dayjs().format('YYYYMMDD')}.pdf`)
   }
 
   return {

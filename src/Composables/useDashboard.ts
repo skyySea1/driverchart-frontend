@@ -64,3 +64,10 @@ export function useDashboard() {
   }
 }
 
+export function resetDashboardState() {
+  statsData.value = null
+  isLoading.value = false
+  error.value = null
+  pollingInterval = null
+  listeners = 0
+}
