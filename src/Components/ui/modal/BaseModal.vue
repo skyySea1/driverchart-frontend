@@ -47,13 +47,6 @@ const props = defineProps<{
 
 function escListener(e: KeyboardEvent) {
   if (e.key === 'Escape' && props.isOpen) {
-    // If multiple modals are open, checking z-index is hard programmatically without a store.
-    // However, since BaseModal is usually a leaf or specific portal, standard event bubbling applies.
-    // If we want "Top-most" only, we rely on the fact that the most recently mounted listener handles it?
-    // Listeners fire in registration order.
-    // A simple way to handle "only top most" in a global listener approach is tricky without a stack manager.
-    // But for the requirement "double click to close all", that implies a specific behavior not covered by standard ESC.
-    // Assuming standard ESC behavior closes the modal.
     emit('close')
   }
 }

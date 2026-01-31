@@ -106,7 +106,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Filter, ChevronDown, X } from 'lucide-vue-next'
 
-// Types
+// todo migrate to using shared types
 export interface FilterOption {
   label: string
   value: string

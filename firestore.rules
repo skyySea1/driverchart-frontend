@@ -98,8 +98,8 @@ service cloud.firestore {
       // Upload Tokens (for public document upload links)
       // Path: artifacts/{appId}/public/data/upload_tokens/{tokenId}
       match /upload_tokens/{tokenId} {
-        // Read: Public (validated via API, token acts as auth)
-        allow read: if true;
+        // Read: Restricted. Validation happens via backend API.
+        allow read: if false;
         // Write: Admin, Manager only (create/revoke tokens)
         allow create, update: if hasRole(['Admin', 'Manager']);
         allow delete: if hasRole(['Admin']);

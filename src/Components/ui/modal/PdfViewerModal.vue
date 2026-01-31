@@ -27,8 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import BaseModal from './BaseModal.vue'
-import BaseButton from './buttons/BaseButton.vue'
+import BaseModal from '../modal/BaseModal.vue'
+import BaseButton from '../buttons/BaseButton.vue'
 import { Download } from 'lucide-vue-next'
 
 const props = defineProps<{

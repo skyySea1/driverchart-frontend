@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import BaseBadge from '@/Components/ui/BaseBadge.vue'
+import BaseBadge from '@/Components/ui/badges/BaseBadge.vue'
 import type { StatConfig, CardType } from '@/types'
 import { capitalizeName } from '../../utils/utils'
 import {

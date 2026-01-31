@@ -154,7 +154,7 @@
           </div>
           <button
             class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-xl transition-all"
-            @click="handleAddDriver"
+            @click="handleAddDriver()"
             v-cursor
           >
             <div class="p-1.5 bg-indigo-100 rounded-lg text-indigo-600">
@@ -316,7 +316,6 @@ function handleNotificationClick(n: HeaderNotification) {
 
 async function handleAddDriver() {
   activeDropdown.value = null
-  await router.push({ name: 'drivers' })
   modalStore.openModal('driver')
 }
 

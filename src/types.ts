@@ -6,16 +6,18 @@ export type AlertType = 'error' | 'success' | 'warning' | 'info'
 export type HireStatusType = 'Pending' | 'Active' | 'Terminated' | 'Rehired'
 export type ApplicationStatusType = 'New' | 'Pending' | 'Hired' | 'Rejected'
 export type ComplianceItem = z.infer<typeof ComplianceItemSchema>
+
 export type DriverBase = z.infer<typeof DriverSchema> & {
   isFlagged?: boolean
   flagReason?: string
   flagDate?: string
 }
 
-export const EntityTypes = ['Driver', 'Vehicle', 'Application', 'User']
+export type EntityType = 'Driver' | 'Vehicle' | 'Application' | 'User'
+export const EntityTypes: EntityType[] = ['Driver', 'Vehicle', 'Application', 'User']
 
 // entity can be used for searching by name or type
-export interface Alert {
+export type Alert = {
   id: string
   type: 'critical' | 'warning' | 'info'
   message: string
@@ -25,7 +27,7 @@ export interface Alert {
   dueDate: string
 }
 
-export interface DocumentLog {
+export type DocumentLog = {
   id: string
   date: string
   fileName: string
@@ -35,7 +37,7 @@ export interface DocumentLog {
   fileUrl?: string
 }
 
-export interface AuditLog {
+export type AuditLog = {
   id: string
   entityId: string
   entityName: string
@@ -45,26 +47,27 @@ export interface AuditLog {
   description: string
 }
 
-export interface FirestoreDoc {
+export type FirestoreDoc = {
   id: string
   [key: string]: unknown
 }
 
-export interface Driver extends Omit<DriverBase, 'id'>, FirestoreDoc {
-  // Legacy / Optional fields (to be deprecated)
-  licenseFront?: string
-  licenseBack?: string
-  medicalCard?: string
-  applicationFile?: string
+export type Driver = Omit<DriverBase, 'id'> &
+  FirestoreDoc & {
+    // Legacy / Optional fields (to be deprecated)
+    licenseFront?: string
+    licenseBack?: string
+    medicalCard?: string
+    applicationFile?: string
 
-  // Flattened legacy personal info
-  personalInfo?: {
-    licenseExpirationDate?: string
-    medicalExpirationDate?: string
+    // Flattened legacy personal info
+    personalInfo?: {
+      licenseExpirationDate?: string
+      medicalExpirationDate?: string
+    }
   }
-}
 
-export interface DriverRow extends Driver {
+export type DriverRow = Driver & {
   firstName: string
   middleName: string
   lastName: string
@@ -79,10 +82,9 @@ export interface DriverRow extends Driver {
 }
 
 export type DriverForm = Driver
-
 export type SortOrder = 'asc' | 'desc' | null
+export type ComparedValues = string | number | null | undefined
 
-export type comparedValues = string | number | null | undefined
 export type BadgeVariant =
   | 'default'
   | 'secondary'
@@ -94,14 +96,14 @@ export type BadgeVariant =
   | 'blue'
   | 'green'
 
-export interface Column<T = unknown> {
+export type Column<T = unknown> = {
   key: keyof T | string
   label: string
   align?: 'left' | 'center' | 'right'
   sortable?: boolean
 }
 
-export interface Vehicle extends FirestoreDoc {
+export type Vehicle = FirestoreDoc & {
   busNumber: string
   vin: string
   vehicleStatus: 'Active' | 'Maintenance' | 'Inactive'
@@ -110,7 +112,7 @@ export interface Vehicle extends FirestoreDoc {
   inspectionFile?: string
 }
 
-export interface DashboardStats {
+export type DashboardStats = {
   totalDrivers: number
   totalVehicles: number
   alertsCount: number
@@ -123,7 +125,7 @@ export interface DashboardStats {
   annualRecordReview: number
 }
 
-export interface StatConfig {
+export type StatConfig = {
   icon: Component
   bgClass: string
   iconClass: string
@@ -147,60 +149,15 @@ export type CardType =
 export type ViewState = 'dashboard' | 'vehicles' | 'applications' | 'login' | 'settings'
 
 export type USState =
-  | 'AL'
-  | 'AK'
-  | 'AZ'
-  | 'AR'
-  | 'CA'
-  | 'CO'
-  | 'CT'
-  | 'DE'
-  | 'FL'
-  | 'GA'
-  | 'HI'
-  | 'ID'
-  | 'IL'
-  | 'IN'
-  | 'IA'
-  | 'KS'
-  | 'KY'
-  | 'LA'
-  | 'ME'
-  | 'MD'
-  | 'MA'
-  | 'MI'
-  | 'MN'
-  | 'MS'
-  | 'MO'
-  | 'MT'
-  | 'NE'
-  | 'NV'
-  | 'NH'
-  | 'NJ'
-  | 'NM'
-  | 'NY'
-  | 'NC'
-  | 'ND'
-  | 'OH'
-  | 'OK'
-  | 'OR'
-  | 'PA'
-  | 'RI'
-  | 'SC'
-  | 'SD'
-  | 'TN'
-  | 'TX'
-  | 'UT'
-  | 'VT'
-  | 'VA'
-  | 'WA'
-  | 'WV'
-  | 'WI'
-  | 'WY'
-  | 'DC'
-  | ''
+  | 'AL' | 'AK' | 'AZ' | 'AR' | 'CA' | 'CO' | 'CT' | 'DE' | 'FL' | 'GA'
+  | 'HI' | 'ID' | 'IL' | 'IN' | 'IA' | 'KS' | 'KY' | 'LA' | 'ME' | 'MD'
+  | 'MA' | 'MI' | 'MN' | 'MS' | 'MO' | 'MT' | 'NE' | 'NV' | 'NH' | 'NJ'
+  | 'NM' | 'NY' | 'NC' | 'ND' | 'OH' | 'OK' | 'OR' | 'PA' | 'RI' | 'SC'
+  | 'SD' | 'TN' | 'TX' | 'UT' | 'VT' | 'VA' | 'WA' | 'WV' | 'WI' | 'WY'
+  | 'DC' | ''
 
 export type UserRole = 'Admin' | 'Manager' | 'Dispatcher' | 'Auditor' | 'Viewer'
+
 export type VehicleTypes =
   | 'Passenger Bus'
   | 'School Bus'
@@ -210,6 +167,7 @@ export type VehicleTypes =
   | 'Van/Doubles'
   | 'Tractor'
   | ''
+
 export type LoginStatus =
   | 'idle'
   | 'loading'
@@ -221,7 +179,7 @@ export type LoginStatus =
   | 'mfa_pending'
 
 // User Interface with Login Info
-export interface User extends FirestoreDoc {
+export type User = FirestoreDoc & {
   email: string
   firstName: string
   lastName: string
@@ -236,20 +194,20 @@ export interface User extends FirestoreDoc {
 }
 
 // Login Request/Response Types
-export interface LoginCredentials {
+export type LoginCredentials = {
   email: string
   password: string
   rememberMe?: boolean
 }
 
-export interface LoginResponse {
+export type LoginResponse = {
   user: User
   token: string
   refreshToken?: string
   expiresIn: number
 }
 
-export interface AuthState {
+export type AuthState = {
   user: User | null
   isAuthenticated: boolean
   loginStatus: LoginStatus
@@ -272,8 +230,7 @@ export type I9FormData = Partial<Driver> & {
 }
 
 // Application Form Data Type
-
-export interface Address {
+export type Address = {
   street: string
   city: string
   state: USState
@@ -284,7 +241,7 @@ export interface Address {
 }
 
 // Personal Info
-export interface PersonalInfo {
+export type PersonalInfo = {
   firstName: string
   middleName: string
   lastName: string
@@ -294,7 +251,8 @@ export interface PersonalInfo {
   ssnNumber: string
   medicalExpirationDate?: string
 }
-export interface License {
+
+export type License = {
   number: string
   state: USState
   class: string
@@ -303,20 +261,23 @@ export interface License {
   emissionDate: string
   expirationDate: string
 }
-export interface Accident {
+
+export type Accident = {
   date: string
   location: string
   description: string
   injuries: boolean
   fatalities: boolean
 }
-export interface Violation {
+
+export type Violation = {
   date: string
   violation: string
   location: string
   penalty: string
 }
-export interface Employment {
+
+export type Employment = {
   companyName: string
   address: string
   city: string
@@ -333,14 +294,14 @@ export interface Employment {
   present?: boolean
 }
 
-export interface VehicleExperience {
+export type VehicleExperience = {
   type: VehicleTypes
 }
 
 export type ConsentOption = 'Yes' | 'No'
 
 // Table view - simplified application data just for listing
-export interface Applications extends FirestoreDoc {
+export type Applications = FirestoreDoc & {
   personalInfo: PersonalInfo
   status: ApplicationStatusType
   appliedDate: string
@@ -353,7 +314,7 @@ export interface Applications extends FirestoreDoc {
   flagDate?: string
 }
 
-export interface DriverApplicationForm extends FirestoreDoc {
+export type DriverApplicationForm = FirestoreDoc & {
   // Personal Info
   personalInfo: PersonalInfo
 
@@ -414,27 +375,29 @@ export interface DriverApplicationForm extends FirestoreDoc {
   notes?: string
 }
 
-export interface QualificationActionItem {
+export type QualificationActionItem = {
   key: string
   label: string
   cfr: string
 }
 
-export interface SignatureDoc {
+export type SignatureDoc = {
   label: string
   signature: string
   date: string
 }
 
-export interface UploadTokenContext {
+export type UploadTokenContext = {
   driverName: string
   documentType: string
 }
 
-export interface Memo {
+export type MemoType = 'memo' | 'policy'
+
+export type Memo = {
   id: string
   title: string
   fileUrl: string
   date: string
-  type: 'memo' | 'policy'
+  type: MemoType
 }

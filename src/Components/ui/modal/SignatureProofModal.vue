@@ -94,7 +94,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import BaseModal from './BaseModal.vue'
-import BaseButton from './buttons/BaseButton.vue'
+import BaseButton from '../buttons/BaseButton.vue'
 import { FileSignature, CheckCircle2, ShieldCheck, Printer } from 'lucide-vue-next'
 import dayjs from 'dayjs'
 

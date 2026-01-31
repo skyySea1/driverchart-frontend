@@ -50,6 +50,8 @@ export const DriverSchema = z.object({
 
   medical: ComplianceItemSchema.extend({
     registry: z.string().optional().default(''),
+    expiryDate: z.string().min(1, 'Medical Card Expiration is required'),
+
   }),
 
   mvr: ComplianceItemSchema,

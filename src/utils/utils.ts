@@ -1,4 +1,4 @@
-import type { comparedValues } from '@/types'
+import type { ComparedValues } from '@/types'
 import { z } from 'zod'
 import dayjs from 'dayjs'
 import isEqual from 'fast-deep-equal'
@@ -104,7 +104,7 @@ export function getHireStatusColor(status: unknown) {
  * Handles strings (localeCompare) and numbers.
  * Treats null/undefined as empty strings/lowest value.
  */
-export function compareValues(a: comparedValues, b: comparedValues, order: 'asc' | 'desc'): number {
+export function compareValues(a: ComparedValues, b: ComparedValues, order: 'asc' | 'desc'): number {
   const aVal = a ?? ''
   const bVal = b ?? ''
 
@@ -211,4 +211,29 @@ export const getChangedFields = (original: any, current: any): any => {
 
   // 5. Value mismatch
   return current
+}
+
+/**
+ * Flattens a nested object into a single-level object with dot-notation keys.
+ * Useful for Firestore updates to prevent overwriting entire nested maps.
+ * e.g. { a: { b: 1 } } -> { "a.b": 1 }
+ */
+
+const isPlainObject = (v: unknown): v is Record<string, unknown> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v) && !(v instanceof Date)
+
+export const flattenObject = (
+  obj: Record<string, unknown>,
+  prefix = '',
+): Record<string, unknown> => {
+  return Object.keys(obj).reduce((out: Record<string, unknown>, k: string) => {
+    const pre = prefix.length ? prefix + '.' : ''
+    const val = obj[k]
+    if (isPlainObject(val)) {
+      Object.assign(out, flattenObject(val, pre + k))
+    } else {
+      out[pre + k] = val
+    }
+    return out
+  }, {})
 }

@@ -89,10 +89,8 @@ const handleInput = (event: Event) => {
     if (numbers.length > 10) numbers = numbers.slice(0, 10)
 
     // As the user types, progressively apply the final format:
-    // - > 6 digits: (XXX) XXX-XXXX
-    // - 4–6 digits: (XXX) XXX
-    // - 1–3 digits: (XXX  (opening parenthesis with partial area code)
-    // - 0 digits : ''   (no formatting)
+    // (XXX) XXX-XXXX
+
     if (numbers.length > 6) {
       value = `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6)}`
     } else if (numbers.length > 3) {

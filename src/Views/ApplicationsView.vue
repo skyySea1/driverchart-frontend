@@ -1,7 +1,9 @@
 <template>
   <div class="space-y-6">
     <div class="flex justify-between">
-      <h2 class="text-lg font-bold text-slate-800" data-testid="applications-title">Applications Section</h2>
+      <h2 class="text-lg font-bold text-slate-800" data-testid="applications-title">
+        Applications Section
+      </h2>
       <p class="text-[10px] justify-en font-bold text-slate-400 uppercase tracking-widest">
         Check Applicant Profile for approval
       </p>
@@ -123,7 +125,7 @@ import type { Applications, Column } from '@/types'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
 import { ExternalLink, Search, X } from 'lucide-vue-next'
 import { capitalizeName, compareValues } from '@/utils/utils'
-import BaseBadge from '@/Components/ui/BaseBadge.vue'
+import BaseBadge from '@/Components/ui/badges/BaseBadge.vue'
 
 const applications = ref<Applications[]>([])
 const loading = ref(false)
@@ -138,6 +140,11 @@ const statusPills = computed(() => [
     label: 'Pending',
     value: 'Pending',
     count: applications.value.filter((a) => a.status === 'Pending').length,
+  },
+  {
+    label: 'New',
+    value: 'New',
+    count: applications.value.filter((a) => a.status === 'New').length,
   },
   {
     label: 'Hired',

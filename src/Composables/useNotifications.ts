@@ -2,6 +2,7 @@ import { computed } from 'vue'
 import dayjs from 'dayjs'
 import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
 import type { Driver } from '@/types'
+import {COLLECTION_ID} from '@/utils/constants'
 import { parseDriverDoc } from '@/utils/firestoreParsers'
 
 export interface NotificationItem {
@@ -13,9 +14,10 @@ export interface NotificationItem {
   daysLeft: number
 }
 
+
 export function useNotifications() {
   const { items: driversItems, loading } = useRealtimeCollection<Driver>(
-    `artifacts/${import.meta.env.VITE_APP_ID}/public/data/drivers`,
+    `artifacts/${COLLECTION_ID}/public/data/drivers`,
     { map: parseDriverDoc },
   )
 
