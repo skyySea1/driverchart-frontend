@@ -123,7 +123,7 @@ import type { Applications, Column } from '@/types'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
 import { ExternalLink, Search, X } from 'lucide-vue-next'
 import { capitalizeName, compareValues } from '@/utils/utils'
-import BaseBadge from '@/Components/ui/BaseBadge.vue'
+import BaseBadge from '@/Components/ui/badges/BaseBadge.vue'
 
 const applications = ref<Applications[]>([])
 const loading = ref(false)
