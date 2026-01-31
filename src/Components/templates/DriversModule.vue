@@ -263,7 +263,7 @@ import { parseDriverDoc } from '@/utils/firestoreParsers'
 import { capitalizeName, getHireStatusColor, compareValues } from '@/utils/utils'
 import { useDriverListReport } from '@/Composables/useDriverListReport'
 import SearchInput from '../ui/inputs/SearchInput.vue'
-
+import { COLLECTION_ID } from '../../utils/constants';
 const props = defineProps<{ compact?: boolean }>()
 
 const route = useRoute()
@@ -272,7 +272,7 @@ const modalStore = useModalStore()
 const { getStatusColor, daysToExpire, isExpiringSoon, isExpired } = useCompliance()
 const { generateDriverListReport } = useDriverListReport()
 const { items: driversItems, loading } = useRealtimeCollection<Driver>(
-  `artifacts/${import.meta.env.VITE_COLLECTION_ID}/public/data/drivers`,
+  `artifacts/${COLLECTION_ID}/public/data/drivers`,
   { map: parseDriverDoc },
 )
 
