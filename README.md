@@ -30,7 +30,7 @@ driverchart/
 ```
 
 - **Collections**: `drivers`, `vehicles`, `document_logs`
-- **appId**: Retrieved via `getAppId()` from `lib/firebase.js`, defaults to `'dot-compliance-app'`
+- **appId**: Retrieved via `getAppId()` from `lib/firebase.js`
 - **Example**: `collection(db, 'artifacts', appId, 'public', 'data', 'drivers')`
 
 **Always use this pattern** when adding new Firestore queries. Do not use root-level collections.
