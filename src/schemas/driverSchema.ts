@@ -3,7 +3,6 @@ import { DriverSchema, ComplianceItemSchema } from '@/shared/schemas/DriverSchem
 import { pastIsoDate, usPhoneNumber } from '../utils/utils'
 
 // Extends Shared DriverSchema for Form-specific validation messages
-// Backend <-> Frontend parity
 
 export const DriverFormSchema = DriverSchema.extend({
   // Personal Info - Override for required messages
@@ -15,7 +14,6 @@ export const DriverFormSchema = DriverSchema.extend({
   terminationDate: z.string().optional(), // Keep optional
 
   // Compliance Sections - Override to enforce required fields strictly for the form
-  // We use ComplianceItemSchema.extend to keep the base fields (documentNumber, expiryDate, file)
 
   license: ComplianceItemSchema.extend({
     documentNumber: z.string().min(1, 'license Number is required'),

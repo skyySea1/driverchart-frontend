@@ -57,11 +57,11 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
-import BaseModal from '@/Components/ui/BaseModal.vue'
+import BaseModal from '@/Components/ui/modal/BaseModal.vue'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import BaseAlert from '@/Components/ui/BaseAlert.vue'
-import InputGroup from '@/Components/ui/InputGroup.vue'
-import FileInput from '@/Components/ui/FileInput.vue'
+import InputGroup from '@/Components/ui/inputs/InputGroup.vue'
+import FileInput from '@/Components/ui/inputs/FileInput.vue'
 import { Info, Upload, X } from 'lucide-vue-next'
 
 const props = defineProps<{
@@ -141,7 +141,7 @@ async function handleUpload() {
     emit('close')
   } catch (err: unknown) {
     console.error('Upload failed:', err)
-     
+
     if (err instanceof Error) {
       errorMsg.value = err.message
     } else {

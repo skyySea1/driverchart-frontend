@@ -1,8 +1,11 @@
 import axios from 'axios'
 import { auth } from '@/services/firebaseService'
-import { API_BASE_URL } from '@/utils/constants'
 
-const baseURL = API_BASE_URL
+const isDev  = import.meta.env.VITE_ENVIRONMENT === 'development'
+
+const baseURL = isDev ? import.meta.env.VITE_API__DEV_BASE_URL : import.meta.env.VITE_API__PROD_BASE_URL
+
+
 const apiClient = axios.create({
   baseURL,
   headers: {

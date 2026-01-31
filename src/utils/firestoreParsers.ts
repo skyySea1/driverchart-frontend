@@ -83,7 +83,7 @@ export function parseDriverDoc(doc: FirestoreDoc): Driver {
 
     medical: {
       documentNumber: asString(getProp(medical, 'documentNumber')),
-      expiryDate: asOptionalString(getProp(medical, 'expiryDate')),
+      expiryDate: asString(getProp(medical, 'expiryDate')),
       file: asOptionalString(getProp(medical, 'file')),
       registry: asString(getProp(medical, 'registry')),
     },

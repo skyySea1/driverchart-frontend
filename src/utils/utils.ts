@@ -212,3 +212,28 @@ export const getChangedFields = (original: any, current: any): any => {
   // 5. Value mismatch
   return current
 }
+
+/**
+ * Flattens a nested object into a single-level object with dot-notation keys.
+ * Useful for Firestore updates to prevent overwriting entire nested maps.
+ * e.g. { a: { b: 1 } } -> { "a.b": 1 }
+ */
+
+const isPlainObject = (v: unknown): v is Record<string, unknown> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v) && !(v instanceof Date)
+
+export const flattenObject = (
+  obj: Record<string, unknown>,
+  prefix = '',
+): Record<string, unknown> => {
+  return Object.keys(obj).reduce((out: Record<string, unknown>, k: string) => {
+    const pre = prefix.length ? prefix + '.' : ''
+    const val = obj[k]
+    if (isPlainObject(val)) {
+      Object.assign(out, flattenObject(val, pre + k))
+    } else {
+      out[pre + k] = val
+    }
+    return out
+  }, {})
+}

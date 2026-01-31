@@ -142,6 +142,11 @@ const statusPills = computed(() => [
     count: applications.value.filter((a) => a.status === 'Pending').length,
   },
   {
+    label: 'New',
+    value: 'New',
+    count: applications.value.filter((a) => a.status === 'New').length,
+  },
+  {
     label: 'Hired',
     value: 'Hired',
     count: applications.value.filter((a) => a.status === 'Hired').length,

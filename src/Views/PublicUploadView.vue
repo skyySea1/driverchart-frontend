@@ -77,6 +77,7 @@
               <input
                 type="file"
                 @change="handleFileChange"
+                accept=".pdf,.jpg,.jpeg,.png"
                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 :disabled="isUploading"
               />

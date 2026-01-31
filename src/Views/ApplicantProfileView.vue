@@ -392,8 +392,8 @@ import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import ApplicantReviewData from '@/Components/templates/ApplicantReviewData.vue'
 import ComplianceDocuments from '@/Components/templates/ComplianceDocuments.vue'
 import DocumentUploadModal from '@/Components/templates/forms/DocumentUploadModal.vue'
-import PdfViewerModal from '@/Components/ui/PdfViewerModal.vue'
-import SignatureProofModal from '@/Components/ui/SignatureProofModal.vue'
+import PdfViewerModal from '@/Components/ui/modal/PdfViewerModal.vue'
+import SignatureProofModal from '@/Components/ui/modal/SignatureProofModal.vue'
 import { useDocumentsStore } from '@/stores/documentsStore'
 
 const activeTab = ref<'overview' | 'review' | 'documents'>('overview')

@@ -18,6 +18,7 @@ import { doc, getDoc, collection, getDocs, deleteDoc } from 'firebase/firestore'
 import { db } from './firebaseService'
 import { COLLECTION_PATHS } from '@/utils/constants'
 import { parseDriverDoc } from '@/utils/firestoreParsers'
+import { flattenObject } from '@/utils/utils'
 
 // migrate for entity based service and document handling
 export const dataService = {
@@ -101,7 +102,10 @@ export const dataService = {
     try {
       const docRef = doc(db, COLLECTION_PATHS.drivers, id)
       const { updateDoc } = await import('firebase/firestore')
-      await updateDoc(docRef, data)
+      // Flatten the data to use dot-notation keys for nested updates in Firestore
+      // This prevents overwriting entire nested maps (e.g. 'license') when only one field changes.
+      const flattenedData = flattenObject(data)
+      await updateDoc(docRef, flattenedData)
     } catch (error) {
       console.warn('Failed to partial update driver via Firestore, falling back to API', error)
       await apiClient.patch(`/drivers/${id}`, data)

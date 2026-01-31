@@ -1,6 +1,6 @@
 // src/utils/constants.ts
 
-const COLLECTION_ID = import.meta.env.VITE_COLLECTION_ID || 'driverchart'
+export const COLLECTION_ID = import.meta.env.VITE_COLLECTION_ID || 'driverchart'
 
 export const STATUS_ACTIVE = 'Active'
 export const STATUS_INACTIVE = 'Inactive'
