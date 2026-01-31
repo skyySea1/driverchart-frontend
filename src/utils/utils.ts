@@ -1,4 +1,4 @@
-import type { comparedValues } from '@/types'
+import type { ComparedValues } from '@/types'
 import { z } from 'zod'
 import dayjs from 'dayjs'
 import isEqual from 'fast-deep-equal'
@@ -104,7 +104,7 @@ export function getHireStatusColor(status: unknown) {
  * Handles strings (localeCompare) and numbers.
  * Treats null/undefined as empty strings/lowest value.
  */
-export function compareValues(a: comparedValues, b: comparedValues, order: 'asc' | 'desc'): number {
+export function compareValues(a: ComparedValues, b: ComparedValues, order: 'asc' | 'desc'): number {
   const aVal = a ?? ''
   const bVal = b ?? ''
 
