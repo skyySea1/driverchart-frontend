@@ -4,7 +4,9 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-xl font-bold text-slate-900" data-testid="drivers-module-title">Drivers List</h1>
+        <h1 class="text-xl font-bold text-slate-900" data-testid="drivers-module-title">
+          Drivers List
+        </h1>
         <p class="text-sm text-slate-500">Manage all drivers</p>
       </div>
 

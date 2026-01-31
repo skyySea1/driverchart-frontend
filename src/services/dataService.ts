@@ -21,7 +21,7 @@ import { parseDriverDoc } from '@/utils/firestoreParsers'
 
 // migrate for entity based service and document handling
 export const dataService = {
-  // --- Drivers ---
+
   getDrivers: async (): Promise<
     (Driver & {
       contact: string
@@ -32,7 +32,6 @@ export const dataService = {
     })[]
   > => {
     // Fallback to API if needed, or implement Firestore fetch here too
-    // For consistency with Profile, let's use Firestore
     try {
       const snapshot = await getDocs(collection(db, COLLECTION_PATHS.drivers))
       return snapshot.docs.map((doc) => {
