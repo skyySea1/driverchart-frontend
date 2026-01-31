@@ -132,7 +132,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { User, Globe, Check } from 'lucide-vue-next'
-import InputGroup from '@/Components/ui/InputGroup.vue'
+import InputGroup from '@/Components/ui/inputs/InputGroup.vue'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
 import { ORGANIZATION } from '@/utils/constants'
 import { useAuthStore } from '@/stores/AuthStore'
