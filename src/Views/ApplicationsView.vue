@@ -1,7 +1,9 @@
 <template>
   <div class="space-y-6">
     <div class="flex justify-between">
-      <h2 class="text-lg font-bold text-slate-800" data-testid="applications-title">Applications Section</h2>
+      <h2 class="text-lg font-bold text-slate-800" data-testid="applications-title">
+        Applications Section
+      </h2>
       <p class="text-[10px] justify-en font-bold text-slate-400 uppercase tracking-widest">
         Check Applicant Profile for approval
       </p>
