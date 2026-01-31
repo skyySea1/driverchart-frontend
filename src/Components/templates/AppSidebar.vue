@@ -64,7 +64,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import UserBadge from '@/Components/ui/UserBadge.vue'
+import UserBadge from '@/Components/ui/badges/UserBadge.vue'
 import { LayoutDashboard, Truck, Settings, Bus, UserPlus, ShieldCheck } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/AuthStore'
 

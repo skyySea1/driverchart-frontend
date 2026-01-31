@@ -28,25 +28,7 @@
 
     <!-- Filters & Search -->
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-      <!-- Search Input -->
-      <div class="relative w-full lg:max-w-xl">
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-          <Search class="w-4 h-4" />
-        </div>
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search drivers..."
-          class="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-lg shadow-sm ring-1 ring-inset ring-slate-200 hover:bg-slate-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 block p-2.5 pl-10"
-        />
-        <button
-          v-if="searchQuery"
-          @click="searchQuery = ''"
-          class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200 ease-in-out"
-        >
-          <X class="w-5 h-5" />
-        </button>
-      </div>
+      <SearchInput v-model="searchQuery" />
 
       <!-- Status Pills & Compliance Filter -->
       <div class="flex flex-wrap items-center gap-3">
@@ -270,9 +252,9 @@ import FilterDropdown, {
 import { dataService } from '@/services/dataService'
 import { useRealtimeCollection } from '@/Composables/useRealtimeCollection'
 import { useCompliance } from '@/Composables/useCompliance'
-import { Edit, Trash2, Search, X, Plus, FileText } from 'lucide-vue-next'
+import { Edit, Trash2, Plus, FileText } from 'lucide-vue-next'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
-import BaseBadge from '@/Components/ui/BaseBadge.vue'
+import BaseBadge from '@/Components/ui/badges/BaseBadge.vue'
 import DefaultTable from '@/Components/templates/DefaultTable.vue'
 import { useModalStore } from '@/stores/ModalStore'
 import type { Driver, Column, DriverRow, SortOrder } from '@/types'
@@ -280,6 +262,7 @@ import SmallButton from '@/Components/ui/buttons/SmallButton.vue'
 import { parseDriverDoc } from '@/utils/firestoreParsers'
 import { capitalizeName, getHireStatusColor, compareValues } from '@/utils/utils'
 import { useDriverListReport } from '@/Composables/useDriverListReport'
+import SearchInput from '../ui/inputs/SearchInput.vue'
 
 const props = defineProps<{ compact?: boolean }>()
 
@@ -365,6 +348,45 @@ onMounted(() => {
     activeFilters.value.expiration = String(route.query.expiration).split(',')
   }
 })
+
+// Listen for search changes in URL (e.g. from Dashboard alerts)
+watch(
+  () => route.query.search,
+  (newSearch) => {
+    if (newSearch !== undefined) {
+      searchQuery.value = String(newSearch)
+    } else {
+      searchQuery.value = ''
+    }
+  },
+)
+
+// Listen for status changes in URL
+watch(
+  () => route.query.status,
+  (newStatus) => {
+    if (newStatus && newStatus !== selectedStatus.value) {
+      selectedStatus.value = String(newStatus)
+    } else if (!newStatus && selectedStatus.value !== 'all') {
+      selectedStatus.value = 'all'
+    }
+  },
+)
+
+// Listen for expiration changes in URL
+watch(
+  () => route.query.expiration,
+  (newExpiration) => {
+    const current = activeFilters.value.expiration || []
+    const next = newExpiration ? String(newExpiration).split(',') : []
+
+    const isSame = current.length === next.length && current.every((v, i) => v === next[i])
+
+    if (!isSame) {
+      activeFilters.value.expiration = next
+    }
+  },
+)
 
 // Sync to URL
 watch(
@@ -483,10 +505,9 @@ const driversData = computed<DriverRow[]>(() => {
     const { key, order } = currentSort.value
     const sortedList = [...mappedList]
     sortedList.sort((a, b) => {
-      const valA = a[key as keyof DriverRow]
-      const valB = b[key as keyof DriverRow]
+      const valA = a[key]
+      const valB = b[key]
 
-      // Type guard: only compare primitives (string/number)
       if (typeof valA === 'string' || typeof valA === 'number') {
         if (typeof valB === 'string' || typeof valB === 'number') {
           return compareValues(valA, valB, order)

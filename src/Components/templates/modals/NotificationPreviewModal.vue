@@ -161,9 +161,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import BaseModal from '@/Components/ui/BaseModal.vue'
+import BaseModal from '@/Components/ui/modal/BaseModal.vue'
 import BaseButton from '@/Components/ui/buttons/BaseButton.vue'
-import BaseBadge from '@/Components/ui/BaseBadge.vue'
+import BaseBadge from '@/Components/ui/badges/BaseBadge.vue'
 import BaseAlert from '@/Components/ui/BaseAlert.vue'
 import { Check, User, AlertCircle, Send, CheckCircle2 } from 'lucide-vue-next'
 import { dataService } from '@/services/dataService'

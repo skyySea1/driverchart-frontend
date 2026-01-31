@@ -24,7 +24,7 @@ export function useDashboard() {
     }
   }
 
-  // Polling logic: Refresh every 30 seconds
+  // Polling logic: Refresh every 5 minutes
   const startPolling = () => {
     if (pollingInterval) return // Already polling
 
@@ -33,7 +33,7 @@ export function useDashboard() {
       if (document.visibilityState === 'visible') {
         fetchDashboardStats(true) // silent update
       }
-    }, 30000)
+    }, 300000)
   }
 
   const stopPolling = () => {

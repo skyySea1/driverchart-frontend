@@ -42,7 +42,7 @@
                 <input
                   :value="magicLink"
                   readonly
-                  class="w-full p-3 bg-slate-100 border border-slate-200 rounded-lg text-sm text-slate-500 cursor-not-allowed"
+                  class="w-full p-3 bg-slate-100 border border-slate-200 rounded-lg text-xs text-slate-500 italic cursor-not-allowed"
                 />
               </div>
             </div>
@@ -181,7 +181,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { Upload, Trash2 } from 'lucide-vue-next'
 import { dataService } from '@/services/dataService'
 import type { Driver } from '@/types'
-import BaseModal from '@/Components/ui/BaseModal.vue'
+import BaseModal from '@/Components/ui/modal/BaseModal.vue'
 
 const props = defineProps({
   isOpen: Boolean,
@@ -340,10 +340,9 @@ const submitLabel = computed(() => {
 
 const magicLink = computed(() => {
   if (!props.driver?.id) return 'Generating link...'
-  const baseUrl = window.location.origin
-  let typeId = '5' // license
-  if (props.mode === 'request_medical') typeId = '6'
-  return `${baseUrl}/driver/upload/?did=${props.driver.id}&cid=${typeId}`
+  // The backend now generates the secure token-based link.
+  // The frontend cannot construct it synchronously.
+  return '(Secure link will be generated automatically)'
 })
 
 watch(
@@ -366,7 +365,7 @@ async function submit() {
         email: form.value.email,
         driverName: `${props.driver.firstName} ${props.driver.lastName}`,
         requestType: requestTypeLabel.value,
-        magicLink: magicLink.value,
+        magicLink: '', // Backend handles link generation now
         customMessage: form.value.customMessage,
         driverId: props.driver.id,
         docType: docTypeKey.value,

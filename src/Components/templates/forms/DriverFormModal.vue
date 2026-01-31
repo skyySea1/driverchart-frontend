@@ -39,7 +39,13 @@
             <label class="block text-xs font-bold text-slate-700"
               >First Name <span class="text-red-500">*</span></label
             >
-            <input id="firstNameInput" v-model.trim="form.firstName" required class="input-base" data-testid="input-firstname" />
+            <input
+              id="firstNameInput"
+              v-model.trim="form.firstName"
+              required
+              class="input-base"
+              data-testid="input-firstname"
+            />
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700">Middle Name</label>
@@ -49,14 +55,26 @@
             <label class="block text-xs font-bold text-slate-700"
               >Last Name <span class="text-red-500">*</span></label
             >
-            <input id="lastNameInput" v-model.trim="form.lastName" required class="input-base" data-testid="input-lastname" />
+            <input
+              id="lastNameInput"
+              v-model.trim="form.lastName"
+              required
+              class="input-base"
+              data-testid="input-lastname"
+            />
           </div>
 
           <div class="space-y-1">
             <label class="block text-xs font-bold text-slate-700"
               >Date of Birth <span class="text-red-500">*</span></label
             >
-            <input id="dobInput" v-model="form.dob" type="date" class="input-base" data-testid="input-dob" />
+            <input
+              id="dobInput"
+              v-model="form.dob"
+              type="date"
+              class="input-base"
+              data-testid="input-dob"
+            />
           </div>
           <InputGroup
             id="phoneInput"
@@ -71,7 +89,13 @@
             <label class="block text-xs font-bold text-slate-700"
               >Email Address <span class="text-red-500">*</span>
             </label>
-            <input id="emailInput" v-model.trim="form.email" type="email" class="input-base" data-testid="input-email" />
+            <input
+              id="emailInput"
+              v-model.trim="form.email"
+              type="email"
+              class="input-base"
+              data-testid="input-email"
+            />
           </div>
 
           <div class="space-y-1">
@@ -207,9 +231,7 @@
             <label class="block text-xs font-bold text-slate-700"
               >Rehire Date <span class="text-red-500">*</span></label
             >
-            <!-- Note: rehireDate is not in the shared schema, so we handle it carefully or assume it's part of a future update.
-                 For now, keeping it but it might not persist to backend if not in schema. -->
-            <input
+             <input
               id="rehireDateInput"
               type="date"
               class="input-base"
@@ -587,11 +609,11 @@ import { useDashboard } from '@/Composables/useDashboard'
 import type { Driver, DriverForm, ComplianceItem } from '@/types'
 import { sanitizeInput, capitalizeName, getChangedFields } from '@/utils/utils'
 import BaseAlert from '@/Components/ui/BaseAlert.vue'
-import BaseModal from '@/Components/ui/BaseModal.vue'
+import BaseModal from '@/Components/ui/modal/BaseModal.vue'
 import FormW9 from '@/Components/templates/forms/FormW9.vue'
 import FormI9 from '@/Components/templates/forms/FormI9.vue'
 import RoadTestCertificate from '@/Components/templates/RoadTestCertificate.vue'
-import InputGroup from '@/Components/ui/InputGroup.vue'
+import InputGroup from '@/Components/ui/inputs/InputGroup.vue'
 import ActionIcon from '@/Components/ui/ActionIcon.vue'
 import {
   User,
