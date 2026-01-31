@@ -33,8 +33,8 @@ export const useAuthStore = defineStore('auth', () => {
     return user.value?.role || 'Viewer'
   })
 
-  const APP_ID = import.meta.env.VITE_APP_ID
-  const USERS_COLLECTION = `artifacts/${APP_ID}/public/data/users`
+  const COLLECTION_ID = import.meta.env.VITE_COLLECTION_ID
+  const USERS_COLLECTION = `artifacts/${COLLECTION_ID}/public/data/users`
 
   function init() {
     return new Promise<void>((resolve) => {

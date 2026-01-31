@@ -287,7 +287,7 @@ const modalStore = useModalStore()
 const { getStatusColor, daysToExpire, isExpiringSoon, isExpired } = useCompliance()
 const { generateDriverListReport } = useDriverListReport()
 const { items: driversItems, loading } = useRealtimeCollection<Driver>(
-  `artifacts/${import.meta.env.VITE_APP_ID}/public/data/drivers`,
+  `artifacts/${import.meta.env.VITE_COLLECTION_ID}/public/data/drivers`,
   { map: parseDriverDoc },
 )
 
