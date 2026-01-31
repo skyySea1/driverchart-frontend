@@ -15,7 +15,7 @@ export interface NotificationItem {
 
 export function useNotifications() {
   const { items: driversItems, loading } = useRealtimeCollection<Driver>(
-    `artifacts/${import.meta.env.VITE_APP_ID}/public/data/drivers`,
+    `artifacts/${import.meta.env.VITE_COLLECTION_ID}/public/data/drivers`,
     { map: parseDriverDoc },
   )
 
