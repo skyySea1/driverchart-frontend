@@ -53,7 +53,7 @@ getStatusText(days); // Returns "EXPIRED", "Due in X days", or "Valid"
 
 When saving driver/vehicle forms with file uploads:
 
-1. Compare new file names against existing (`data[field] !== editingDriver?.[field]`)
+1. logic Comparison in new file names against existing (`data[field] !== editingDriver?.[field]`), doens't break if field is null
 2. Call `createDocumentLog(fileName, 'Driver' | 'Vehicle', entityName)` for changed docs
 3. Log in parallel using `Promise.all()` before the main save operation
 
