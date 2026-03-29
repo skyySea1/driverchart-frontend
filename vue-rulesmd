@@ -1,4 +1,4 @@
-# migração para vue
+# Diretrizes vue
 
 - Use v-show not v-if for navigation, avoiding recreating and reevaluating  
 - ícones devem ser do tamanho da fonte (usar 1em)
