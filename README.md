@@ -47,7 +47,7 @@ driverchart/
 getDaysDiff(expirationDate); // Days until future date (license, Medical Cert)
 getDaysUntilDue(lastActionDate); // Days until 1-year anniversary (MVR, Drug Test)
 getStatusColor(days); // Returns Tailwind classes: red (expired), yellow (<30), green
-getStatusText(days); // Returns "EXPIRED", "Due in X days", or "Valid"
+getStatusText(days); // Returns "EXPIRED", "Due in X days", or "Valid"```
 
 ### Document Logging Pattern
 
