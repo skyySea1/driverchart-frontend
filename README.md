@@ -9,7 +9,7 @@
 ```txt
 driverchart/
 ├── src/
-│   ├── Components/Dashboard.vue       # Main app component ( migrated of react 1000+ lines, all state management)
+│   ├── Components/Dashboard.vue       # Main app component
 │   ├── components/
 │   │   ├── templates/            # FormW9, FormI9, RoadTestTemplate (printable DOT docs)
 │   │   └── ui/                   # Reusable components (Modal, StatCard, etc.)
@@ -41,11 +41,6 @@ driverchart/
 2. If present, uses `signInWithCustomToken()`, else falls back to `signInAnonymously()`
 3. All Firestore queries require `user` to be set (checked in `useEffect` dependency)
 
- Script de validação rápido
-
- 1) Simular expirations and ensure alerts appear
- 2) Generate a road test certificate and print to PDF
-
 ## Compliance Date Calculations (lib/utils.js)
 
 ```javascript
@@ -62,8 +57,8 @@ When saving driver/vehicle forms with file uploads:
 2. Call `createDocumentLog(fileName, 'Driver' | 'Vehicle', entityName)` for changed docs
 3. Log in parallel using `Promise.all()` before the main save operation
 
-### Print-Friendly Components
-
+### Print-Ready Components
+- For easy reporting, components are open for printing functionality
 Templates in `components/templates/` use:
 
 - `print:` Tailwind variants for print styles
